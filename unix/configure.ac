@@ -67,6 +67,7 @@ m4_include([unix/config/ax_check_libsdl.m4])
 m4_include([unix/config/ax_check_libtiff.m4])
 m4_include([unix/config/ax_check_openexr.m4])
 m4_include([unix/config/ax_compare_version.m4])
+m4_include([unix/config/ax_compile_stdcxx_11.m4])
 m4_include([unix/config/ax_compiler_vendor.m4])
 m4_include([unix/config/ax_compiler_version.m4])
 m4_include([unix/config/ax_fix_incorrect_path.m4])
@@ -561,6 +562,7 @@ else
 
 fi  # with_cygwin_dll
 
+pov_websockets_msg=enabled
 
 ###############################################################################
 
@@ -752,6 +754,13 @@ fi
 
 # Language.
 
+AC_COMPILE_STDCXX_11
+#if defined HAVE_STDCXX_11
+	CXXFLAGS="$CXXFLAGS -std=c++11"
+	echo "Have c++11"
+#endif
+
+echo "CXXFLAGS=$CXXFLAGS"
 # don't use -ansi since it can make compilation fail (e.g. on cygwin).
 #AX_TEST_COMPILER_FLAGS([-ansi], [], [AX_TEST_COMPILER_FLAGS([-Aa])])
 
@@ -1266,6 +1275,7 @@ AC_CONFIG_FILES([\
   vfe/Makefile \
   platform/Makefile \
   unix/Makefile \
+  tests/websockets/server/Makefile
 ])
 
 
@@ -1296,6 +1306,7 @@ test x"$pov_img_fmt_disabled" = x"" && pov_img_fmt_disabled="-"
 
 AC_DEFINE_UNQUOTED([BUILTIN_IO_RESTRICTIONS], ["$pov_io_msg"], [I/O restrictions.])
 AC_DEFINE_UNQUOTED([BUILTIN_XWIN_DISPLAY], ["$pov_xwin_msg"], [X Window display.])
+AC_DEFINE_UNQUOTED([BUILTIN_WEBSOCKETS], ["$pov_websockets_msg"], [WebSockets.])
 AC_DEFINE_UNQUOTED([BUILTIN_IMG_FORMATS], ["$pov_img_fmt_builtin $pov_img_fmt_enabled"], [Supported image formats.])
 AC_DEFINE_UNQUOTED([MISSING_IMG_FORMATS], ["$pov_img_fmt_disabled"], [Unsupported image formats.])
 
@@ -1346,6 +1357,7 @@ fi
 AC_MSG_RESULT([Built-in features:
   I/O restrictions:          ${pov_io_msg}
   X Window display:          ${pov_xwin_msg}
+  WebSockets:                ${pov_websockets_msg}
   Supported image formats:   $pov_img_fmt_builtin $pov_img_fmt_enabled
   Unsupported image formats: $pov_img_fmt_disabled
 
