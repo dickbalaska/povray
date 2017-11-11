@@ -130,6 +130,14 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 # =========================
+# Eclipse foo
+# =========================
+/.settings
+.autotools
+.cproject
+.project
+
+# =========================
 # Operating System detritus
 # =========================
 
@@ -206,6 +214,8 @@ $RECYCLE.BIN/
 /config.h
 /config.status
 /stamp-h1
+/autom4te.cache
+
 # Files created by configure script in specific subdirectories
 /platform/Makefile
 /source/Makefile
@@ -243,3 +253,9 @@ $RECYCLE.BIN/
 /tools/windows/htmlhelp/output
 /tools/windows/htmlhelp/debug.txt
 /tools/windows/htmlhelp/filelist.txt
+
+# =====================
+# tests
+# =====================
+tests/websockets/server/dummypovserver
+
