@@ -25,6 +25,10 @@
 # Prepare all but the doc/ directory using:
 #   % ./prebuild.sh
 #
+# Prepare to build the websockets edition
+# (replace the unix commandline frontend with websockets
+#   % ./prebuild.sh --websockets
+#
 # Clean up all files and folders created by this script (but docs):
 #   % ./prebuild.sh clean
 #
@@ -68,7 +72,7 @@ fi
 
 # Check optional argument.
 case "$1" in
-  ""|clean|doc|docs|docclean|docsclean) ;;
+  ""|clean|doc|docs|docclean|docsclean|--websockets|--ws) ;;
   *) echo "$0: error: unrecognized option '$1'"; exit ;;
 esac
 
@@ -80,7 +84,7 @@ else
 fi
 
 # Check for autoconf/automake presence and version.
-if test x"$1" = x""; then
+if test "x$1" = "x" -o x`echo $1 | cut -c1-2` = "x--"; then
   if autoconf --version > /dev/null 2>&1; then
     autoconf=`autoconf --version | grep autoconf | sed s,[^0-9.]*,,g`
     echo "Detected autoconf $autoconf"
@@ -106,7 +110,14 @@ if test x"$1" = x""; then
   fi
 fi
 
-
+UNIXORWS=unix
+case "$1" in
+  "--websockets"|"--ws")
+  	UNIXORWS=websockets
+  	echo "Building Websockets edition"
+  	;;
+esac
+    
 ###############################################################################
 # Copying and generating standard/additional files
 ###############################################################################
@@ -384,7 +395,6 @@ echo "make maintainer-clean" 1>&2  &&  make maintainer-clean 1>&2 ; \
 
 esac
 
-
 ###############################################################################
 # Creation of supporting unix-specific files
 ###############################################################################
@@ -407,6 +417,22 @@ case "$1" in
   ;;
 
   *)
+
+
+  if test $UNIXORWS != unix ; then
+    povray_SOURCES=""
+
+    bin_PROGRAMS="povrayws"
+  else
+    # Source files.
+    povray_SOURCES="disp.h \\
+      disp_sdl.cpp disp_sdl.h \\
+      disp_text.cpp disp_text.h"
+      
+    bin_PROGRAMS="povray"	
+  fi
+  prog_SOURCES="${bin_PROGRAMS}_SOURCES"
+
   echo "Create $makefile.am"
   cat Makefile.header > $makefile.am
   cat << pbEOF >> $makefile.am
@@ -415,13 +441,10 @@ case "$1" in
 # Please report bugs to $pov_config_bugreport
 
 # Programs to build.
-bin_PROGRAMS = povray
+bin_PROGRAMS = $bin_PROGRAMS
 
-# Source files.
-povray_SOURCES = \\
-  disp.h \\
-  disp_sdl.cpp disp_sdl.h \\
-  disp_text.cpp disp_text.h
+#
+$prog_SOURCES=$povray_SOURCES
 
 cppflags_platformcpu =
 ldadd_platformcpu =
@@ -448,7 +471,7 @@ AM_CPPFLAGS = \\
   -I\$(top_srcdir)/platform/unix \\
   \$(cppflags_platformcpu) \\
   -I\$(top_srcdir)/vfe \\
-  -I\$(top_srcdir)/vfe/unix
+  -I\$(top_srcdir)/vfe/$UNIXORWS
 
 # Libraries to link with.
 # Beware: order does matter!
@@ -572,6 +595,11 @@ case "$1" in
   *)
   scriptfiles=`find scripts -type f`
 
+#  if test $UNIXORWS = unix ; then
+#  	DOUNIX=unix
+#  else
+#   DOUNIX=
+#  fi
   echo "Create $makefile.am"
   cat Makefile.header > $makefile.am
   cat << pbEOF >> $makefile.am
@@ -819,7 +847,7 @@ AM_CPPFLAGS = \\
   \$(cppflags_platformcpu) \\
   -I\$(top_srcdir)/unix \\
   -I\$(top_srcdir)/vfe \\
-  -I\$(top_srcdir)/vfe/unix
+  -I\$(top_srcdir)/vfe/$UNIXORWS
 pbEOF
   ;;
 esac
@@ -1328,7 +1356,7 @@ case "$1" in
 
   *)
   # includes the vfe/unix/ files to avoid circular dependencies when linking
-  files=`find $dir $dir/unix -maxdepth 1 -name \*.cpp -or -name \*.h | sed s,"$dir/",,g | sort`
+  files=`find $dir $dir/$UNIXORWS -maxdepth 1 -name \*.cpp -or -name \*.h | sed s,"$dir/",,g | sort`
 
   echo "Create $makefile.am"
   cat Makefile.header > $makefile.am
@@ -1354,10 +1382,14 @@ AM_CPPFLAGS = \\
   -I\$(top_srcdir)/unix/povconfig \\
   -I\$(top_srcdir)/platform/unix \\
   \$(cppflags_platformcpu) \\
-  -I\$(top_srcdir)/vfe/unix \\
+  -I\$(top_srcdir)/vfe/$UNIXORWS \\
   -I\$(top_srcdir)/unix \\
   -I\$(top_srcdir)/source
 
+#if test $UNIXORWS = unix ; then
+#	AM_CPPFLAGS +=   -I\$(top_srcdir)/unix
+#fi
+	
 # Extra definitions for compiling.
 # They cannot be placed in config.h since they indirectly rely on \$prefix.
 DEFS = \\
@@ -1398,6 +1430,7 @@ case "$1" in
     files_ext=`find $dir/x86/$ext -name "*.cpp" -or -name "*.h" | sed s,"$dir/",,g | sort`
     eval files_x86$ext='$files_ext'
   done
+
 
   echo "Create $makefile.am"
   cat Makefile.header > $makefile.am
@@ -1446,8 +1479,7 @@ AM_CPPFLAGS = \\
   -I\$(top_srcdir)/platform/unix \\
   \$(cppflags_platformcpu) \\
   -I\$(top_srcdir)/vfe \\
-  -I\$(top_srcdir)/vfe/unix \\
-  -I\$(top_srcdir)/unix \\
+  -I\$(top_srcdir)/vfe/websockets \\
   -I\$(top_srcdir)/source
 
 # Extra definitions for compiling.
