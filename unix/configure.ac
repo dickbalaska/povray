@@ -366,6 +366,8 @@ AC_CHECK_LIB([m], [sin])
 # real-time clock
 AC_CHECK_LIB([rt], [clock_gettime])
 
+AC_CHECK_LIB([stdc++], [main])
+
 # libz; required library for distributable builds
 AC_MSG_CHECKING([whether to use the ZLIB library])
 if test x"$pov_no_distrib" = x"yes" && test x"$with_zlib" = x"no"; then
