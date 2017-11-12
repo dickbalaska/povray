@@ -415,6 +415,9 @@ Additional POV-Ray specific options are:
     slower.  It is therefore only meant for developers who want to experiment
     with the source code.  For best results, it is often recommended to
     disable all compiler optimizations; see below.
+    Note that with debug enabled, you must also add
+        LIBS=-lboost_date_time
+    to your configure command. 
 
 --enable-profile
     enables execution profiling, i.e. ask the compiler to generate run-time
