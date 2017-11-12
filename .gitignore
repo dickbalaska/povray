@@ -226,8 +226,11 @@ $RECYCLE.BIN/
 
 # Files created by make in main directory
 /povray.ini
+
 # Files created by make in specific subdirectories
 /unix/povray
+/unix/povrayws
+
 # Files created by make in various subdirectories
 .dirstamp
 
