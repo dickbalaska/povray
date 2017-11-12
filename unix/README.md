@@ -26,6 +26,19 @@ following packages pre-installed:
     libjpeg8-dev
     libtiff5-dev
     libopenexr-dev
+    libwebsocketpp-dev
+
+debian based systems can copy and paste
+	sudo apt-get install \
+		libboost-dev \
+		libboost-date-time-dev \
+		libboost-thread-dev \
+		zlib1g-dev \
+		libpng12-dev \
+		libjpeg8-dev \
+		libtiff5-dev \
+		libopenexr-dev \
+		libwebsocketpp-dev
     
 Generating configure and building the code
 ==========================================
