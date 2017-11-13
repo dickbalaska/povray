@@ -481,7 +481,8 @@ LDADD = \\
   \$(top_builddir)/source/libpovray.a \\
   \$(top_builddir)/vfe/libvfe.a \\
   \$(top_builddir)/platform/libplatform.a \\
-  \$(ldadd_platformcpu)
+  \$(top_builddir)/source/libpovray.a \\
+    \$(ldadd_platformcpu)
 pbEOF
   ;;
 esac
