@@ -1293,7 +1293,7 @@ namespace vfe
       boost::condition m_RequestEvent;
       volatile int m_RequestFlag;
       volatile int m_RequestResult;
-  } ;
+  };
 }
 
 #endif // __VFESESSION_H__
