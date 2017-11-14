@@ -31,7 +31,7 @@ ostream WebsocketServer::os(&ls);
 
 MessageHandlerFunc messageHandlerFunc = NULL;
 
-bool WebsocketServer::init() {
+bool WebsocketServer::init(int port) {
 	// Initialising WebsocketServer.
 	server.init_asio();
 	// Set custom logger (ostream-based).
@@ -43,7 +43,7 @@ bool WebsocketServer::init() {
 	server.set_fail_handler(&WebsocketServer::on_fail);
 	server.set_close_handler(&WebsocketServer::on_close);
 	// Listen on port.
-	int port = 4441;
+	//int port = 4441;
 	try {
 		//server.listen(port);
         server.listen(websocketpp::lib::asio::ip::tcp::v6(), port);

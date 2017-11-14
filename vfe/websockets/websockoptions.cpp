@@ -1,6 +1,6 @@
 //******************************************************************************
 ///
-/// @file vfe/unix/unixoptions.cpp
+/// @file vfe/websockets/websockoptions.cpp
 ///
 /// Processing system for options in povray.conf, command line and environment
 /// variables.
@@ -43,6 +43,8 @@
 #include <sys/stat.h>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+
+#undef UNIX_DEBUG
 
 namespace vfePlatform
 {

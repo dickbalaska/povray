@@ -1,6 +1,6 @@
 //******************************************************************************
 ///
-/// @file vfe/unix/vfeplatform.h
+/// @file vfe/websockets/vfeplatform.h
 ///
 /// Defines a *nix platform-specific session class derived from vfeSession.
 ///
@@ -35,8 +35,8 @@
 ///
 //******************************************************************************
 
-#ifndef __VFEPLATFORM_H__
-#define __VFEPLATFORM_H__
+#ifndef __VFEWEBSOCKETSPLATFORM_H__
+#define __VFEWEBSOCKETSPLATFORM_H__
 
 #include <boost/shared_ptr.hpp>
 
@@ -46,6 +46,7 @@
 #include "frontend/shelloutprocessing.h"
 
 #include "vfesession.h"
+
 
 namespace vfePlatform
 {
@@ -85,11 +86,11 @@ namespace vfePlatform
     ///////////////////////////////////////////////////////////////////////
     // most of the methods in vfeUnixSession are derived from vfeSession.
     // see vfeSession for documentation for those cases.
-    class vfeUnixSession : public vfeSession
+    class vfeWebsocketSession : public vfeSession
     {
         public:
-            vfeUnixSession(int id = 0);
-            virtual ~vfeUnixSession() {}
+    	vfeWebsocketSession(int id = 0);
+            virtual ~vfeWebsocketSession() {}
 
             virtual UCS2String GetTemporaryPath(void) const;
             virtual UCS2String CreateTemporaryFile(void) const;

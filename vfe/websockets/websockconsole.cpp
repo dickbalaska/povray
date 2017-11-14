@@ -45,6 +45,7 @@
 #include <sys/select.h>
 
 // from directory "vfe"
+//#include "vfeplatform.h"
 #include "vfe.h"
 
 // from directory "unix"
@@ -57,22 +58,25 @@
 #include "backend/povray.h"
 #include "backend/control/benchmark.h"
 
-namespace pov_frontend
-{
-    shared_ptr<Display> gDisplay;
-}
+#include "websocketserver.h"
+#include "wshandler.h"
+
+//namespace pov_frontend
+//{
+//    shared_ptr<Display> gDisplay;
+//}
 
 using namespace vfe;
 using namespace vfePlatform;
 
-enum DispMode
-{
-    DISP_MODE_NONE,
-    DISP_MODE_TEXT,
-    DISP_MODE_SDL
-};
-
-static DispMode gDisplayMode;
+//enum DispMode
+//{
+//    DISP_MODE_NONE,
+//    DISP_MODE_TEXT,
+//    DISP_MODE_SDL
+//};
+//
+//static DispMode gDisplayMode;
 
 enum ReturnValue
 {
@@ -99,6 +103,7 @@ static void SignalHandler (void)
         sigwait(&sigset, &signum);  // wait till a signal is caught
         boost::mutex::scoped_lock lock(gSignalMutex);
         gSignalNumber = signum;
+        povray::websockets::notifyShutdown();
     }
 }
 
@@ -381,7 +386,7 @@ Press <Enter> to continue or <Ctrl-C> to abort.\n\
     return RETURN_OK;
 }
 
-static void CleanupBenchmark(vfeUnixSession *session, string& ini, string& pov)
+static void CleanupBenchmark(vfeWebsocketSession *session, string& ini, string& pov)
 {
     fprintf(stderr, "%s: removing %s\n", PACKAGE, ini.c_str());
     session->DeleteTemporaryFile(ASCIItoUCS2String(ini.c_str()));
@@ -391,7 +396,7 @@ static void CleanupBenchmark(vfeUnixSession *session, string& ini, string& pov)
 
 int main (int argc, char **argv)
 {
-    vfeUnixSession   *session;
+	vfeWebsocketSession   *session;
     vfeStatusFlags    flags;
     vfeRenderOptions  opts;
     ReturnValue       retval = RETURN_OK;
@@ -429,7 +434,15 @@ int main (int argc, char **argv)
     // create the signal handling thread
     sigthread = new boost::thread(SignalHandler);
 
-    session = new vfeUnixSession();
+    ::povray::websockets::WebsocketServer::init(4401);
+    ::povray::websockets::WebsocketServer::setReceiveHandler(&::povray::websockets::WsHandler::staticReceiveHandler);
+    boost::thread t1(::povray::websockets::WebsocketServer::run);
+
+    ::povray::websockets::waitForShutdown();
+
+#if 0
+
+    session = new vfeWebsocketSession();
     if (session->Initialize(NULL, NULL) != vfeNoError)
         ErrorExit(session);
 
@@ -444,7 +457,7 @@ int main (int argc, char **argv)
         gDisplayMode = DISP_MODE_TEXT;
     else
 #endif
-        gDisplayMode = DISP_MODE_NONE;
+        //gDisplayMode = DISP_MODE_NONE;
 
     // default number of work threads: number of CPUs or 4
     int nthreads = 1;
@@ -589,6 +602,6 @@ int main (int argc, char **argv)
     PrintStatus (session);
     delete sigthread;
     delete session;
-
+#endif
     return retval;
 }

@@ -76,7 +76,7 @@ namespace vfePlatform
     // User-interface functions
     //////////////////////////////////////////////////////////////
 
-    vfeUnixSession::vfeUnixSession(int id) :
+    vfeWebsocketSession::vfeWebsocketSession(int id) :
         m_LastTimestamp(0), m_TimestampOffset(0), vfeSession(id)
     {
         m_OptionsProc = shared_ptr<UnixOptionsProcessor>(new UnixOptionsProcessor(this));
@@ -121,7 +121,7 @@ namespace vfePlatform
     // error will occur again (e.g. invalid output path or something), then
     // you may want to call the render cancel API so the user isn't bombarded
     // with an error message for each frame of the render.
-    int vfeUnixSession::RequestNewOutputPath(int CallCount, const string& Reason, const UCS2String& OldPath, UCS2String& NewPath)
+    int vfeWebsocketSession::RequestNewOutputPath(int CallCount, const string& Reason, const UCS2String& OldPath, UCS2String& NewPath)
     {
         // TODO: print warning and cancel?
         return 0;
@@ -134,7 +134,7 @@ namespace vfePlatform
     /////////////////////////////////////////////////////////////////////////
     // return an absolute path including trailing path separator.
     // *nix platforms might want to just return "/tmp/" here.
-    UCS2String vfeUnixSession::GetTemporaryPath(void) const
+    UCS2String vfeWebsocketSession::GetTemporaryPath(void) const
     {
         return ASCIItoUCS2String (m_OptionsProc->GetTemporaryPath().c_str());
     }
@@ -143,7 +143,7 @@ namespace vfePlatform
     // might be better called 'CreateTemporaryFileName()' since pov
     // doesn't actually want the file opened; just the full path and
     // name to one that it can use.
-    UCS2String vfeUnixSession::CreateTemporaryFile(void) const
+    UCS2String vfeWebsocketSession::CreateTemporaryFile(void) const
     {
         char str [FILE_NAME_LENGTH] = "";
         snprintf(str, FILE_NAME_LENGTH, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), getpid ());
@@ -156,7 +156,7 @@ namespace vfePlatform
     // you could check that the path given lies within the paths that
     // your platform gives out for temporary files if you want; this
     // example doesn't do that but it's not a bad idea to add.
-    void vfeUnixSession::DeleteTemporaryFile(const UCS2String& filename) const
+    void vfeWebsocketSession::DeleteTemporaryFile(const UCS2String& filename) const
     {
         POV_DELETE_FILE (UCS2toASCIIString (filename).c_str());
     }
@@ -181,7 +181,7 @@ namespace vfePlatform
     // interface), we may want to set a flag to display the message later
     // rather than pop up a messagebox on the local windowstation. Otherwise
     // you would probably display the message immediately.
-    void vfeUnixSession::NotifyCriticalError (const char *message, const char *filename, int line)
+    void vfeWebsocketSession::NotifyCriticalError (const char *message, const char *filename, int line)
     {
         fprintf (stderr, "POV-Ray Critical Error: %s", message);
     }
@@ -200,7 +200,7 @@ namespace vfePlatform
     // clock changes by caching the last value your implementation returns
     // and adding an appropriate offset if you calculate a lower value later
     // in the session.
-    POV_LONG vfeUnixSession::GetTimestamp(void) const
+    POV_LONG vfeWebsocketSession::GetTimestamp(void) const
     {
         POV_LONG timestamp = 0;  // in milliseconds
 #ifdef HAVE_CLOCK_GETTIME
@@ -232,13 +232,13 @@ namespace vfePlatform
     /////////////////////////////////////////////////////////////////////////
     // called when the worker thread starts - you could if you like set the
     // thread priority here.
-    void vfeUnixSession::WorkerThreadStartup()
+    void vfeWebsocketSession::WorkerThreadStartup()
     {
     }
 
     /////////////////////////////////////////////////////////////////////////
     // called just before the worker thread exits.
-    void vfeUnixSession::WorkerThreadShutdown()
+    void vfeWebsocketSession::WorkerThreadShutdown()
     {
     }
 
@@ -248,7 +248,7 @@ namespace vfePlatform
 
     /////////////////////////////////////////////////////////////////////////
     // case-sensitive string comparison
-    bool vfeUnixSession::StrCompare (const UCS2String& lhs, const UCS2String& rhs) const
+    bool vfeWebsocketSession::StrCompare (const UCS2String& lhs, const UCS2String& rhs) const
     {
         return lhs.compare(rhs);
     }
@@ -258,7 +258,7 @@ namespace vfePlatform
     // of path. will also return true if recursive is true and path is a parent
     // of file. does not support relative paths, and will perform case-sensitive
     // comparisons.
-    bool vfeUnixSession::TestPath (const Path& path, const Path& file, bool recursive) const
+    bool vfeWebsocketSession::TestPath (const Path& path, const Path& file, bool recursive) const
     {
         // we don't support relative paths
         if (path.HasVolume() == false || file.HasVolume() == false)
@@ -282,7 +282,7 @@ namespace vfePlatform
     // take some time to return (especially if user is not at workstation ...)
     //
     // TODO: modify this to work fully with UCS2 strings (no conversion)
-    bool vfeUnixSession::TestAccessAllowed (const Path& file, bool isWrite) const
+    bool vfeWebsocketSession::TestAccessAllowed (const Path& file, bool isWrite) const
     {
         if (!m_OptionsProc->isIORestrictionsEnabled(isWrite))
             return true;

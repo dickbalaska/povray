@@ -9,6 +9,7 @@
 #define _WEBSOCKET_WEBSOCKETSERVER_H_
 
 #include <string>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 
@@ -48,7 +49,7 @@ class WebsocketServer {
 public:
 //	WebsocketServer();
 //	virtual ~WebsocketServer();
-	static bool init();
+	static bool init(int port);
 	static void run();
 	static void stop();
 
