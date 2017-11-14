@@ -1,0 +1,8 @@
+*.swp
+.depend
+autom4te.cache
+config.status
+configure
+Makefile
+makeinclude
+testpovws
