@@ -50,16 +50,12 @@
 
 // from directory "unix"
 //#include "disp.h"
-#include "websockoptions.h"
-//#include "disp_text.h"
-//#include "disp_sdl.h"
-
-// from directory "source"
 #include "backend/povray.h"
 #include "backend/control/benchmark.h"
 
-#include "websocketserver.h"
 #include "wshandler.h"
+#include "wsoptions.h"
+#include "wsserver.h"
 
 //namespace pov_frontend
 //{

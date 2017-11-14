@@ -5,12 +5,13 @@
  *      Author: Dick Balaska
  */
 
+#include "wsserver.h"
+
 #include <map>
 
 #include "websocketpp/server.hpp"
 #include "websocketpp/config/asio_no_tls.hpp"
 
-#include "websocketserver.h"
 
 
 // static initialisations

@@ -37,7 +37,7 @@
 ///
 //*******************************************************************************
 
-#include "websockoptions.h"
+#include "wsoptions.h"
 
 #include <fstream>
 #include <sys/stat.h>
