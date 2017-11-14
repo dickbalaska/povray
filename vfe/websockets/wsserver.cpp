@@ -129,7 +129,7 @@ void WebsocketServer::stop() {
 
 void WebsocketServer::on_message(websocketpp::connection_hdl hdl, message_ptr msg) {
 	if (DEBUG)
-		std::cout << "on_message called with hdl: " << hdl.lock().get()
+		std::cerr << "on_message called with hdl: " << hdl.lock().get()
 				  << " and message: " << msg->get_payload()
 				  << endl;
 

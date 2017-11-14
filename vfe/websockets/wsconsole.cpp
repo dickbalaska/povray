@@ -233,35 +233,6 @@ static void PrintStatusChanged (vfeSession *session, State force = kUnknown)
     }
 }
 
-static void PrintVersion(void)
-{
-    fprintf(stderr,
-        "%s %s\n\n"
-        "%s\n%s\n%s\n"
-        "%s\n%s\n%s\n\n",
-        PACKAGE_NAME, POV_RAY_VERSION,
-        DISTRIBUTION_MESSAGE_1, DISTRIBUTION_MESSAGE_2, DISTRIBUTION_MESSAGE_3,
-        POV_RAY_COPYRIGHT, DISCLAIMER_MESSAGE_1, DISCLAIMER_MESSAGE_2
-    );
-    fprintf(stderr,
-        "Built-in features:\n"
-        "  I/O restrictions:          %s\n"
-        "  X Window display:          %s\n"
-        "  WebSockets:                %s\n"
-        "  Supported image formats:   %s\n"
-        "  Unsupported image formats: %s\n\n",
-        BUILTIN_IO_RESTRICTIONS, BUILTIN_XWIN_DISPLAY, BUILTIN_WEBSOCKETS, BUILTIN_IMG_FORMATS, MISSING_IMG_FORMATS
-    );
-    fprintf(stderr,
-        "Compilation settings:\n"
-        "  Build architecture:  %s\n"
-        "  Built/Optimized for: %s\n"
-        "  Compiler vendor:     %s\n"
-        "  Compiler version:    %s\n"
-        "  Compiler flags:      %s\n",
-        BUILD_ARCH, BUILT_FOR, COMPILER_VENDOR, COMPILER_VERSION, CXXFLAGS
-    );
-}
 
 static void ErrorExit(vfeSession *session)
 {
@@ -432,9 +403,11 @@ int main (int argc, char **argv)
 
     ::povray::websockets::WebsocketServer::init(4401);
     ::povray::websockets::WebsocketServer::setReceiveHandler(&::povray::websockets::WsHandler::staticReceiveHandler);
-    boost::thread t1(::povray::websockets::WebsocketServer::run);
+    boost::thread wsthread(::povray::websockets::WebsocketServer::run);
 
     ::povray::websockets::waitForShutdown();
+    ::povray::websockets::WebsocketServer::stop();
+    wsthread.join();
 
 #if 0
 

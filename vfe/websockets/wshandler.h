@@ -32,6 +32,12 @@ public:
 	void on_message(websocketpp::connection_hdl hdl, message_ptr msg);
 
 	static void staticReceiveHandler(websocketpp::connection_hdl hdl, message_ptr msg);
+
+private:
+	void send(websocketpp::connection_hdl hdl, const char* msg);
+	void Quit(websocketpp::connection_hdl hdl);
+	void PrintVersion(websocketpp::connection_hdl hdl);
+
 };
 
 }} /* namespace websockets, namespace povray */
