@@ -1,0 +1,76 @@
+# Makefile.in for the websockets client test program 
+# @configure_input@
+#
+# ./tests/websockets/client/Makefile.in
+#
+# This directory contains the program testpovws
+#
+# Copyright 2017 by Dick Balaska and BuckoSoft, Corp.  dick@buckosoft.com
+#
+
+PROGNAME = testpovws
+
+SUBDIRS = ..
+
+#CPPFILES = \
+#	../testclient.cpp ../client.cpp
+
+OBJS = ../testclient.o ../client.o
+
+DEPLIBS = 
+
+CLEAN =
+
+################################################################
+TOP=@top_srcdir@
+
+include @top_srcdir@/makeinclude
+
+XPCXXFLAGS = $(COMMONINC)
+
+OBJECTS = $(CPPFILES:.cpp=.o) $(CFILES:.c=.o)
+
+all::	$(SUBDIRS) 
+	@for dir in $(SUBDIRS); do\
+		echo "=== making $$dir ===";\
+		(cd $$dir; $(MAKE) $(MFLAGS)) || exit 1;\
+	done
+
+all::	$(PROGNAME) 
+
+$(PROGNAME): $(OBJS) $(DEPLIBS)
+	echo $(CXX) $@ ...
+	$(CXX) $(OBJS) -o $@  $(LDFLAGS) $(LDLIBS) $(DEPLIBS)
+
+
+clean :
+	@for dir in $(SUBDIRS); do\
+		echo "=== cleaning $$dir ===";\
+		(cd $$dir; $(MAKE) $(MFLAGS) clean) || exit 1;\
+	done
+	-@ rm -f *.o *.do $(PROGNAME) $(CLEAN) core *~ *.bak cmap
+	-@ touch .depend
+
+distclean: clean
+	@for dir in $(SUBDIRS); do\
+		echo "=== distcleaning $$dir ===";\
+		(cd $$dir; $(MAKE) $(MFLAGS) distclean) || exit 1;\
+	done
+	-@ rm -f Makefile .depend
+
+depend:
+	@for dir in $(SUBDIRS); do\
+		echo "=== making dependencies in $$dir ===";\
+		(cd $$dir; $(MAKE) $(MFLAGS) depend) || exit 1;\
+	done
+	-@ makedepend $(OSFLAG) $(XPCXXFLAGS) $(FLTKINC) -f .depend $(CPPFILES) $(CFILES)
+
+include .depend
+
+################################################################
+
+
+
+#
+# End of "$Id: Makefile.in,v 1.4 2009/10/06 04:17:20 dick Exp $".
+#

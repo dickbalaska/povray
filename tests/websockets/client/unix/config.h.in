@@ -1,0 +1,25 @@
+/* 
+ * @configure_input@
+ * main autoconf configuration header
+ *
+ *
+ * config.h.in for LogProc
+ * ./config.h.in
+ *
+ * Copyright 2008 by Dick Balaska and BuckoSoft, Corp.  "dick@buckosoft.com"
+ *
+ * ----------------------------------------------------------------
+ *
+ * Note that this file is quite empty... for the moment.
+ *
+ */
+
+#define	PATH_TO_IPTABLES	"@PATH_TO_IPTABLES@"
+#define	VARRUN_DIR			"@VARRUN_DIR@"
+#define	VARLOG_DIR			"@VARLOG_DIR@"
+
+// I can't get this one worked out, with the double expand required.  For now use the build command line.
+#define	SYSCONF_DIR			"@CONFIG_DIR@"
+
+/* use websockets */
+#undef USE_WEBSOCKETS
