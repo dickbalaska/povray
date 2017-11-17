@@ -28,6 +28,7 @@ public:
 	bool	isError() { return(error.empty()); }
 	string	getError() { return(error); }
 	bool	waitForReceive();
+	void	clearReceive();
 	std::vector<std::string>& getMessages() { return(m_messages); }
 private:
 	string	error;

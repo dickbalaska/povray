@@ -79,19 +79,22 @@ int TestPovWS::execute(int argc, _TCHAR* argv[]) {
 	client->init();
 	string s = boost::join(command, " ");
 	client->sendCommand(s.c_str());
-	if (!client->waitForReceive()) {
-		cout << "received: ";
-		for (vector<string>::iterator it=client->getMessages().begin(); it != client->getMessages().end(); ++it) {
-			cout << ' ' << *it;
+	while (true) {
+		if (!client->waitForReceive()) {
+			cout << "received: ";
+			for (vector<string>::iterator it=client->getMessages().begin(); it != client->getMessages().end(); ++it) {
+				cout << ' ' << *it;
+			}
+			cout << endl;
+			client->clearReceive();
+			//delete client;
+			//return(1);
 		}
-		cout << endl;
-		delete client;
-		return(1);
 	}
 	delete client;
 	return(0);
 }
-}	// namespace berzerk
+}	// namespace testpovws
 
 int _tmain(int argc, _TCHAR* argv[]) {
 	cout << "TestPovWS:" << endl;

@@ -244,7 +244,9 @@ Client::Client() {
 Client::~Client() {
 }
 
-
+void Client::clearReceive() {
+	transactionComplete = false;
+}
 bool Client::init() {
 	try {
 		connId = endpoint.connect(url);
