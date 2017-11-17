@@ -5,20 +5,32 @@
  *      Author: dick
  */
 
-#ifndef VFE_WEBSOCKETS_WSHANDLER_H_
-#define VFE_WEBSOCKETS_WSHANDLER_H_
+#ifndef _VFE_WEBSOCKETS_WSHANDLER_H_
+#define _VFE_WEBSOCKETS_WSHANDLER_H_
 
 #include "websocketpp/config/asio_no_tls.hpp"
 #include "websocketpp/server.hpp"
 
+#include "vfe.h"
+#include "wsoptions.h"
 #include "wsserver.h"
+
 using namespace std;
+using namespace vfe;
+using namespace vfePlatform;
 
 namespace povray {
 namespace websockets {
 
+
 extern void waitForShutdown();
 extern void notifyShutdown();
+
+extern void PrintStatus(websocketpp::connection_hdl hdl, vfeWebsocketSession* session);
+extern void CancelRender(websocketpp::connection_hdl hdl, vfeWebsocketSession* session);
+extern void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessionp);
+extern void wsSend(websocketpp::connection_hdl hdl, const char* msg);
+inline void wsSend(websocketpp::connection_hdl hdl, const string& msg) { wsSend(hdl, msg.c_str()); }
 
 typedef string (*commandFunc)(websocketpp::connection_hdl hdl);
 
@@ -34,12 +46,21 @@ public:
 	static void staticReceiveHandler(websocketpp::connection_hdl hdl, message_ptr msg);
 
 private:
-	void send(websocketpp::connection_hdl hdl, const char* msg);
+
 	void Quit(websocketpp::connection_hdl hdl);
+	void CancelRender(websocketpp::connection_hdl hdl);
+	void ErrorExit(websocketpp::connection_hdl hdl);
+	void ParseCommandLine(const string& data, int& argc, char**& argv);
 	void PrintVersion(websocketpp::connection_hdl hdl);
+	void PrintStatus(websocketpp::connection_hdl hdl);
+	void Render(websocketpp::connection_hdl hdl, const string& data);
+
+	vfeWebsocketSession*	session;
+	vfeRenderOptions*		opts;
+    boost::thread*			renderMonThread;
 
 };
 
 }} /* namespace websockets, namespace povray */
 
-#endif /* VFE_WEBSOCKETS_WSHANDLER_H_ */
+#endif /* _VFE_WEBSOCKETS_WSHANDLER_H_ */

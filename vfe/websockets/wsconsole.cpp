@@ -81,7 +81,7 @@ enum ReturnValue
     RETURN_USER_ABORT
 };
 
-static bool gCancelRender = false;
+bool gCancelRender = false;
 
 // for handling asynchronous (external) signals
 static int gSignalNumber = 0;
@@ -104,7 +104,7 @@ static void SignalHandler (void)
 }
 
 
-static void ProcessSignal (void)
+void ProcessSignal (void)
 {
     boost::mutex::scoped_lock lock(gSignalMutex);
 
@@ -242,14 +242,6 @@ static void ErrorExit(vfeSession *session)
     exit(RETURN_ERROR);
 }
 
-static void CancelRender(vfeSession *session)
-{
-    session->CancelRender();  // request the backend to cancel
-    PrintStatus (session);
-    while (session->GetBackendState() != kReady)  // wait for the render to effectively shut down
-        Delay(10);
-    PrintStatus (session);
-}
 
 //static void PauseWhenDone(vfeSession *session)
 //{
