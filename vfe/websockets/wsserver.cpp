@@ -47,7 +47,7 @@ bool WebsocketServer::init(int port) {
 	//int port = 4441;
 	try {
 		//server.listen(port);
-        server.listen(websocketpp::lib::asio::ip::tcp::v6(), port);
+        server.listen(websocketpp::lib::asio::ip::tcp::v4(), port);
 	} catch(websocketpp::exception const &e) {
 		// Websocket exception on listen. Get char string via e.what().
 	}
