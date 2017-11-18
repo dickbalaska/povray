@@ -13,6 +13,7 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <boost/thread/lock_guard.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <websocketpp/client.hpp>
 #include <websocketpp/common/thread.hpp>
@@ -275,7 +276,26 @@ bool Client::waitForReceive() {
 		std::unique_lock<mutex> lck(mtx);
 		mtx_cv.wait(lck, isTransactionComplete);
 	}
-	m_messages = endpoint.get_metadata(connId)->m_messages;
+	boost::lock_guard<boost::mutex> lock(messageMutex);
+	for (vector<string>::iterator it=endpoint.get_metadata(connId)->m_messages.begin(); it != endpoint.get_metadata(connId)->m_messages.end(); ++it) {
+		m_messages.push(*it);
+	}
+	endpoint.get_metadata(connId)->m_messages.clear();
+	//m_messages = endpoint.get_metadata(connId)->m_messages;
 	return(true);
+}
+
+void Client::printReceived() {
+	boost::lock_guard<boost::mutex> lock(messageMutex);
+	while (!m_messages.empty()) {
+		string s = m_messages.front();
+		cout << s;
+		m_messages.pop();
+	}
+//	for (vector<string>::iterator it=getMessages().begin(); it != client->getMessages().end(); ++it) {
+//		cout << ' ' << *it;
+//	}
+	cout << endl;
+
 }
 }	// namespace berzerk

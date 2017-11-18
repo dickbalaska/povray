@@ -10,7 +10,9 @@
 
 #include "stdafx.h"
 #include <string>
-#include <vector>
+#include <queue>
+#include <boost/thread/mutex.hpp>
+
 //#include <boost/asio.hpp>
 
 using namespace std;
@@ -28,15 +30,18 @@ public:
 	bool	isError() { return(error.empty()); }
 	string	getError() { return(error); }
 	bool	waitForReceive();
+	void	printReceived();
+
 	void	clearReceive();
-	std::vector<std::string>& getMessages() { return(m_messages); }
+	std::queue<std::string>& getMessages() { return(m_messages); }
 private:
 	string	error;
 	string	url;
 	int		connId;
 //	string	hostname;
 //	int		port;
-    std::vector<std::string> m_messages;
+	boost::mutex		messageMutex;
+    std::queue<std::string> m_messages;
 
 
 };

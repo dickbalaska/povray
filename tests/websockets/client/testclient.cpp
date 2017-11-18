@@ -81,11 +81,9 @@ int TestPovWS::execute(int argc, _TCHAR* argv[]) {
 	client->sendCommand(s.c_str());
 	while (true) {
 		if (!client->waitForReceive()) {
+
 			cout << "received: ";
-			for (vector<string>::iterator it=client->getMessages().begin(); it != client->getMessages().end(); ++it) {
-				cout << ' ' << *it;
-			}
-			cout << endl;
+			client->printReceived();
 			client->clearReceive();
 			//delete client;
 			//return(1);
