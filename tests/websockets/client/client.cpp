@@ -83,8 +83,9 @@ public:
         cout << msg->get_payload();
         if (DEBUG > 5)
         	cout << endl;
+    	boost::lock_guard<boost::mutex> lock(receiveQueueMutex);
         if (msg->get_opcode() == websocketpp::frame::opcode::text) {
-            m_messages.push_back(msg->get_payload());
+            m_messages.push_back(string(msg->get_payload()));
         } else {
             m_messages.push_back(websocketpp::utility::to_hex(msg->get_payload()));
         }
@@ -99,8 +100,10 @@ public:
     string get_status() { return(m_status); }
     int		get_id() { return(m_id); }
     websocketpp::connection_hdl get_hdl() { return(m_hdl); }
+	boost::mutex		receiveQueueMutex;
     std::vector<std::string> m_messages;
     std::vector<string> m_sendMessages;
+
     void queueSend(string& message) {
     	m_sendMessages.push_back(message);
     }
@@ -277,8 +280,12 @@ bool Client::waitForReceive() {
 		mtx_cv.wait(lck, isTransactionComplete);
 	}
 	boost::lock_guard<boost::mutex> lock(messageMutex);
+	boost::lock_guard<boost::mutex> rqlock(endpoint.get_metadata(connId)->receiveQueueMutex);
 	for (vector<string>::iterator it=endpoint.get_metadata(connId)->m_messages.begin(); it != endpoint.get_metadata(connId)->m_messages.end(); ++it) {
-		m_messages.push(*it);
+		string s = *it;
+		messageQueue.push(s);
+        //if (DEBUG <= 5)
+        //	cout << *it << endl;
 	}
 	endpoint.get_metadata(connId)->m_messages.clear();
 	//m_messages = endpoint.get_metadata(connId)->m_messages;
@@ -287,10 +294,10 @@ bool Client::waitForReceive() {
 
 void Client::printReceived() {
 	boost::lock_guard<boost::mutex> lock(messageMutex);
-	while (!m_messages.empty()) {
-		string s = m_messages.front();
+	while (!messageQueue.empty()) {
+		string s = messageQueue.front();
 		cout << s;
-		m_messages.pop();
+		messageQueue.pop();
 	}
 //	for (vector<string>::iterator it=getMessages().begin(); it != client->getMessages().end(); ++it) {
 //		cout << ' ' << *it;

@@ -33,7 +33,7 @@ public:
 	void	printReceived();
 
 	void	clearReceive();
-	std::queue<std::string>& getMessages() { return(m_messages); }
+	std::queue<std::string>& getMessages() { return(messageQueue); }
 private:
 	string	error;
 	string	url;
@@ -41,7 +41,7 @@ private:
 //	string	hostname;
 //	int		port;
 	boost::mutex		messageMutex;
-    std::queue<std::string> m_messages;
+    std::queue<std::string> messageQueue;
 
 
 };
