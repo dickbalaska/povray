@@ -1276,8 +1276,7 @@ AC_CONFIG_FILES([\
   source/Makefile \
   vfe/Makefile \
   platform/Makefile \
-  unix/Makefile \
-  tests/websockets/server/Makefile
+  unix/Makefile
 ])
 
 
