@@ -54,8 +54,7 @@ void WsHandler::staticReceiveHandler(websocketpp::connection_hdl hdl, message_pt
 }
 
 WsHandler::WsHandler()
-	: opts(NULL),
-	  session(NULL),
+	: session(NULL),
 	  renderMonThread(NULL)
 {
 	// TODO Auto-generated constructor stub
@@ -146,25 +145,49 @@ void WsHandler::PrintVersion(websocketpp::connection_hdl hdl)
 	wsSend(hdl, v);
 }
 
+void PrintNonStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
+{
+    vfeSession::MessageType type;
+	string str;
+	UCS2String file;
+	int	line;
+	int	col;
+
+	while (session->GetNextNonStatusMessage (type, str, file, line, col)) {
+    	stringstream ss;
+    	ss << "stream " << type << " " << str;
+    	wsSend(hdl, ss.str());
+    	cout << "PrintNonStatusMessage: " << ss.str()  << " " << UCS2toASCIIString(file) << " : " << line << " : " << col << endl;
+
+	}
+}
+void PrintStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
+{
+    vfeSession::MessageType type;
+	string str;
+	UCS2String file;
+	int	line;
+	int	col;
+	vfeSession::StatusMessage msg(*session);
+	while (session->GetNextStatusMessage(msg)) {
+    	stringstream ss;
+    	//ss << type << " " << str << " " << UCS2toASCIIString(file) << " : " << line << " : " << col;
+    	ss << "stream " << msg.m_Type << " " << msg.m_Message << " " << UCS2toASCIIString(msg.m_Filename);
+    	wsSend(hdl, ss.str());
+    	cout << "PrintStatusMessage: " << ss.str() << endl;
+
+	}
+}
+
 void PrintStatus(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
 {
     string str;
     vfeSession::MessageType type;
     static vfeSession::MessageType lastType = vfeSession::mUnclassified;
 
-    while (session->GetNextCombinedMessage (type, str))
-    {
-//        if (type != vfeSession::mGenericStatus)
-//        {
-//            if (lastType == vfeSession::mGenericStatus)
-//                fprintf (stderr, "\n") ;
-//            fprintf (stderr, "%s\n", str.c_str());
-//        }
-//        else
-//            fprintf (stderr, "%s\r", str.c_str());
-//        lastType = type;
+    while (session->GetNextCombinedMessage (type, str)) {
     	stringstream ss;
-    	ss << type << " " << str;
+    	ss << "stream " << type << " " << str;
     	wsSend(hdl, ss.str());
     	cout << "PrintStatus: " << ss.str() << endl;
     }
@@ -247,12 +270,22 @@ void WsHandler::ParseCommandLine(const string& s, int& argc, char**& argv)
 	}
 	*nargv = NULL;
 }
+void WsHandler::DeleteArgv(char**& argv)
+{
+	char** pp = argv;
+	while (*pp) {
+		delete *pp;
+		pp++;
+	}
+	//delete argv;
+}
 
 void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 {
 	int argc;
-	char** argv;
+	char** argv;		// XXX These leak
 	ParseCommandLine(data, argc, argv);
+	char** oldargv = argv;
 	cerr << "chdir: " << argv[0] << endl;
 	int ret = chdir(argv[0]);
 	if (ret) {
@@ -261,8 +294,8 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 		wsSend(hdl, ss.str());
 		return;
 	}
-	opts = new vfeRenderOptions();
     session = new vfeWebsocketSession();
+	session->renderOptions = new vfeRenderOptions();
     if (session->Initialize(NULL, NULL) != vfeNoError) {
         ErrorExit(hdl);
         return;
@@ -279,13 +312,20 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 #endif
     if (nthreads < 2)
         nthreads = 4;
-    opts->SetThreadCount(nthreads);
+    session->renderOptions->SetThreadCount(nthreads);
     session->GetUnixOptions()->ProcessOptions(&argc, &argv);
-    session->GetUnixOptions()->Process_povray_ini(*opts);
+    session->GetUnixOptions()->Process_povray_ini(*session->renderOptions);
     while (*++argv)
-        opts->AddCommand (*argv);
+    	session->renderOptions->AddCommand (*argv);
 
-    if (session->SetOptions(*opts) != vfeNoError)
+	char** pp = oldargv;
+	while (*pp) {
+		delete *pp;
+		pp++;
+	}
+	delete oldargv;
+
+    if (session->SetOptions(*session->renderOptions) != vfeNoError)
     {
     	string s = s_stream_fatal;
     	s += "Problem with option setting";
@@ -295,21 +335,24 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 //            fprintf(stderr,"%s%c",argv_copy[loony],loony+1<argc_copy?' ':'\n');
 //        }
         ErrorExit(hdl);
+        DeleteArgv(argv);
         return;
     }
     if (session->StartRender() != vfeNoError) {
         ErrorExit(hdl);
+        DeleteArgv(argv);
         return;
     }
-    //renderMonThread = new boost::thread(RenderMonitor, hdl, session);
-    RenderMonitor(hdl, session);
+    DeleteArgv(argv);
+    renderMonThread = new boost::thread(RenderMonitor, hdl, session);
+    //RenderMonitor(hdl, session);
 }
 
 void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessionp)
 {
 	vfeWebsocketSession* session = sessionp;
     // main render loop
-    session->SetEventMask(stBackendStateChanged);  // immediatly notify this event
+    session->SetEventMask(stBackendStateChanged | stAnyMessage);  // immediatly notify this event
     vfeStatusFlags    flags;
     while (((flags = session->GetStatus(true, 200)) & stRenderShutdown) == 0)
     {
@@ -322,8 +365,10 @@ void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessio
 
         if (flags & stAnimationStatus)
             fprintf(stderr, "\nRendering frame %d of %d (#%d)\n", session->GetCurrentFrame(), session->GetTotalFrames(), session->GetCurrentFrameId());
-        if (flags & stAnyMessage)
-            PrintStatus (hdl, session);
+        if (flags & stAnyMessage) {
+        	PrintNonStatusMessage(hdl, session);
+        } else if (flags & stAnyMessage)
+        	PrintStatusMessage (hdl, session);
         if (flags & stBackendStateChanged) {
            PrintStatusChanged (hdl, session);
         	//fprintf(stderr, "\nUnhandled PrintStatusChanged\n");

@@ -1,6 +1,6 @@
 //******************************************************************************
 ///
-/// @file vfe/unix/vfeplatform.cpp
+/// @file vfe/websockets/vfeplatform.cpp
 ///
 /// This module contains *nix platform-specific support code for the VFE.
 ///
@@ -77,7 +77,10 @@ namespace vfePlatform
     //////////////////////////////////////////////////////////////
 
     vfeWebsocketSession::vfeWebsocketSession(int id) :
-        m_LastTimestamp(0), m_TimestampOffset(0), vfeSession(id)
+        m_LastTimestamp(0),
+		m_TimestampOffset(0),
+		vfeSession(id),
+		renderOptions(NULL)
     {
         m_OptionsProc = shared_ptr<UnixOptionsProcessor>(new UnixOptionsProcessor(this));
     }
@@ -234,6 +237,7 @@ namespace vfePlatform
     // thread priority here.
     void vfeWebsocketSession::WorkerThreadStartup()
     {
+    	std::cerr << "WorkerThreadStartup()" << std::endl;
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -242,6 +246,16 @@ namespace vfePlatform
     {
     }
 
+    void vfeWebsocketSession::AppendErrorMessage (const string& Msg)
+    {
+    	std::cerr << "================ AppendErrorMessage: '" << Msg << "'" << std::endl;
+    }
+
+    void vfeWebsocketSession::AppendErrorMessage (const string& Msg, const UCS2String& File, int Line, int Col)
+    {
+    	std::cerr << "================ AppendErrorMessage: '" << Msg << "'" << std::endl;
+
+    }
     /////////////////////////////////////////////////////////////////////////
     // The following methods support the I/O permissions feature
     /////////////////////////////////////////////////////////////////////////

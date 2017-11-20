@@ -90,7 +90,9 @@ namespace vfePlatform
     {
         public:
     	vfeWebsocketSession(int id = 0);
-            virtual ~vfeWebsocketSession() {}
+            virtual ~vfeWebsocketSession() {
+            	if (renderOptions) delete renderOptions;
+            }
 
             virtual UCS2String GetTemporaryPath(void) const;
             virtual UCS2String CreateTemporaryFile(void) const;
@@ -104,9 +106,14 @@ namespace vfePlatform
 
             shared_ptr<UnixOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
 
+        	vfeRenderOptions*		renderOptions;
+
         protected:
             virtual void WorkerThreadStartup();
             virtual void WorkerThreadShutdown();
+
+            virtual void AppendErrorMessage (const string& Msg);
+            virtual void AppendErrorMessage (const string& Msg, const UCS2String& File, int Line = 0, int Col = 0);
 
             ///////////////////////////////////////////////////////////////////////
             // return true if the path component of file is equal to the path component
@@ -129,6 +136,7 @@ namespace vfePlatform
 
             // platform specific configuration options
             shared_ptr<UnixOptionsProcessor> m_OptionsProc;
+
     } ;
 
     ///////////////////////////////////////////////////////////////////////

@@ -27,6 +27,7 @@ extern void waitForShutdown();
 extern void notifyShutdown();
 
 extern void PrintStatus(websocketpp::connection_hdl hdl, vfeWebsocketSession* session);
+extern void PrintNonStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* session);
 extern void CancelRender(websocketpp::connection_hdl hdl, vfeWebsocketSession* session);
 extern void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessionp);
 extern void wsSend(websocketpp::connection_hdl hdl, const char* msg);
@@ -51,12 +52,12 @@ private:
 	void CancelRender(websocketpp::connection_hdl hdl);
 	void ErrorExit(websocketpp::connection_hdl hdl);
 	void ParseCommandLine(const string& data, int& argc, char**& argv);
+	void DeleteArgv(char**& argv);
 	void PrintVersion(websocketpp::connection_hdl hdl);
 	void PrintStatus(websocketpp::connection_hdl hdl);
 	void Render(websocketpp::connection_hdl hdl, const string& data);
 
 	vfeWebsocketSession*	session;
-	vfeRenderOptions*		opts;
     boost::thread*			renderMonThread;
 
 };
