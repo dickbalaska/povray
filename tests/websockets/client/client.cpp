@@ -248,9 +248,9 @@ Client::Client() {
 Client::~Client() {
 }
 
-void Client::clearReceive() {
-	transactionComplete = false;
-}
+//void Client::clearReceive() {
+//	transactionComplete = false;
+//}
 bool Client::init() {
 	try {
 		connId = endpoint.connect(url);
@@ -289,6 +289,7 @@ bool Client::waitForReceive() {
 	}
 	endpoint.get_metadata(connId)->m_messages.clear();
 	//m_messages = endpoint.get_metadata(connId)->m_messages;
+	transactionComplete = false;
 	return(true);
 }
 

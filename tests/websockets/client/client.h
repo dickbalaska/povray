@@ -32,7 +32,7 @@ public:
 	bool	waitForReceive();
 	void	printReceived();
 
-	void	clearReceive();
+	//void	clearReceive();
 	std::queue<std::string>& getMessages() { return(messageQueue); }
 private:
 	string	error;

@@ -84,7 +84,7 @@ int TestPovWS::execute(int argc, _TCHAR* argv[]) {
 
 			cout << "received: ";
 			client->printReceived();
-			client->clearReceive();
+			//client->clearReceive();
 			//delete client;
 			//return(1);
 		}
