@@ -32,7 +32,8 @@ ostream WebsocketServer::os(&ls);
 
 MessageHandlerFunc messageHandlerFunc = NULL;
 
-bool WebsocketServer::init(int port) {
+void WebsocketServer::init()
+{
 	// Initialising WebsocketServer.
 	server.init_asio();
 	// Set custom logger (ostream-based).
@@ -43,6 +44,9 @@ bool WebsocketServer::init(int port) {
 	server.set_message_handler(&WebsocketServer::on_message);
 	server.set_fail_handler(&WebsocketServer::on_fail);
 	server.set_close_handler(&WebsocketServer::on_close);
+
+}
+bool WebsocketServer::listen(int port) {
 	// Listen on port.
 	//int port = 4441;
 	try {
@@ -50,6 +54,7 @@ bool WebsocketServer::init(int port) {
         server.listen(websocketpp::lib::asio::ip::tcp::v4(), port);
 	} catch(websocketpp::exception const &e) {
 		// Websocket exception on listen. Get char string via e.what().
+		return(false);
 	}
 	// Starting Websocket accept.
 	websocketpp::lib::error_code ec;
@@ -195,6 +200,17 @@ bool WebsocketServer::sendData(string id, string data) {
 	}
 
 	return true;
+}
+
+bool WebsocketServer::sendBinary(connection_hdl hdl, const char* data, int size) {
+	websocketpp::lib::error_code ec;
+	server.send(hdl, data, size, websocketpp::frame::opcode::binary, ec);
+	if (ec) {
+		cerr << "Error sending binary: " << ec.message() << endl;
+		return(false);
+	}
+
+	return(true);
 }
 
 bool WebsocketServer::sendClose(string id) {

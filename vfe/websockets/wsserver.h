@@ -47,14 +47,14 @@ protected:
 
 class WebsocketServer {
 public:
-//	WebsocketServer();
-//	virtual ~WebsocketServer();
-	static bool init(int port);
+	static void init();
+	static bool listen(int port);
 	static void run();
 	static void stop();
 
 	static bool sendClose(string id);
 	static bool sendData(string id, string data);
+	static bool	sendBinary(websocketpp::connection_hdl hdl, const char* data, int size);
 	static void setReceiveHandler(MessageHandlerFunc func);
 	static void send(websocketpp::connection_hdl hdl, const string& msg);
 private:
@@ -71,6 +71,8 @@ private:
 	//static bool on_validate(websocketpp::connection_hdl hdl);
 	static void on_fail(websocketpp::connection_hdl hdl);
 	static void on_close(websocketpp::connection_hdl hdl);
+
+	WebsocketServer() {}
 };
 
 }} /* namespace websockets, namespace povray */

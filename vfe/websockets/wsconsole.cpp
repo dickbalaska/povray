@@ -392,8 +392,13 @@ int main (int argc, char **argv)
 
     // create the signal handling thread
     sigthread = new boost::thread(SignalHandler);
-
-    ::povray::websockets::WebsocketServer::init(4401);
+    ::povray::websockets::WebsocketServer::init();
+    int port = 4401;
+    while (!::povray::websockets::WebsocketServer::listen(port)) {
+    	cerr << "failed to init socket port " << port << endl;
+    	Delay(1000);
+    }
+    cerr << "listening on port " << port << endl;
     ::povray::websockets::WebsocketServer::setReceiveHandler(&::povray::websockets::WsHandler::staticReceiveHandler);
     boost::thread wsthread(::povray::websockets::WebsocketServer::run);
 
