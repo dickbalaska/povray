@@ -15,6 +15,12 @@
 namespace povray {
 namespace websockets {
 
+enum
+{
+	WSG_INIT = 0,
+	WSG_DRAW_PIXEL_BLOCK
+};
+
 using namespace vfe;
 
 class WsGraphics : public vfeDisplay {

@@ -11,11 +11,6 @@
 namespace povray {
 namespace websockets {
 
-enum
-{
-	WSG_INIT = 0,
-	WSG_DRAW_PIXEL_BLOCK
-};
 WsGraphics::WsGraphics(unsigned int w, unsigned int h, GammaCurvePtr gamma, vfeSession *session, bool visible)
     : vfeDisplay(w, h, gamma, session, visible)
 {
@@ -44,16 +39,37 @@ void WsGraphics::DrawPixel(unsigned int x, unsigned int y, const RGBA8& colour)
 }
 void WsGraphics::DrawRectangleFrame(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8& colour)
 {
+	std::cerr << "WsGraphics::DrawRectangleFrame: x1=" << x1 << " y1=" << y1 << std::endl;
 
 }
 void WsGraphics::DrawFilledRectangle(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8& colour)
 {
+	std::cerr << "WsGraphics::DrawFilledRectangle: x1=" << x1 << " y1=" << y1 << std::endl;
 
 }
 void WsGraphics::DrawPixelBlock(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8 *colour)
 {
 	std::cerr << "WsGraphics::DrawPixelBlock: x1=" << x1 << " y1=" << y1 << std::endl;
-
+	int size = std::abs(x2-x1+1) * std::abs(y2-y1+1);
+	int fullsize = (size+5)*4;		// add opcode plus 4 coords
+	char buff[fullsize];
+	unsigned int* bi = (unsigned int*)&buff;
+	*bi++ = htonl(WSG_DRAW_PIXEL_BLOCK);
+	*bi++ = htonl(x1);
+	*bi++ = htonl(y1);
+	*bi++ = htonl(x2);
+	*bi++ = htonl(y2);
+	unsigned char* bc = (unsigned char*)bi;
+	for (unsigned int y = y1, i = 0; y <= y2; y++) {
+		for(unsigned int x = x1; x <= x2; x++, i++) {
+        	*bc++ = colour->red;
+        	*bc++ = colour->green;
+        	*bc++ = colour->blue;
+        	*bc++ = colour->alpha;
+        	colour++;
+        }
+	}
+	WebsocketServer::sendBinary(m_hdl, buff, fullsize);
 }
 void WsGraphics::Clear()
 {
