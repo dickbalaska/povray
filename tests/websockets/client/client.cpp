@@ -78,15 +78,14 @@ public:
         notifyReceive();
     }
     void on_message(websocketpp::connection_hdl hdl, client::message_ptr msg) {
-        if (DEBUG > 5)
-        	cout << "on_message: ";
-        cout << msg->get_payload();
-        if (DEBUG > 5)
-        	cout << endl;
     	boost::lock_guard<boost::mutex> lock(receiveQueueMutex);
         if (msg->get_opcode() == websocketpp::frame::opcode::text) {
+            if (DEBUG > 5)
+            	cout << "on_message: " << msg->get_payload() << endl;
             m_messages.push_back(string(msg->get_payload()));
         } else {
+            if (DEBUG > 5)
+            	cout << "on_binarymessage: " << websocketpp::utility::to_hex(msg->get_payload()) << endl;
             m_messages.push_back(websocketpp::utility::to_hex(msg->get_payload()));
         }
         notifyReceive();

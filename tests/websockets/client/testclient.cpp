@@ -82,8 +82,8 @@ int TestPovWS::execute(int argc, _TCHAR* argv[]) {
 	while (true) {
 		if (!client->waitForReceive()) {
 
-			cout << "received: ";
-			client->printReceived();
+			//cout << "received: ";
+			//client->printReceived();
 			//client->clearReceive();
 			//delete client;
 			//return(1);
