@@ -14,6 +14,7 @@
 
 #include "config.h"
 #include "wshandler.h"
+#include "wsgraphics.h"
 
 extern void ProcessSignal(void);
 extern bool gCancelRender;
@@ -28,6 +29,8 @@ using namespace vfe;
 using namespace vfePlatform;
 
 WsHandler websocketHandler;
+
+static websocketpp::connection_hdl gHdl;	// pass the handle to the display creator
 
 const char* s_stream_fatal = "stream fatal ";
 
@@ -157,8 +160,7 @@ void PrintNonStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession*
     	stringstream ss;
     	ss << "stream " << type << " " << str;
     	wsSend(hdl, ss.str());
-    	cout << "PrintNonStatusMessage: " << ss.str()  << " " << UCS2toASCIIString(file) << " : " << line << " : " << col << endl;
-
+    	//cout << "PrintNonStatusMessage: " << ss.str()  << " " << UCS2toASCIIString(file) << " : " << line << " : " << col << endl;
 	}
 }
 void PrintStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
@@ -175,7 +177,6 @@ void PrintStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* se
     	ss << "stream " << msg.m_Type << " " << msg.m_Message << " " << UCS2toASCIIString(msg.m_Filename);
     	wsSend(hdl, ss.str());
     	cout << "PrintStatusMessage: " << ss.str() << endl;
-
 	}
 }
 
@@ -189,7 +190,7 @@ void PrintStatus(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
     	stringstream ss;
     	ss << "stream " << type << " " << str;
     	wsSend(hdl, ss.str());
-    	cout << "PrintStatus: " << ss.str() << endl;
+    	//cout << "PrintStatus: " << ss.str() << endl;
     }
 }
 void PrintStatusChanged (websocketpp::connection_hdl hdl, vfeSession *session, State force = kUnknown)
@@ -280,6 +281,16 @@ void WsHandler::DeleteArgv(char**& argv)
 	//delete argv;
 }
 
+static vfeDisplay *WsDisplayCreator (unsigned int width, unsigned int height, GammaCurvePtr gamma, vfeSession *session, bool visible)
+{
+	cerr << "WsDisplayCreator: w=" << width << " h=" << height << endl;
+	WsGraphics* wsg = new WsGraphics(width, height, gamma, session, visible);
+	wsg->m_hdl = gHdl;
+	wsg->SendInit();
+
+	return(wsg);
+}
+
 void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 {
 	int argc;
@@ -338,6 +349,9 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
         DeleteArgv(argv);
         return;
     }
+    gHdl = hdl;
+    session->SetDisplayCreator(WsDisplayCreator);
+
     if (session->StartRender() != vfeNoError) {
         ErrorExit(hdl);
         DeleteArgv(argv);
