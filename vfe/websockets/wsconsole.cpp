@@ -57,22 +57,8 @@
 #include "wsoptions.h"
 #include "wsserver.h"
 
-//namespace pov_frontend
-//{
-//    shared_ptr<Display> gDisplay;
-//}
-
 using namespace vfe;
 using namespace vfePlatform;
-
-//enum DispMode
-//{
-//    DISP_MODE_NONE,
-//    DISP_MODE_TEXT,
-//    DISP_MODE_SDL
-//};
-//
-//static DispMode gDisplayMode;
 
 enum ReturnValue
 {
@@ -147,31 +133,6 @@ void ProcessSignal (void)
     }
     gSignalNumber = 0;
 }
-
-//static vfeDisplay *UnixDisplayCreator (unsigned int width, unsigned int height, GammaCurvePtr gamma, vfeSession *session, bool visible)
-//{
-//    UnixDisplay *display = GetRenderWindow () ;
-//    switch (gDisplayMode)
-//    {
-//#ifdef HAVE_LIBSDL
-//        case DISP_MODE_SDL:
-//            if (display != NULL && display->GetWidth() == width && display->GetHeight() == height)
-//            {
-//                UnixDisplay *p = new UnixSDLDisplay (width, height, gamma, session, false) ;
-//                if (p->TakeOver (display))
-//                    return p;
-//                delete p;
-//            }
-//            return new UnixSDLDisplay (width, height, gamma, session, visible) ;
-//            break;
-//#endif
-//        case DISP_MODE_TEXT:
-//            //return new UnixTextDisplay (width, height, gamma, session, visible) ;
-//            break;
-//        default:
-//            return NULL;
-//    }
-//}
 
 static void PrintStatus (vfeSession *session)
 {
@@ -355,7 +316,7 @@ static void CleanupBenchmark(vfeWebsocketSession *session, string& ini, string& 
 
 int main (int argc, char **argv)
 {
-	vfeWebsocketSession   *session;
+	vfeWebsocketSession* session;
     vfeStatusFlags    flags;
     vfeRenderOptions  opts;
     ReturnValue       retval = RETURN_OK;
@@ -363,7 +324,7 @@ int main (int argc, char **argv)
     string            bench_ini_name;
     string            bench_pov_name;
     sigset_t          sigset;
-    boost::thread    *sigthread;
+    boost::thread*    sigthread;
     char **           argv_copy=argv; /* because argv is updated later */
     int               argc_copy=argc; /* because it might also be updated */
 
