@@ -73,7 +73,7 @@ fi
 # Check optional argument.
 case "$1" in
   ""|clean|doc|docs|docclean|docsclean|--websockets|--ws) ;;
-  *) echo "$0: error: unrecognized option '$1'"; exit ;;
+  *) echo "$0: error: unrecognized option '$1'"; exit 1 ;;
 esac
 
 # Check whether 'cp -u' is supported.
@@ -352,7 +352,7 @@ echo "make maintainer-clean" 1>&2  &&  make maintainer-clean 1>&2 ; \
   chmod u+rw docs_internal_$timestamp.log
   rm -f      $log_file
 
-  exit
+  exit 0
   ;;
 
 
@@ -1550,3 +1550,5 @@ case "$1" in
   done
   ;;
 esac  # boost
+
+exit 0
