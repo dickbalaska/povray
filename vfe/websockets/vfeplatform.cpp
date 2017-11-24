@@ -58,6 +58,12 @@
 #include "vfe.h"
 #include "unix/unixoptions.h"
 
+namespace povray {
+namespace websockets {
+extern void wsSend(websocketpp::connection_hdl hdl, const char* msg);
+inline void wsSend(websocketpp::connection_hdl hdl, const string& msg) { wsSend(hdl, msg.c_str()); }
+}}
+
 namespace vfePlatform
 {
     using namespace vfe;
@@ -248,12 +254,18 @@ namespace vfePlatform
 
     void vfeWebsocketSession::AppendErrorMessage (const string& Msg)
     {
-    	std::cerr << "================ AppendErrorMessage: '" << Msg << "'" << std::endl;
+    	//std::cerr << "================ AppendErrorMessage: '" << Msg << "'" << std::endl;
+    	string s = "stream fatal ";
+    	s += Msg;
+#ifdef _DEBUG
+    	std::cerr << s << "'" << std::endl;
+#endif
+    	povray::websockets::wsSend(hdl, s);
     }
 
     void vfeWebsocketSession::AppendErrorMessage (const string& Msg, const UCS2String& File, int Line, int Col)
     {
-    	std::cerr << "================ AppendErrorMessage: '" << Msg << "'" << std::endl;
+    	std::cerr << "================ AppendErrorMessageDecorated: '" << Msg << "'" << std::endl;
 
     }
     /////////////////////////////////////////////////////////////////////////

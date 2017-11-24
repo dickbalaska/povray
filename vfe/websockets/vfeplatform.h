@@ -39,12 +39,15 @@
 #define __VFEWEBSOCKETSPLATFORM_H__
 
 #include <boost/shared_ptr.hpp>
+#include "websocketpp/config/asio_no_tls.hpp"
+#include "websocketpp/server.hpp"
 
 #include "base/path.h"
 #include "base/stringutilities.h"
 
 #include "frontend/shelloutprocessing.h"
 
+//#include "wshandler.h"
 #include "vfesession.h"
 
 
@@ -106,7 +109,9 @@ namespace vfePlatform
 
             shared_ptr<UnixOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
 
+            void setWebSocketHdl(websocketpp::connection_hdl hdl) { this->hdl = hdl; }
         	vfeRenderOptions*		renderOptions;
+
 
         protected:
             virtual void WorkerThreadStartup();
@@ -136,6 +141,8 @@ namespace vfePlatform
 
             // platform specific configuration options
             shared_ptr<UnixOptionsProcessor> m_OptionsProc;
+
+            websocketpp::connection_hdl hdl;
 
     } ;
 

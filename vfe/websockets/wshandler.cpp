@@ -306,6 +306,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 		return;
 	}
     session = new vfeWebsocketSession();
+    session->setWebSocketHdl(hdl);
 	session->renderOptions = new vfeRenderOptions();
     if (session->Initialize(NULL, NULL) != vfeNoError) {
         ErrorExit(hdl);
