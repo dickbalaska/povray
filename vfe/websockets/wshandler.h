@@ -49,7 +49,8 @@ public:
 private:
 
 	void Quit(websocketpp::connection_hdl hdl);
-	void CancelRender(websocketpp::connection_hdl hdl);
+	void Cancel(websocketpp::connection_hdl hdl);
+//	void CancelRender(websocketpp::connection_hdl hdl);
 	void ErrorExit(websocketpp::connection_hdl hdl);
 	void ParseCommandLine(const string& data, int& argc, char**& argv);
 	void DeleteArgv(char**& argv);

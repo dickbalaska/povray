@@ -101,6 +101,8 @@ void WsHandler::on_message(websocketpp::connection_hdl hdl, message_ptr msg)
 		Quit(hdl);
 	else if (command == "render" || command == "r")
 		Render(hdl, data);
+	else if (command == "cancel")
+		Cancel(hdl);
 	else {
 		s = "unknown command: ";
 		s += command;
@@ -112,6 +114,15 @@ void WsHandler::Quit(websocketpp::connection_hdl hdl)
 	cerr << "exit on user command" << endl;
 	notifyShutdown();
 }
+
+void WsHandler::Cancel(websocketpp::connection_hdl hdl)
+{
+#ifdef _DEBUG
+	cerr << "Cancel on user command" << endl;
+#endif
+	gCancelRender = true;
+}
+
 
 void WsHandler::PrintVersion(websocketpp::connection_hdl hdl)
 {
@@ -251,6 +262,7 @@ void WsHandler::ErrorExit(websocketpp::connection_hdl hdl)
     session->Shutdown();
     delete session;
     session = NULL;
+    wsSend(hdl, "done");
 }
 
 void WsHandler::ParseCommandLine(const string& s, int& argc, char**& argv)
@@ -295,6 +307,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 {
 	int argc;
 	char** argv;		// XXX These leak
+	gCancelRender = false;
 	ParseCommandLine(data, argc, argv);
 	char** oldargv = argv;
 	cerr << "chdir: " << argv[0] << endl;
@@ -432,6 +445,7 @@ void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessio
 //    delete sigthread;
     delete session;
     sessionp = NULL;
+    wsSend(hdl, "done");
 
 }
 
