@@ -8,6 +8,8 @@
 #include "wsgraphics.h"
 #include "wsserver.h"
 
+static bool wsDebug = false;
+
 namespace povray {
 namespace websockets {
 
@@ -52,7 +54,8 @@ void WsGraphics::DrawFilledRectangle(unsigned int x1, unsigned int y1, unsigned 
 void WsGraphics::DrawPixelBlock(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8 *colour)
 {
 #ifdef _DEBUG
-	std::cerr << "WsGraphics::DrawPixelBlock: x1=" << x1 << " y1=" << y1 << std::endl;
+	if (wsDebug)
+		std::cerr << "WsGraphics::DrawPixelBlock: x1=" << x1 << " y1=" << y1 << std::endl;
 #endif
 	int size = std::abs(x2-x1+1) * std::abs(y2-y1+1);
 	int fullsize = (size+5)*4;		// add opcode plus 4 coords
