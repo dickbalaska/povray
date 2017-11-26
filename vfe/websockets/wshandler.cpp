@@ -170,8 +170,10 @@ void PrintNonStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession*
 	while (session->GetNextNonStatusMessage (type, str, file, line, col)) {
     	stringstream ss;
     	ss << "stream " << type << " " << str;
+#ifdef _DEBUG
+    	cerr << "PrintNonStatusMessage: " << ss.str()  << " " << UCS2toASCIIString(file) << " : " << line << " : " << col << endl;
+#endif
     	wsSend(hdl, ss.str());
-    	//cout << "PrintNonStatusMessage: " << ss.str()  << " " << UCS2toASCIIString(file) << " : " << line << " : " << col << endl;
 	}
 }
 void PrintStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
@@ -185,9 +187,13 @@ void PrintStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* se
 	while (session->GetNextStatusMessage(msg)) {
     	stringstream ss;
     	//ss << type << " " << str << " " << UCS2toASCIIString(file) << " : " << line << " : " << col;
+    	//if (msg.m_Type == vfeSession::MessageType::mAnimationStatus)
+    	//	ss << "stream 7 "
     	ss << "stream " << msg.m_Type << " " << msg.m_Message << " " << UCS2toASCIIString(msg.m_Filename);
+#ifdef _DEBUG
+    	cerr << "PrintStatusMessage: " << ss.str() << endl;
+#endif
     	wsSend(hdl, ss.str());
-    	cout << "PrintStatusMessage: " << ss.str() << endl;
 	}
 }
 
@@ -200,8 +206,10 @@ void PrintStatus(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
     while (session->GetNextCombinedMessage (type, str)) {
     	stringstream ss;
     	ss << "stream " << type << " " << str;
+#ifdef _DEBUG
+    	cerr << "PrintStatus: " << ss.str() << endl;
+#endif
     	wsSend(hdl, ss.str());
-    	//cout << "PrintStatus: " << ss.str() << endl;
     }
 }
 void PrintStatusChanged (websocketpp::connection_hdl hdl, vfeSession *session, State force = kUnknown)
@@ -246,6 +254,9 @@ void PrintStatusChanged (websocketpp::connection_hdl hdl, vfeSession *session, S
 
 void CancelRender(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
 {
+#ifdef _DEBUG
+	cerr << "CancelRender" << endl;
+#endif
     session->CancelRender();  // request the backend to cancel
     PrintStatus (hdl, session);
     while (session->GetBackendState() != kReady)  // wait for the render to effectively shut down
@@ -259,6 +270,7 @@ void WsHandler::ErrorExit(websocketpp::connection_hdl hdl)
 	s += session->GetErrorString();
 	wsSend(hdl, s);
     //fprintf(stderr, "%s\n", session->GetErrorString());
+	cerr << "ErrorExit: " << s << endl;
     session->Shutdown();
     delete session;
     session = NULL;
@@ -382,7 +394,7 @@ void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessio
     // main render loop
     session->SetEventMask(stBackendStateChanged | stAnyMessage);  // immediatly notify this event
     vfeStatusFlags    flags;
-    while (((flags = session->GetStatus(true, 200)) & stRenderShutdown) == 0)
+    while (((flags = session->GetStatus(true, 1000)) & stRenderShutdown) == 0)
     {
         ProcessSignal();
         if (gCancelRender)
@@ -390,43 +402,27 @@ void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessio
             CancelRender(hdl, session);
             break;
         }
-
-        if (flags & stAnimationStatus)
+        cerr << "flags: " << hex << flags << endl;
+        if (flags & stAnimationStatus) {
+        	stringstream ss;
+#ifdef _DEBUG
             fprintf(stderr, "\nRendering frame %d of %d (#%d)\n", session->GetCurrentFrame(), session->GetTotalFrames(), session->GetCurrentFrameId());
+#endif
+        	ss << "stream 6 Rendering frame " <<  session->GetCurrentFrame() << " of " << session->GetTotalFrames() << " (#" << session->GetCurrentFrameId() << ")";
+        	wsSend(hdl, ss.str());
+        }
+        if (flags & stAnyMessage)
+        	PrintStatusMessage (hdl, session);
         if (flags & stAnyMessage) {
         	PrintNonStatusMessage(hdl, session);
-        } else if (flags & stAnyMessage)
-        	PrintStatusMessage (hdl, session);
+        }
         if (flags & stBackendStateChanged) {
            PrintStatusChanged (hdl, session);
         	//fprintf(stderr, "\nUnhandled PrintStatusChanged\n");
         }
 
-//        if (GetRenderWindow() != NULL)
-//        {
-//            // early exit
-//            if (GetRenderWindow()->HandleEvents())
-//            {
-//                gCancelRender = true;  // will set proper return value
-//                CancelRender(session);
-//                break;
-//            }
-//
-//            GetRenderWindow()->UpdateScreen();
-//
-//            // inter-frame pause
-//            if (session->GetCurrentFrame() < session->GetTotalFrames()
-//            && session->GetPauseWhenDone()
-//            && (flags & stAnimationFrameCompleted) != 0
-//            && session->Failed() == false)
-//            {
-//                PauseWhenDone(session);
-//                if (! gCancelRender)
-//                    session->Resume();
-//            }
-//        }
     }
-
+    cerr << "RenderMonitor break" << endl;
     // pause when done for single or last frame of an animation
 //    if (session->Failed() == false && GetRenderWindow() != NULL && session->GetBoolOption("Pause_When_Done", false))
 //    {
