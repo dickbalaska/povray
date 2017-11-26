@@ -214,6 +214,7 @@ void PrintStatus(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
 }
 void PrintStatusChanged (websocketpp::connection_hdl hdl, vfeSession *session, State force = kUnknown)
 {
+#ifdef _DEBUG
     if (force == kUnknown)
         force = session->GetBackendState();
     switch (force)
@@ -250,6 +251,7 @@ void PrintStatusChanged (websocketpp::connection_hdl hdl, vfeSession *session, S
 #endif
             break;
     }
+#endif
 }
 
 void CancelRender(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
@@ -307,7 +309,9 @@ void WsHandler::DeleteArgv(char**& argv)
 
 static vfeDisplay *WsDisplayCreator (unsigned int width, unsigned int height, GammaCurvePtr gamma, vfeSession *session, bool visible)
 {
+#ifdef _DEBUG
 	cerr << "WsDisplayCreator: w=" << width << " h=" << height << endl;
+#endif
 	WsGraphics* wsg = new WsGraphics(width, height, gamma, session, visible);
 	wsg->m_hdl = gHdl;
 	wsg->SendInit();
@@ -402,7 +406,9 @@ void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessio
             CancelRender(hdl, session);
             break;
         }
+#ifdef _DEBUG
         cerr << "flags: " << hex << flags << endl;
+#endif
         if (flags & stAnimationStatus) {
         	stringstream ss;
 #ifdef _DEBUG
