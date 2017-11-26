@@ -263,8 +263,7 @@ Press <Enter> to continue or <Ctrl-C> to abort.\n\
     );
 
     // wait for user input from stdin (including abort signals)
-    while (true)
-    {
+    while (true) {
         ProcessSignal();
         if (gCancelRender)
         {
@@ -357,6 +356,9 @@ int main (int argc, char **argv)
     int port = 4401;
     while (!::povray::websockets::WebsocketServer::listen(port)) {
     	cerr << "failed to init socket port " << port << endl;
+        ProcessSignal();
+        if (gCancelRender)
+        	return(RETURN_USER_ABORT);
     	Delay(1000);
     }
     cerr << "listening on port " << port << endl;
