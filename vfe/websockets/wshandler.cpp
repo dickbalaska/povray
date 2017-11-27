@@ -107,6 +107,7 @@ void WsHandler::on_message(websocketpp::connection_hdl hdl, message_ptr msg)
 		s = "unknown command: ";
 		s += command;
 		wsSend(hdl, s);
+		cerr << s << endl;
 	}
 }
 void WsHandler::Quit(websocketpp::connection_hdl hdl)
@@ -189,6 +190,8 @@ void PrintStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* se
     	//ss << type << " " << str << " " << UCS2toASCIIString(file) << " : " << line << " : " << col;
     	//if (msg.m_Type == vfeSession::MessageType::mAnimationStatus)
     	//	ss << "stream 7 "
+    	if (msg.m_Type == vfeSession::MessageType::mAnimationStatus)
+    		continue;
     	ss << "stream " << msg.m_Type << " " << msg.m_Message << " " << UCS2toASCIIString(msg.m_Filename);
 #ifdef _DEBUG
     	cerr << "PrintStatusMessage: " << ss.str() << endl;
@@ -416,6 +419,7 @@ void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessio
 #endif
         	ss << "stream 6 Rendering frame " <<  session->GetCurrentFrame() << " of " << session->GetTotalFrames() << " (#" << session->GetCurrentFrameId() << ")";
         	wsSend(hdl, ss.str());
+        	continue;
         }
         if (flags & stAnyMessage)
         	PrintStatusMessage (hdl, session);
