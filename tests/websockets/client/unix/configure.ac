@@ -16,7 +16,6 @@ m4_include([../../../../unix/config/ax_websockets.m4])
 #AC_CONFIG_SRCDIR([berzerk/Config.cpp])
 #AC_CONFIG_HEADER([config.h])
 
-
 # Checks for programs.
 #AC_PROG_CC
 AC_PROG_RANLIB
@@ -259,6 +258,7 @@ AC_CONFIG_FILES([makeinclude
 
 # these directories (which have actual source code) need to have at least an empty .depend file
 echo $ECHO_N >>.depend
+echo $ECHO_N >>../.depend
 
 #echo sysconfdir=${sysconfdir}
 ##########################################################################################
