@@ -56,7 +56,8 @@ distclean: clean
 		echo "=== distcleaning $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) distclean) || exit 1;\
 	done
-	-@ rm -f Makefile .depend
+	-@ rm -rf autom4te.cache
+	-@ rm -f Makefile .depend configure config.log config.status
 
 depend:
 	@for dir in $(SUBDIRS); do\
