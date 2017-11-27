@@ -133,11 +133,12 @@ void WebsocketServer::stop() {
 //}
 
 void WebsocketServer::on_message(websocketpp::connection_hdl hdl, message_ptr msg) {
+#ifdef _DEBUG
 	if (DEBUG)
 		std::cerr << "on_message called with hdl: " << hdl.lock().get()
 				  << " and message: " << msg->get_payload()
 				  << endl;
-
+#endif
     // check for a special command to instruct the server to stop listening so
     // it can be cleanly exited.
 //    if (msg->get_payload() == "stop-listening") {
@@ -176,6 +177,7 @@ void WebsocketServer::on_fail(connection_hdl hdl) {
 
 void WebsocketServer::on_close(connection_hdl hdl) {
 	// Websocket connection closed.
+	cerr << "WebsocketServer::on_close" << endl;
 }
 void WebsocketServer::send(websocketpp::connection_hdl hdl, const string& msg) {
 	websocketpp::lib::error_code ec;
