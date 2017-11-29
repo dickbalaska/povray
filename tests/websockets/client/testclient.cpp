@@ -38,8 +38,8 @@ int TestPovWS::parseCommandLine(int argc, _TCHAR* argv[]) {
 		("help,h", "Display help message")
 		("debug,d", po::value<int>(&testpovws::DEBUG)->default_value(0), "debug level 0-9")
 		//("l", po::value<int>(&berzerk::_logLevel)->default_value(1), "log level 0-9")
-		("port,P", po::value<int>(&testpovws::_serverPort)->default_value(-1), "port that berzerk is listening on")
-		(",c", "output the commands to be digested by the completion script")
+		("port,P", po::value<int>(&testpovws::_serverPort)->default_value(-1), "port that povrayws is listening on")
+		(",c", "output the commands to be sent to the server")
 		("command", po::value< vector<string> >(), "command")
 	;
 	po::positional_options_description p;
@@ -83,10 +83,10 @@ int TestPovWS::execute(int argc, _TCHAR* argv[]) {
 		if (!client->waitForReceive()) {
 
 			//cout << "received: ";
-			//client->printReceived();
+			client->printReceived();
 			//client->clearReceive();
-			//delete client;
-			//return(1);
+			delete client;
+			return(1);
 		}
 	}
 	delete client;
