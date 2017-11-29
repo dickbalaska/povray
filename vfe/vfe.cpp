@@ -364,8 +364,7 @@ void vfeParserMessageHandler::Error(Console *Con, POVMS_Object& Obj, bool conout
   // regardless of whether or not conout is set.
   if (m_Session->m_OptimizeForConsoleOutput == false)
     m_Session->AppendErrorMessage (d.Message, d.UCS2File, d.Line, d.Col) ;
-
-  if (!d.Message.empty())
+  else if (!d.Message.empty())
   {
     if (!d.File.empty() && (d.Line > 0))
     {
