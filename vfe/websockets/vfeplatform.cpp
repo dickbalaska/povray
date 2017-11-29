@@ -83,12 +83,13 @@ namespace vfePlatform
     //////////////////////////////////////////////////////////////
 
     vfeWebsocketSession::vfeWebsocketSession(int id) :
+		vfeSession(id),
         m_LastTimestamp(0),
 		m_TimestampOffset(0),
-		vfeSession(id),
 		renderOptions(NULL)
     {
         m_OptionsProc = shared_ptr<UnixOptionsProcessor>(new UnixOptionsProcessor(this));
+		m_OptimizeForConsoleOutput = false;
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -265,8 +266,11 @@ namespace vfePlatform
 
     void vfeWebsocketSession::AppendErrorMessage (const string& Msg, const UCS2String& File, int Line, int Col)
     {
-    	std::cerr << "================ AppendErrorMessageDecorated: '" << Msg << "'" << std::endl;
-
+    	std::cerr << "================ AppendErrorMessageDecorated: '" << Msg << "' File:'" << POVMS_UCS2toASCIIString(File)
+    			<< "' Line: " << Line << " - " << Col << std::endl;
+    	std::stringstream ss;
+    	ss << "stream error \"" << POVMS_UCS2toASCIIString(File) << "\" " << Line << " " << Col << " " << Msg;
+    	povray::websockets::wsSend(hdl, ss.str());
     }
     /////////////////////////////////////////////////////////////////////////
     // The following methods support the I/O permissions feature
