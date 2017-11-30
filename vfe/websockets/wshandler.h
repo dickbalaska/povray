@@ -22,6 +22,7 @@ using namespace vfePlatform;
 namespace povray {
 namespace websockets {
 
+extern string GetBannerVersion();
 
 extern void waitForShutdown();
 extern void notifyShutdown();

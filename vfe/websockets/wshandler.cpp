@@ -12,7 +12,7 @@
 #include "base/version_info.h"
 #include "backend/povray.h"
 
-#include "config.h"
+//#include "config.h"
 #include "wshandler.h"
 #include "wsgraphics.h"
 
@@ -127,37 +127,8 @@ void WsHandler::Cancel(websocketpp::connection_hdl hdl)
 
 void WsHandler::PrintVersion(websocketpp::connection_hdl hdl)
 {
-	string v = "version ";
-	char s[2048];
-    snprintf(s, 2048,
-        "%s %s\n\n"
-        "%s\n%s\n%s\n"
-        "%s\n%s\n%s\n\n",
-        PACKAGE_NAME, POV_RAY_VERSION,
-        DISTRIBUTION_MESSAGE_1, DISTRIBUTION_MESSAGE_2, DISTRIBUTION_MESSAGE_3,
-        POV_RAY_COPYRIGHT, DISCLAIMER_MESSAGE_1, DISCLAIMER_MESSAGE_2
-    );
-	v += s;
-    snprintf(s, 2048,
-        "Built-in features:\n"
-        "  I/O restrictions:          %s\n"
-        "  X Window display:          %s\n"
-        "  Supported image formats:   %s\n"
-        "  Unsupported image formats: %s\n\n",
-        BUILTIN_IO_RESTRICTIONS, BUILTIN_XWIN_DISPLAY, BUILTIN_IMG_FORMATS, MISSING_IMG_FORMATS
-    );
-	v += s;
-    snprintf(s, 2048,
-        "Compilation settings:\n"
-        "  Build architecture:  %s\n"
-        "  Built/Optimized for: %s\n"
-        "  Compiler vendor:     %s\n"
-        "  Compiler version:    %s\n"
-        "  Compiler flags:      %s\n",
-        BUILD_ARCH, BUILT_FOR, COMPILER_VENDOR, COMPILER_VERSION, CXXFLAGS
-    );
-	v += s;
-	wsSend(hdl, v);
+	string s = GetBannerVersion();
+	wsSend(hdl, s);
 }
 
 void PrintNonStatusMessage(websocketpp::connection_hdl hdl, vfeWebsocketSession* session)
@@ -330,7 +301,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 	ParseCommandLine(data, argc, argv);
 	char** oldargv = argv;
 	cerr << "chdir: " << argv[0] << endl;
-	int ret = chdir(argv[0]);
+	int ret = _chdir(argv[0]);
 	if (ret) {
 		stringstream ss;
 		ss << "Failed to chdir to '" << argv[0] << "'" << endl;
@@ -354,6 +325,12 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
     if (nthreads < 2)
         nthreads = sysconf(_SC_NPROCESSORS_CONF);
 #endif
+#ifdef SYSTEM_INFO
+	SYSTEM_INFO           sysinfo;
+	GetSystemInfo(&sysinfo);
+	nthreads = sysinfo.dwNumberOfProcessors;
+#endif
+
     if (nthreads < 2)
         nthreads = 4;
     session->renderOptions->SetThreadCount(nthreads);

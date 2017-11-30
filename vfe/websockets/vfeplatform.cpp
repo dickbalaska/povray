@@ -46,7 +46,7 @@
 #endif
 
 // other library headers
-#include <pthread.h>
+//#include <pthread.h>
 #ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
 #endif
@@ -54,6 +54,7 @@
 # include <sys/wait.h>
 #endif
 
+#include <boost/lexical_cast.hpp>
 // from directory "vfe"
 #include "vfe.h"
 #include "unix/unixoptions.h"
@@ -75,7 +76,11 @@ namespace vfePlatform
     // all other running threads in the process (and preferably in the OS).
     POVMS_Sys_Thread_Type GetThreadId ()
     {
-        return (POVMS_Sys_Thread_Type) pthread_self();
+        //return (POVMS_Sys_Thread_Type) pthread_self();
+		std::string threadId = boost::lexical_cast<std::string>(boost::this_thread::get_id());
+		unsigned long threadNumber = 0;
+		sscanf(threadId.c_str(), "%lx", &threadNumber);
+		return threadNumber;
     }
 
     //////////////////////////////////////////////////////////////
@@ -156,7 +161,7 @@ namespace vfePlatform
     UCS2String vfeWebsocketSession::CreateTemporaryFile(void) const
     {
         char str [FILE_NAME_LENGTH] = "";
-        snprintf(str, FILE_NAME_LENGTH, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), getpid ());
+        snprintf(str, FILE_NAME_LENGTH, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), _getpid ());
         POV_DELETE_FILE (str);
 
         return ASCIItoUCS2String (str);
@@ -410,7 +415,10 @@ namespace vfePlatform
         }
         else
         {
-            m_ExitCode = WEXITSTATUS(result);
+            //m_ExitCode = WEXITSTATUS(result);
+			// FIXME! 
+			m_ExitCode = -1;
+
         }
 #endif
 

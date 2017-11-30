@@ -57,10 +57,11 @@ void WsGraphics::DrawPixelBlock(unsigned int x1, unsigned int y1, unsigned int x
 	if (wsDebug)
 		std::cerr << "WsGraphics::DrawPixelBlock: x1=" << x1 << " y1=" << y1 << std::endl;
 #endif
-	int size = std::abs(x2-x1+1) * std::abs(y2-y1+1);
+	int size = std::abs((int)(x2-x1+1)) * std::abs((int)(y2-y1+1));
 	int fullsize = (size+5)*4;		// add opcode plus 4 coords
-	char buff[fullsize];
-	unsigned int* bi = (unsigned int*)&buff;
+	//char buff[fullsize];
+	char* buff = new char[fullsize];
+	unsigned int* bi = (unsigned int*)buff;
 	*bi++ = htonl(WSG_DRAW_PIXEL_BLOCK);
 	*bi++ = htonl(x1);
 	*bi++ = htonl(y1);
@@ -77,7 +78,9 @@ void WsGraphics::DrawPixelBlock(unsigned int x1, unsigned int y1, unsigned int x
         }
 	}
 	WebsocketServer::sendBinary(m_hdl, buff, fullsize);
+	delete buff;
 }
+
 void WsGraphics::Clear()
 {
 

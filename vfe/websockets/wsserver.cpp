@@ -26,11 +26,17 @@ int DEBUG = 9;
 
 websocketpp::server<websocketpp::config::asio> WebsocketServer::server;
 map<string, connection_hdl> WebsocketServer::websockets;
-pthread_rwlock_t WebsocketServer::websocketsLock = PTHREAD_RWLOCK_INITIALIZER;
+
 LogStream WebsocketServer::ls;
 ostream WebsocketServer::os(&ls);
 
 MessageHandlerFunc messageHandlerFunc = NULL;
+
+//pthread_rwlock_t WebsocketServer::websocketsLock = PTHREAD_RWLOCK_INITIALIZER;
+typedef boost::shared_mutex BMutex;
+typedef boost::unique_lock<BMutex> WriteLock;
+typedef boost::shared_lock<BMutex> ReadLock;
+BMutex mtx_;
 
 void WebsocketServer::init()
 {
@@ -158,13 +164,16 @@ void WebsocketServer::on_message(websocketpp::connection_hdl hdl, message_ptr ms
 bool WebsocketServer::getWebsocket(const string &id, websocketpp::connection_hdl &hdl) {
 	map<string, connection_hdl>::iterator iter;
 	bool found = false;
-	pthread_rwlock_rdlock(&websocketsLock);
+	//pthread_rwlock_rdlock(&websocketsLock);
+	ReadLock r_lock(mtx_);
 	iter = websockets.find(id);
 	if (iter != websockets.end()) {
 		hdl = iter->second;
 		found = true;
 	}
-	pthread_rwlock_unlock(&websocketsLock);
+	//pthread_rwlock_unlock(&websocketsLock);
+	r_lock.unlock();
+
 	return(found);
 }
 
@@ -231,9 +240,11 @@ bool WebsocketServer::sendClose(string id) {
 	}
 
 	// Remove websocket from the map.
-	pthread_rwlock_rdlock(&websocketsLock);
+	//pthread_rwlock_rdlock(&websocketsLock);
+	WriteLock w_lock(mtx_);
 	websockets.erase(id);
-	pthread_rwlock_unlock(&websocketsLock);
+	//pthread_rwlock_unlock(&websocketsLock);
+	w_lock.unlock();
 
 	return true;
 }

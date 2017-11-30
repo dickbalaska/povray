@@ -61,7 +61,7 @@ private:
 	static bool getWebsocket(const string &id, websocketpp::connection_hdl &hdl);
 
 	static websocketpp::server<websocketpp::config::asio> server;
-	static pthread_rwlock_t websocketsLock;
+	//static pthread_rwlock_t websocketsLock;
 	static map<string, websocketpp::connection_hdl> websockets;
 	static LogStream ls;
 	static ostream os;

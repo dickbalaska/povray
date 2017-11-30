@@ -46,6 +46,14 @@
 
 #undef UNIX_DEBUG
 
+#ifndef PACKAGE
+#define	PACKAGE	"povray"
+#endif
+#define VERSION_BASE "v3.7"
+#define	HAVE_GETCWD	1
+
+extern string DocumentsPath;
+
 namespace vfePlatform
 {
     using std::cerr;
@@ -78,13 +86,13 @@ namespace vfePlatform
 
         // system configuration file
         m_conf    = "";
-        m_sysconf = POVCONFDIR "/povray.conf";
+        //m_sysconf = POVCONFDIR "/povray.conf";
 
         // user configuration file
         if (m_home.length() > 0)
         {
             m_user_dir = m_home + "/." PACKAGE "/" VERSION_BASE;
-            m_userconf = m_home + "/." PACKAGE "/" VERSION_BASE "/povray.conf";
+            m_userconf = m_home + "/." PACKAGE "/" VERSION_BASE "/povray.ini";
         }
         else
         {
@@ -148,12 +156,17 @@ namespace vfePlatform
         string path = QueryOptionString("general", "temppath");
         if (path.length() == 0)
         {
-            struct stat s;
+#ifdef _WINDOWS
+			path = "/temp/";
+			return(path);
+#else
+			struct stat s;
             path = "/tmp/";
             if (stat (path.c_str(), &s) == 0  &&  S_ISDIR (s.st_mode)  &&  (s.st_mode & S_IRWXU) == S_IRWXU)
                 return path;
             path = unix_getcwd();
-        }
+#endif
+		}
         if (path[path.length()-1] != '/')
             path = path + "/";
         return path;
@@ -386,7 +399,7 @@ namespace vfePlatform
         len = 256;  // default buffer size
         char *tmp = new char[len];
 
-        while(getcwd(tmp, len) == NULL)  // buffer is too small
+        while(_getcwd(tmp, len) == NULL)  // buffer is too small
         {
             delete[] tmp;
             len *= 2;  // double buffer size and try again
@@ -1088,7 +1101,20 @@ namespace vfePlatform
                 perror(povini.c_str());
             }
         }
-
+		// See if Windows knows of one
+		if (!DocumentsPath.empty()) {
+			cerr << "DocumentsPath=" << DocumentsPath.c_str() << endl;
+			povini = DocumentsPath + "/povray.ini";
+			if (file_exist(povini)) {
+				opts.AddINI(povini);
+				return;
+			}
+			povini = DocumentsPath + "/ini/povray.ini";
+			if (file_exist(povini)) {
+				opts.AddINI(povini);
+				return;
+			}
+		}
         // try any INI file in the current directory
         povini = "./povray.ini";
         if (file_exist(povini))
@@ -1192,8 +1218,8 @@ namespace vfePlatform
 
     bool UnixOptionsProcessor::isIORestrictionsEnabled(bool write)
     {
-        if (IO_RESTRICTIONS_DISABLED)
-            return false;
+        //if (IO_RESTRICTIONS_DISABLED)
+        //    return false;
         if (!write &&  m_file_io < IO_RESTRICTED)
             return false;
         if(m_file_io < IO_READONLY)

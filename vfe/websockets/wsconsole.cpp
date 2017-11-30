@@ -73,6 +73,44 @@ bool gCancelRender = false;
 static int gSignalNumber = 0;
 static boost::mutex gSignalMutex;
 
+namespace povray {
+namespace websockets {
+
+string GetBannerVersion()
+{
+	string v = "version ";
+	char s[2048];
+	snprintf(s, 2048,
+		"%s %s\n\n"
+		"%s\n%s\n%s\n"
+		"%s\n%s\n%s\n\n",
+		PACKAGE_NAME, POV_RAY_VERSION,
+		DISTRIBUTION_MESSAGE_1, DISTRIBUTION_MESSAGE_2, DISTRIBUTION_MESSAGE_3,
+		POV_RAY_COPYRIGHT, DISCLAIMER_MESSAGE_1, DISCLAIMER_MESSAGE_2
+	);
+	v += s;
+	snprintf(s, 2048,
+		"Built-in features:\n"
+		"  I/O restrictions:          %s\n"
+		"  X Window display:          %s\n"
+		"  Supported image formats:   %s\n"
+		"  Unsupported image formats: %s\n\n",
+		BUILTIN_IO_RESTRICTIONS, BUILTIN_XWIN_DISPLAY, BUILTIN_IMG_FORMATS, MISSING_IMG_FORMATS
+	);
+	v += s;
+	snprintf(s, 2048,
+		"Compilation settings:\n"
+		"  Build architecture:  %s\n"
+		"  Built/Optimized for: %s\n"
+		"  Compiler vendor:     %s\n"
+		"  Compiler version:    %s\n"
+		"  Compiler flags:      %s\n",
+		BUILD_ARCH, BUILT_FOR, COMPILER_VENDOR, COMPILER_VERSION, CXXFLAGS
+	);
+	v += s;
+	return(v);
+}
+}}	// namespace websockets, namespace povray
 
 static void SignalHandler (void)
 {
