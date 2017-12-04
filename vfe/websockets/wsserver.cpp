@@ -1,13 +1,44 @@
-/*
- * server.cpp
- *
- *  Created on: Oct 29, 2017
- *      Author: Dick Balaska
- */
+//******************************************************************************
+///
+/// @file vfe/websockets/wsserver.cpp
+///
+/// WebSocket server for povrayws
+///
+/// @author Dick Balaska <dick@buckosoft.com>
+///
+/// @copyright
+/// @parblock
+///
+/// Persistence of Vision Ray Tracer ('POV-Ray') version 3.7.
+/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+///
+/// POV-Ray is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as
+/// published by the Free Software Foundation, either version 3 of the
+/// License, or (at your option) any later version.
+///
+/// POV-Ray is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+///
+/// ----------------------------------------------------------------------------
+///
+/// POV-Ray is based on the popular DKB raytracer version 2.12.
+/// DKBTrace was originally written by David K. Buck.
+/// DKBTrace Ver 2.0-2.12 were written by David K. Buck & Aaron A. Collins.
+///
+/// @endparblock
+///
+//*******************************************************************************
 
 #include "wsserver.h"
 
 #include <map>
+#include "boost/thread/shared_mutex.hpp"
 
 #include "websocketpp/server.hpp"
 #include "websocketpp/config/asio_no_tls.hpp"
@@ -186,7 +217,9 @@ void WebsocketServer::on_fail(connection_hdl hdl) {
 
 void WebsocketServer::on_close(connection_hdl hdl) {
 	// Websocket connection closed.
+#ifdef _DEBUG
 	cerr << "WebsocketServer::on_close" << endl;
+#endif
 }
 void WebsocketServer::send(websocketpp::connection_hdl hdl, const string& msg) {
 	websocketpp::lib::error_code ec;
