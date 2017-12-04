@@ -40,19 +40,24 @@
 #include "wsoptions.h"
 
 #include <fstream>
+#include <sstream>
 #include <sys/stat.h>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+
+#include "wshandler.h"
 
 #undef UNIX_DEBUG
 
 #ifndef PACKAGE
 #define	PACKAGE	"povray"
 #endif
-#define VERSION_BASE "v3.7"
+//#define VERSION_BASE "v3.7"
 #define	HAVE_GETCWD	1
 
 extern string DocumentsPath;
+
+using namespace std;
 
 namespace vfePlatform
 {
@@ -61,18 +66,18 @@ namespace vfePlatform
 
     extern bool gShelloutsPermittedFixThis;
 
-    const UnixOptionsProcessor::Option_Info UnixOptionsProcessor::Standard_Options[] =
+    const WsOptionsProcessor::Option_Info WsOptionsProcessor::Standard_Options[] =
     {
         // section name, option name, default, has_param, command line parameter, environment variable name, help text
-        UnixOptionsProcessor::Option_Info("general", "help", "off", false, "--help|-help|-h|-?", "", "display usage information"),
-        UnixOptionsProcessor::Option_Info("general", "temppath", "", true, "", "POV_TEMP_DIR", "directory for temporary files"),
-        UnixOptionsProcessor::Option_Info("general", "version", "off", false, "--version|-version|--V", "", "display program version"),
-        UnixOptionsProcessor::Option_Info("general", "benchmark", "off", false, "--benchmark|-benchmark", "", "run the standard POV-Ray benchmark"),
-        UnixOptionsProcessor::Option_Info("", "", "", false, "", "", "") // has to be last
+		WsOptionsProcessor::Option_Info("general", "help", "off", false, "--help|-help|-h|-?", "", "display usage information"),
+		WsOptionsProcessor::Option_Info("general", "temppath", "", true, "", "POV_TEMP_DIR", "directory for temporary files"),
+		WsOptionsProcessor::Option_Info("general", "version", "off", false, "--version|-version|--V", "", "display program version"),
+		WsOptionsProcessor::Option_Info("general", "benchmark", "off", false, "--benchmark|-benchmark", "", "run the standard POV-Ray benchmark"),
+		WsOptionsProcessor::Option_Info("", "", "", false, "", "", "") // has to be last
     };
 
     // based on 3.6 unix_create_globals()
-    UnixOptionsProcessor::UnixOptionsProcessor(vfeSession *session) :
+    WsOptionsProcessor::WsOptionsProcessor(vfeSession *session) :
         m_Session(session)
     {
         char* value;
@@ -151,7 +156,7 @@ namespace vfePlatform
         process_povray_conf();
     }
 
-    string UnixOptionsProcessor::GetTemporaryPath(void)
+    string WsOptionsProcessor::GetTemporaryPath(void)
     {
         string path = QueryOptionString("general", "temppath");
         if (path.length() == 0)
@@ -172,7 +177,7 @@ namespace vfePlatform
         return path;
     }
 
-    void UnixOptionsProcessor::PrintOptions(void)
+    void WsOptionsProcessor::PrintOptions(void)
     {
         cerr << endl;
         cerr << "Platform specific command line options:" << endl;
@@ -201,7 +206,7 @@ namespace vfePlatform
         cerr << endl;
     }
 
-    void UnixOptionsProcessor::Register(const Option_Info options[])
+    void WsOptionsProcessor::Register(const Option_Info options[])
     {
         for (int i = 0; options[i].Section != ""; i++)
         {
@@ -213,7 +218,7 @@ namespace vfePlatform
         }
     }
 
-    void UnixOptionsProcessor::QueryOption(Option_Info &option)
+    void WsOptionsProcessor::QueryOption(Option_Info &option)
     {
         list<Option_Info>::iterator iter = find(m_user_options.begin(), m_user_options.end(), option);
 
@@ -223,14 +228,14 @@ namespace vfePlatform
             option.Value = "";
     }
 
-    string UnixOptionsProcessor::QueryOptionString(const string &section, const string &name)
+    string WsOptionsProcessor::QueryOptionString(const string &section, const string &name)
     {
         Option_Info opt(section, name);
         QueryOption(opt);
         return opt.Value;
     }
 
-    int UnixOptionsProcessor::QueryOptionInt(const string &section, const string &name, const int dflt)
+    int WsOptionsProcessor::QueryOptionInt(const string &section, const string &name, const int dflt)
     {
         int res;
         try
@@ -244,7 +249,7 @@ namespace vfePlatform
         return res;
     }
 
-    float UnixOptionsProcessor::QueryOptionFloat(const string &section, const string &name, const float dflt)
+    float WsOptionsProcessor::QueryOptionFloat(const string &section, const string &name, const float dflt)
     {
         float res;
         try
@@ -258,7 +263,7 @@ namespace vfePlatform
         return res;
     }
 
-    bool UnixOptionsProcessor::isOptionSet(const Option_Info &option)
+    bool WsOptionsProcessor::isOptionSet(const Option_Info &option)
     {
         list<Option_Info>::iterator iter = find(m_user_options.begin(), m_user_options.end(), option);
 
@@ -275,7 +280,7 @@ namespace vfePlatform
         return false;
     }
 
-    bool UnixOptionsProcessor::isOptionSet(const string &section, const string &name)
+    bool WsOptionsProcessor::isOptionSet(const string &section, const string &name)
     {
         for (list<Option_Info>::iterator iter = m_user_options.begin(); iter != m_user_options.end(); iter++)
         {
@@ -285,7 +290,7 @@ namespace vfePlatform
         return false;
     }
 
-    void UnixOptionsProcessor::ProcessOptions(int *argc, char **argv[])
+    void WsOptionsProcessor::ProcessOptions(int *argc, char **argv[])
     {
         // add custom configuration options found in povray.conf files
         for (list<Conf_Option>::iterator iter_c = m_custom_conf_options.begin(); iter_c != m_custom_conf_options.end(); iter_c++)
@@ -376,7 +381,7 @@ namespace vfePlatform
     }
 
     // based on 3.x RemoveArgs() by Andreas Dilger
-    void UnixOptionsProcessor::remove_arg(int *argc, char *argv[], int index)
+    void WsOptionsProcessor::remove_arg(int *argc, char *argv[], int index)
     {
         if (index >= *argc || index == 0)
             return;
@@ -391,7 +396,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 UNIX_getcwd()
-    string UnixOptionsProcessor::unix_getcwd(void)
+    string WsOptionsProcessor::unix_getcwd(void)
     {
 #ifdef HAVE_GETCWD
         size_t len;
@@ -399,7 +404,7 @@ namespace vfePlatform
         len = 256;  // default buffer size
         char *tmp = new char[len];
 
-        while(_getcwd(tmp, len) == NULL)  // buffer is too small
+        while(getcwd(tmp, len) == NULL)  // buffer is too small
         {
             delete[] tmp;
             len *= 2;  // double buffer size and try again
@@ -433,7 +438,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 unix_basename()
-    string UnixOptionsProcessor::basename(const string &path)
+    string WsOptionsProcessor::basename(const string &path)
     {
         if(path.length() < 2) // less than two characters
             return path;
@@ -449,7 +454,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 unix_dirname()
-    string UnixOptionsProcessor::dirname(const string &path)
+    string WsOptionsProcessor::dirname(const string &path)
     {
         if(path.length() < 2)  // less than two characters
             return string("");
@@ -465,7 +470,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 unix_readlink()
-    string UnixOptionsProcessor::unix_readlink(const string &path)
+    string WsOptionsProcessor::unix_readlink(const string &path)
     {
 #ifdef HAVE_READLINK
         char   *tmp;
@@ -514,7 +519,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 UNIX_canonicalize_path()
-    string UnixOptionsProcessor::CanonicalizePath(const string &path)
+    string WsOptionsProcessor::CanonicalizePath(const string &path)
     {
         int   i;
         typedef struct { const char *match, *replace; } subst;
@@ -618,7 +623,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 pre_process_conf_line()
-    string UnixOptionsProcessor::pre_process_conf_line(const string &input)
+    string WsOptionsProcessor::pre_process_conf_line(const string &input)
     {
         string s = boost::trim_copy(input);
 
@@ -634,7 +639,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 add_permitted_path()
-    void UnixOptionsProcessor::add_permitted_path(list<UnixPath> &paths, const string &input, const string &conf_name, unsigned long line_number)
+    void WsOptionsProcessor::add_permitted_path(list<UnixPath> &paths, const string &input, const string &conf_name, unsigned long line_number)
     {
         char quote = 0;
         bool descend = false;
@@ -709,7 +714,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 unix_parse_conf_file()
-    void UnixOptionsProcessor::parse_conf_file(std::istream &Stream, const string &conf_name, bool user_mode)
+    void WsOptionsProcessor::parse_conf_file(std::istream &Stream, const string &conf_name, bool user_mode)
     {
         list<UnixPath> paths;
         string line;
@@ -1003,7 +1008,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 unix_process_povray_conf()
-    void UnixOptionsProcessor::process_povray_conf(void)
+    void WsOptionsProcessor::process_povray_conf(void)
     {
         m_Session->ClearPaths();
         m_Session->AddExcludedPath(string(POVCONFDIR));
@@ -1021,8 +1026,14 @@ namespace vfePlatform
             }
             else
             {
-                fprintf(stderr, "%s: cannot open the system configuration file ", PACKAGE);
-                perror(m_sysconf.c_str());
+            	stringstream ss;
+            	ss << PACKAGE << ": cannot open the system configuration file " << m_sysconf.c_str();
+            	ss << ": " << strerror(errno);
+            	cerr << ss.str();
+            	string s = "stream warning " + ss.str();
+            	povray::websockets::wsSend(m_hdl, s);
+//                fprintf(stderr, "%s: cannot open the system configuration file ", PACKAGE);
+//                perror(m_sysconf.c_str());
             }
         }
 
@@ -1037,15 +1048,25 @@ namespace vfePlatform
             }
             else
             {
-                fprintf(stderr, "%s: cannot open the user configuration file ", PACKAGE);
-                perror(m_userconf.c_str());
+            	stringstream ss;
+            	ss << PACKAGE << ": cannot open the user configuration file " << m_sysconf.c_str();
+            	ss << ": " << strerror(errno);
+            	cerr << ss.str();
+            	string s = "stream warning " + ss.str();
+            	povray::websockets::wsSend(m_hdl, s);
+//                fprintf(stderr, "%s: cannot open the user configuration file ", PACKAGE);
+//                perror(m_userconf.c_str());
             }
         }
 
         // no file was read, disable I/O restrictions
-        if(m_conf.length() == 0)
-            fprintf(stderr, "%s: I/O restrictions are disabled\n", PACKAGE);
-
+        if(m_conf.length() == 0) {
+        	stringstream ss;
+        	ss << PACKAGE << ": I/O restrictions are disabled";
+        	cerr << ss.str() << endl;
+        	string s = "stream warning " + ss.str();
+            //fprintf(stderr, "%s: I/O restrictions are disabled\n", PACKAGE);
+        }
         // if no paths specified, at least include POVLIBDIR and POVCONFDIR
         else if(m_permitted_paths.empty())
         {
@@ -1069,7 +1090,7 @@ namespace vfePlatform
         }
     }
 
-    bool UnixOptionsProcessor::file_exist(const string &name)
+    bool WsOptionsProcessor::file_exist(const string &name)
     {
         FILE *file = fopen(name.c_str(), "r");
 
@@ -1082,7 +1103,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 unix_process_povray_ini()
-    void UnixOptionsProcessor::Process_povray_ini(vfeRenderOptions &opts)
+    void WsOptionsProcessor::Process_povray_ini(vfeRenderOptions &opts)
     {
         // try the file pointed to by POVINI
         string povini;
@@ -1101,6 +1122,7 @@ namespace vfePlatform
                 perror(povini.c_str());
             }
         }
+#ifdef _WINDOWS
 		// See if Windows knows of one
 		if (!DocumentsPath.empty()) {
 			cerr << "DocumentsPath=" << DocumentsPath.c_str() << endl;
@@ -1115,6 +1137,7 @@ namespace vfePlatform
 				return;
 			}
 		}
+#endif
         // try any INI file in the current directory
         povini = "./povray.ini";
         if (file_exist(povini))
@@ -1154,7 +1177,7 @@ namespace vfePlatform
 
 #if 0
     // based on 3.6 unix_subdir()
-    static bool UnixOptionsProcessor::file_in_permitted_paths (const string &Filename, bool write)
+    static bool WsOptionsProcessor::file_in_permitted_paths (const string &Filename, bool write)
     {
         // NOTE: Filename must be already canonicalized
 
@@ -1216,7 +1239,7 @@ namespace vfePlatform
     }
 #endif
 
-    bool UnixOptionsProcessor::isIORestrictionsEnabled(bool write)
+    bool WsOptionsProcessor::isIORestrictionsEnabled(bool write)
     {
         //if (IO_RESTRICTIONS_DISABLED)
         //    return false;
@@ -1227,7 +1250,7 @@ namespace vfePlatform
         return true;
     }
 
-    void UnixOptionsProcessor::IORestrictionsError(const string &fnm, bool write, bool is_user_setting)
+    void WsOptionsProcessor::IORestrictionsError(const string &fnm, bool write, bool is_user_setting)
     {
         if (is_user_setting)
         {

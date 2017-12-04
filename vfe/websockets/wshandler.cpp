@@ -197,32 +197,10 @@ void PrintStatusChanged (websocketpp::connection_hdl hdl, vfeSession *session, S
             fprintf (stderr, "==== [Parsing...] ==========================================================\n");
             break;
         case kRendering:
-#ifdef HAVE_LIBSDL
-            if ((gDisplay != NULL) && (gDisplayMode == DISP_MODE_SDL))
-            {
-                fprintf (stderr, "==== [Rendering... Press p to pause, q to quit] ============================\n");
-            }
-            else
-            {
-                fprintf (stderr, "==== [Rendering...] ========================================================\n");
-            }
-#else
             fprintf (stderr, "==== [Rendering...] ========================================================\n");
-#endif
             break;
         case kPausedRendering:
-#ifdef HAVE_LIBSDL
-            if ((gDisplay != NULL) && (gDisplayMode == DISP_MODE_SDL))
-            {
-                fprintf (stderr, "==== [Paused... Press p to resume] =========================================\n");
-            }
-            else
-            {
-                fprintf (stderr, "==== [Paused...] ===========================================================\n");
-            }
-#else
             fprintf (stderr, "==== [Paused...] ===========================================================\n");
-#endif
             break;
     }
 #endif
@@ -301,7 +279,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 	ParseCommandLine(data, argc, argv);
 	char** oldargv = argv;
 	cerr << "chdir: " << argv[0] << endl;
-	int ret = _chdir(argv[0]);
+	int ret = chdir(argv[0]);
 	if (ret) {
 		stringstream ss;
 		ss << "Failed to chdir to '" << argv[0] << "'" << endl;
@@ -310,6 +288,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 	}
     session = new vfeWebsocketSession();
     session->setWebSocketHdl(hdl);
+    session->GetUnixOptions()->setWebSocketHdl(hdl);
 	session->renderOptions = new vfeRenderOptions();
     if (session->Initialize(NULL, NULL) != vfeNoError) {
         ErrorExit(hdl);
@@ -409,7 +388,9 @@ void RenderMonitor(websocketpp::connection_hdl hdl, vfeWebsocketSession*& sessio
         }
 
     }
+#ifdef _DEBUG
     cerr << "RenderMonitor break" << endl;
+#endif
     // pause when done for single or last frame of an animation
 //    if (session->Failed() == false && GetRenderWindow() != NULL && session->GetBoolOption("Pause_When_Done", false))
 //    {

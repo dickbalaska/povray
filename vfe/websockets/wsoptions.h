@@ -1,6 +1,6 @@
 //******************************************************************************
 ///
-/// @file vfe/unix/unixoptions.h
+/// @file vfe/websockets/wsoptions.h
 ///
 /// Processing system for options in povray.conf, command line and environment
 /// variables.
@@ -40,13 +40,17 @@
 #ifndef _OPTIONS_H
 #define _OPTIONS_H
 
-#include "vfe.h"
+#include "websocketpp/config/asio_no_tls.hpp"
+#include "websocketpp/server.hpp"
+
 
 #include <list>
 #include <vector>
 #include <iostream>
 #include <string>
 #include <boost/algorithm/string.hpp>
+
+#include "vfe.h"
 
 using boost::to_lower_copy;
 
@@ -130,7 +134,7 @@ namespace vfePlatform
         vfeUnixSession::GetUnixOptions().
 
     */
-    class UnixOptionsProcessor
+    class WsOptionsProcessor
     {
       public:
         /*
@@ -209,8 +213,8 @@ namespace vfePlatform
             }
         };
 
-        UnixOptionsProcessor(vfeSession *session);
-        virtual ~UnixOptionsProcessor() {} ;
+        WsOptionsProcessor(vfeSession *session);
+        virtual ~WsOptionsProcessor() {} ;
 
         /**
              called by the Display classes to register their custom options
@@ -319,6 +323,8 @@ namespace vfePlatform
 
         bool ShelloutPermitted(const string& command, const string& parameters) const { return m_shellout == SHL_ALLOWED; }
 
+        void setWebSocketHdl(websocketpp::connection_hdl hdl) { this->m_hdl = hdl; }
+
      protected:
         /// list of standard options
         static const Option_Info Standard_Options[];
@@ -347,6 +353,7 @@ namespace vfePlatform
         list<UnixPath> m_permitted_paths;
         list<Conf_Option> m_custom_conf_options;
         list<Option_Info> m_user_options;
+        websocketpp::connection_hdl m_hdl;
     };
 }
 

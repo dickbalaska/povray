@@ -57,7 +57,7 @@
 #include <boost/lexical_cast.hpp>
 // from directory "vfe"
 #include "vfe.h"
-#include "unix/unixoptions.h"
+#include "websockets/wsoptions.h"
 
 namespace povray {
 namespace websockets {
@@ -93,7 +93,7 @@ namespace vfePlatform
 		m_TimestampOffset(0),
 		renderOptions(NULL)
     {
-        m_OptionsProc = shared_ptr<UnixOptionsProcessor>(new UnixOptionsProcessor(this));
+        m_OptionsProc = shared_ptr<WsOptionsProcessor>(new WsOptionsProcessor(this));
 		m_OptimizeForConsoleOutput = false;
     }
 
@@ -161,7 +161,7 @@ namespace vfePlatform
     UCS2String vfeWebsocketSession::CreateTemporaryFile(void) const
     {
         char str [FILE_NAME_LENGTH] = "";
-        snprintf(str, FILE_NAME_LENGTH, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), _getpid ());
+        snprintf(str, FILE_NAME_LENGTH, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), getpid ());
         POV_DELETE_FILE (str);
 
         return ASCIItoUCS2String (str);
@@ -249,7 +249,9 @@ namespace vfePlatform
     // thread priority here.
     void vfeWebsocketSession::WorkerThreadStartup()
     {
+#ifdef _DEBUG
     	std::cerr << "WorkerThreadStartup()" << std::endl;
+#endif
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -271,8 +273,10 @@ namespace vfePlatform
 
     void vfeWebsocketSession::AppendErrorMessage (const string& Msg, const UCS2String& File, int Line, int Col)
     {
+#ifdef _DEBUG
     	std::cerr << "================ AppendErrorMessageDecorated: '" << Msg << "' File:'" << POVMS_UCS2toASCIIString(File)
     			<< "' Line: " << Line << " - " << Col << std::endl;
+#endif
     	std::stringstream ss;
     	ss << "stream error \"" << POVMS_UCS2toASCIIString(File) << "\" " << Line << " " << Col << " " << Msg;
     	povray::websockets::wsSend(hdl, ss.str());

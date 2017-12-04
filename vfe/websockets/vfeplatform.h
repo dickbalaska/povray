@@ -56,7 +56,7 @@ namespace vfePlatform
     using namespace pov_base;
     using namespace vfe;
 
-    class UnixOptionsProcessor;
+    class WsOptionsProcessor;
 
     class UnixShelloutProcessing: public pov_frontend::ShelloutProcessing
     {
@@ -107,7 +107,7 @@ namespace vfePlatform
             virtual ShelloutProcessing *CreateShelloutProcessing(POVMS_Object& opts, const string& scene, unsigned int width, unsigned int height)
                 { return new UnixShelloutProcessing(opts, scene, width, height); }
 
-            shared_ptr<UnixOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
+            shared_ptr<WsOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
 
             void setWebSocketHdl(websocketpp::connection_hdl hdl) { this->hdl = hdl; }
         	vfeRenderOptions*		renderOptions;
@@ -140,7 +140,7 @@ namespace vfePlatform
             mutable POV_LONG m_TimestampOffset;
 
             // platform specific configuration options
-            shared_ptr<UnixOptionsProcessor> m_OptionsProc;
+            shared_ptr<WsOptionsProcessor> m_OptionsProc;
 
             websocketpp::connection_hdl hdl;
 
