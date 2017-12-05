@@ -61,6 +61,8 @@
 
 extern string DocumentsPath;
 
+const char* s_streamWarning = "stream warning ";
+
 using namespace std;
 
 namespace vfePlatform
@@ -1059,7 +1061,7 @@ namespace vfePlatform
 #ifdef _DEBUG
             	cerr << ss.str() << endl;
 #endif
-            	string s = "stream warning " + ss.str();
+            	string s = s_streamWarning + ss.str();
             	povray::websockets::wsSend(m_hdl, s);
 //                fprintf(stderr, "%s: cannot open the user configuration file ", PACKAGE);
 //                perror(m_userconf.c_str());
@@ -1073,7 +1075,7 @@ namespace vfePlatform
 #ifdef _DEBUG
         	cerr << ss.str() << endl;
 #endif
-        	string s = "stream warning " + ss.str();
+        	string s = s_streamWarning + ss.str();
         	povray::websockets::wsSend(m_hdl, s);
             //fprintf(stderr, "%s: I/O restrictions are disabled\n", PACKAGE);
         }
