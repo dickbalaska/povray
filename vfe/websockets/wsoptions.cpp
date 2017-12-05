@@ -52,7 +52,11 @@
 #ifndef PACKAGE
 #define	PACKAGE	"povray"
 #endif
-//#define VERSION_BASE "v3.7"
+
+#ifndef VERSION_BASE			// FIXME!
+#define VERSION_BASE "v3.7"
+#endif
+
 #define	HAVE_GETCWD	1
 
 extern string DocumentsPath;
