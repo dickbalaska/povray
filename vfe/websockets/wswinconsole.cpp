@@ -36,6 +36,8 @@
 ///
 //******************************************************************************
 
+#ifdef _WINDOWS					// windows only main
+
 #include "base/version_info.h"
 
 #include "backend/povray.h"
@@ -264,3 +266,4 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+#endif		// _WINDOWS
