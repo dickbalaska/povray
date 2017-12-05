@@ -12,6 +12,7 @@
 #include "websocketpp/server.hpp"
 
 #include "vfe.h"
+#include "vfeplatform.h"
 #include "wsoptions.h"
 #include "wsserver.h"
 

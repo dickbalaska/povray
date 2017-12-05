@@ -92,7 +92,7 @@ namespace vfePlatform
     class vfeWebsocketSession : public vfeSession
     {
         public:
-    	vfeWebsocketSession(int id = 0);
+    		vfeWebsocketSession(websocketpp::connection_hdl hdl, int id = 0);
             virtual ~vfeWebsocketSession() {
             	if (renderOptions) delete renderOptions;
             }
@@ -109,7 +109,7 @@ namespace vfePlatform
 
             shared_ptr<WsOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
 
-            void setWebSocketHdl(websocketpp::connection_hdl hdl) { this->hdl = hdl; }
+            void setWebSocketHdl(websocketpp::connection_hdl hdl) { this->m_hdl = hdl; }
         	vfeRenderOptions*		renderOptions;
 
 
@@ -142,7 +142,7 @@ namespace vfePlatform
             // platform specific configuration options
             shared_ptr<WsOptionsProcessor> m_OptionsProc;
 
-            websocketpp::connection_hdl hdl;
+            websocketpp::connection_hdl m_hdl;
 
     } ;
 

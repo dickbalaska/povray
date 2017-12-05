@@ -13,6 +13,7 @@
 #include "backend/povray.h"
 
 //#include "config.h"
+#include "vfeplatform.h"
 #include "wshandler.h"
 #include "wsgraphics.h"
 
@@ -286,9 +287,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 		wsSend(hdl, ss.str());
 		return;
 	}
-    session = new vfeWebsocketSession();
-    session->setWebSocketHdl(hdl);
-    session->GetUnixOptions()->setWebSocketHdl(hdl);
+    session = new vfeWebsocketSession(hdl);
 	session->renderOptions = new vfeRenderOptions();
     if (session->Initialize(NULL, NULL) != vfeNoError) {
         ErrorExit(hdl);

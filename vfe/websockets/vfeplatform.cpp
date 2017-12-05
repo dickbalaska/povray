@@ -87,13 +87,14 @@ namespace vfePlatform
     // User-interface functions
     //////////////////////////////////////////////////////////////
 
-    vfeWebsocketSession::vfeWebsocketSession(int id) :
+    vfeWebsocketSession::vfeWebsocketSession(websocketpp::connection_hdl hdl, int id) :
 		vfeSession(id),
         m_LastTimestamp(0),
 		m_TimestampOffset(0),
-		renderOptions(NULL)
+		renderOptions(NULL),
+		m_hdl(hdl)
     {
-        m_OptionsProc = shared_ptr<WsOptionsProcessor>(new WsOptionsProcessor(this));
+        m_OptionsProc = shared_ptr<WsOptionsProcessor>(new WsOptionsProcessor(this, hdl));
 		m_OptimizeForConsoleOutput = false;
     }
 
@@ -268,7 +269,7 @@ namespace vfePlatform
 #ifdef _DEBUG
     	std::cerr << s << "'" << std::endl;
 #endif
-    	povray::websockets::wsSend(hdl, s);
+    	povray::websockets::wsSend(m_hdl, s);
     }
 
     void vfeWebsocketSession::AppendErrorMessage (const string& Msg, const UCS2String& File, int Line, int Col)
@@ -279,7 +280,7 @@ namespace vfePlatform
 #endif
     	std::stringstream ss;
     	ss << "stream error \"" << POVMS_UCS2toASCIIString(File) << "\" " << Line << " " << Col << " " << Msg;
-    	povray::websockets::wsSend(hdl, ss.str());
+    	povray::websockets::wsSend(m_hdl, ss.str());
     }
     /////////////////////////////////////////////////////////////////////////
     // The following methods support the I/O permissions feature
