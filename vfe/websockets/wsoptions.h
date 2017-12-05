@@ -51,6 +51,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include "vfe.h"
+#include "vfeplatform.h"
 
 using boost::to_lower_copy;
 
@@ -213,7 +214,7 @@ namespace vfePlatform
             }
         };
 
-        WsOptionsProcessor(vfeSession *session);
+        WsOptionsProcessor(vfeWebsocketSession *session, websocketpp::connection_hdl hdl);
         virtual ~WsOptionsProcessor() {} ;
 
         /**

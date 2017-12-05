@@ -77,8 +77,9 @@ namespace vfePlatform
     };
 
     // based on 3.6 unix_create_globals()
-    WsOptionsProcessor::WsOptionsProcessor(vfeSession *session) :
-        m_Session(session)
+    WsOptionsProcessor::WsOptionsProcessor(vfeWebsocketSession *session, websocketpp::connection_hdl hdl) :
+        m_Session(session),
+		m_hdl(hdl)
     {
         char* value;
         value = getenv("HOME");
@@ -1027,7 +1028,7 @@ namespace vfePlatform
             else
             {
             	stringstream ss;
-            	ss << PACKAGE << ": cannot open the system configuration file " << m_sysconf.c_str();
+            	ss << PACKAGE << ": cannot open the system configuration file " << m_sysconf;
             	ss << ": " << strerror(errno);
             	cerr << ss.str();
             	string s = "stream warning " + ss.str();
@@ -1049,9 +1050,11 @@ namespace vfePlatform
             else
             {
             	stringstream ss;
-            	ss << PACKAGE << ": cannot open the user configuration file " << m_sysconf.c_str();
+            	ss << PACKAGE << ": cannot open the user configuration file " << m_userconf;
             	ss << ": " << strerror(errno);
-            	cerr << ss.str();
+#ifdef _DEBUG
+            	cerr << ss.str() << endl;
+#endif
             	string s = "stream warning " + ss.str();
             	povray::websockets::wsSend(m_hdl, s);
 //                fprintf(stderr, "%s: cannot open the user configuration file ", PACKAGE);
@@ -1063,8 +1066,11 @@ namespace vfePlatform
         if(m_conf.length() == 0) {
         	stringstream ss;
         	ss << PACKAGE << ": I/O restrictions are disabled";
+#ifdef _DEBUG
         	cerr << ss.str() << endl;
+#endif
         	string s = "stream warning " + ss.str();
+        	povray::websockets::wsSend(m_hdl, s);
             //fprintf(stderr, "%s: I/O restrictions are disabled\n", PACKAGE);
         }
         // if no paths specified, at least include POVLIBDIR and POVCONFDIR
