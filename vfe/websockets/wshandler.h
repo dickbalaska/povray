@@ -16,6 +16,9 @@
 #include "wsoptions.h"
 #include "wsserver.h"
 
+extern const char* s_stream_fatal;
+extern const char* s_stream_warning;
+
 using namespace std;
 using namespace vfe;
 using namespace vfePlatform;

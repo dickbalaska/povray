@@ -17,6 +17,10 @@
 #include "wshandler.h"
 #include "wsgraphics.h"
 
+const char* s_stream_fatal	 = "stream fatal ";
+const char* s_stream_warning = "stream warning ";
+
+
 extern void ProcessSignal(void);
 extern bool gCancelRender;
 
@@ -32,8 +36,6 @@ using namespace vfePlatform;
 WsHandler websocketHandler;
 
 static websocketpp::connection_hdl gHdl;	// pass the handle to the display creator
-
-const char* s_stream_fatal = "stream fatal ";
 
 std::mutex shutdownMtx;
 std::condition_variable shutdownMtx_cv;
@@ -94,8 +96,10 @@ void WsHandler::on_message(websocketpp::connection_hdl hdl, message_ptr msg)
 		command = s.substr(0, i);
 		data = s.substr(i+1);
 	}
+#ifdef _DEBUG
 	cerr << "Command = '" << command << "'" << endl;
 	cerr << "Data = '" << data << "'" << endl;
+#endif
 	if (command == "version")
 		PrintVersion(hdl);
 	else if (command == "quit")
@@ -119,8 +123,9 @@ void WsHandler::Quit(websocketpp::connection_hdl hdl)
 
 void WsHandler::Cancel(websocketpp::connection_hdl hdl)
 {
+	string s = "Cancel on user command";
 #ifdef _DEBUG
-	cerr << "Cancel on user command" << endl;
+	cerr << s << endl;
 #endif
 	gCancelRender = true;
 }
@@ -279,7 +284,9 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 	gCancelRender = false;
 	ParseCommandLine(data, argc, argv);
 	char** oldargv = argv;
+#ifdef _DEBUG
 	cerr << "chdir: " << argv[0] << endl;
+#endif
 	int ret = chdir(argv[0]);
 	if (ret) {
 		stringstream ss;
