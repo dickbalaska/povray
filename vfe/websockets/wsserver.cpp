@@ -50,6 +50,8 @@
 // namespace merging
 using websocketpp::connection_hdl;
 
+extern bool gCancelRender;
+bool gDeadConnection = false;
 
 namespace povray {
 namespace websockets {
@@ -176,6 +178,7 @@ void WebsocketServer::on_message(websocketpp::connection_hdl hdl, message_ptr ms
 				  << " and message: " << msg->get_payload()
 				  << endl;
 #endif
+	gDeadConnection = false;
     // check for a special command to instruct the server to stop listening so
     // it can be cleanly exited.
 //    if (msg->get_payload() == "stop-listening") {
@@ -222,10 +225,14 @@ void WebsocketServer::on_close(connection_hdl hdl) {
 #endif
 }
 void WebsocketServer::send(websocketpp::connection_hdl hdl, const string& msg) {
+	if (gDeadConnection)
+		return;
 	websocketpp::lib::error_code ec;
 	server.send(hdl, msg, websocketpp::frame::opcode::text, ec);
 	if (ec) {
 		cerr << "Error sending: " << ec.message() << endl;
+		gCancelRender = true;
+		gDeadConnection = true;
 	}
 }
 
@@ -239,7 +246,7 @@ bool WebsocketServer::sendData(string id, string data) {
 	websocketpp::lib::error_code ec;
 	server.send(hdl, data, websocketpp::frame::opcode::text, ec); // send text message.
 	if (ec) { // we got an error
-		// Error sending on websocket. Log reason using ec.message().
+		cerr << "Error sendDataing: " << ec.message() << endl;
 		return false;
 	}
 
@@ -247,10 +254,14 @@ bool WebsocketServer::sendData(string id, string data) {
 }
 
 bool WebsocketServer::sendBinary(connection_hdl hdl, const char* data, int size) {
+	if (gDeadConnection)
+		return(false);
 	websocketpp::lib::error_code ec;
 	server.send(hdl, data, size, websocketpp::frame::opcode::binary, ec);
 	if (ec) {
 		cerr << "Error sending binary: " << ec.message() << endl;
+		gCancelRender = true;
+		gDeadConnection = true;
 		return(false);
 	}
 
