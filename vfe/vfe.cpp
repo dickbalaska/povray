@@ -467,8 +467,10 @@ void vfeRenderMessageHandler::Progress(Console *Con, POVMS_Object& Obj, bool ver
         m_Session->SetPixelsRendered(cc, pc);
         int percent = pc > 0 ? (int) ((cc * 100.0) / pc) : 0 ;
         m_Session->SetPercentComplete (percent);
-        if (verbose == true || m_Session->m_OptimizeForConsoleOutput == false)
+        if (verbose == true || m_Session->m_OptimizeForConsoleOutput == false) {
+          // DIK: I want just the numbers, so I can internationalize the message
           m_Session->AppendStatusMessage (format ("Rendered %u of %u pixels (%d%%)") % cc % pc % percent, 250) ;
+        }
       }
       else
       {
