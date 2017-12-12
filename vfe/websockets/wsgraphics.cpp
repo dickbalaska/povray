@@ -8,7 +8,10 @@
 #include "wsgraphics.h"
 #include "wsserver.h"
 
+#ifdef _DEBUG
 static bool wsDebug = false;
+#endif
+
 
 namespace povray {
 namespace websockets {
