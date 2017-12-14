@@ -27,7 +27,7 @@ extern bool gCancelRender;
 namespace povray {
 namespace websockets {
 
-using namespace std;
+//using namespace std;
 using namespace boost;
 
 using namespace vfe;
