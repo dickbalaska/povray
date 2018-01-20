@@ -58,8 +58,8 @@
 #include "base/colour.h"
 #include "base/types.h"
 
-#include "core/coretypes.h"
-#include "core/bounding/boundingbox.h"
+#include "povcore/coretypes.h"
+#include "povcore/bounding/boundingbox.h"
 
 #include "backend/configbackend.h"
 

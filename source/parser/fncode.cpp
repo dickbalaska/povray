@@ -43,7 +43,7 @@
 #include <cstring>
 #include <algorithm>
 
-#include "core/scene/scenedata.h"
+#include "povcore/scene/scenedata.h"
 
 #include "vm/fnintern.h"
 #include "vm/fnpovfpu.h"

@@ -8,6 +8,7 @@ QT       -= gui
 TARGET = povray
 TEMPLATE = lib
 CONFIG += staticlib warn_off
+CONFIG += object_parallel_to_source
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -20,9 +21,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+DEFINES += OPENEXR_MISSING
+DEFINES += BUILD_ARCH="\"$$QMAKE_HOST.arch\""
 QMAKE_CLEAN += libpovray.a
 
-INCLUDEPATH += "expat/lib"
+INCLUDEPATH += "../platform/unix"
+INCLUDEPATH += "../unix/povconfig"
+INCLUDEPATH += "../vfe"
 
 # QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
 
@@ -64,50 +69,50 @@ SOURCES += \
 	base/pov_mem.cpp base/precomp.cpp \
 	base/stringutilities.cpp base/textstreambuffer.cpp \
 	base/textstream.cpp base/timer.cpp \
-	core/bounding/boundingbox.cpp \
-	core/bounding/bounding.cpp \
-	core/bounding/boundingcylinder.cpp \
-	core/bounding/boundingsphere.cpp \
-	core/bounding/bsptree.cpp core/colour/spectral.cpp \
-	core/lighting/lightgroup.cpp \
-	core/lighting/lightsource.cpp \
-	core/lighting/photons.cpp \
-	core/lighting/radiosity.cpp \
-	core/lighting/subsurface.cpp \
-	core/material/blendmap.cpp \
-	core/material/interior.cpp core/material/media.cpp \
-	core/material/noise.cpp core/material/normal.cpp \
-	core/material/pattern.cpp \
-	core/material/pigment.cpp \
-	core/material/portablenoise.cpp \
-	core/material/texture.cpp core/material/warp.cpp \
-	core/math/chi2.cpp core/math/hypercomplex.cpp \
-	core/math/jitter.cpp core/math/matrix.cpp \
-	core/math/polynomialsolver.cpp \
-	core/math/quaternion.cpp \
-	core/math/randcosweighted.cpp \
-	core/math/randomsequence.cpp core/math/spline.cpp \
-	core/precomp.cpp core/render/ray.cpp \
-	core/render/trace.cpp core/render/tracepixel.cpp \
-	core/scene/atmosphere.cpp core/scene/camera.cpp \
-	core/scene/object.cpp core/scene/scenedata.cpp \
-	core/scene/tracethreaddata.cpp \
-	core/shape/bezier.cpp core/shape/blob.cpp \
-	core/shape/box.cpp core/shape/cone.cpp \
-	core/shape/csg.cpp core/shape/disc.cpp \
-	core/shape/fractal.cpp core/shape/heightfield.cpp \
-	core/shape/isosurface.cpp core/shape/lathe.cpp \
-	core/shape/lemon.cpp core/shape/mesh.cpp \
-	core/shape/ovus.cpp core/shape/parametric.cpp \
-	core/shape/plane.cpp core/shape/polygon.cpp \
-	core/shape/polynomial.cpp core/shape/prism.cpp \
-	core/shape/quadric.cpp core/shape/sor.cpp \
-	core/shape/sphere.cpp core/shape/spheresweep.cpp \
-	core/shape/superellipsoid.cpp core/shape/torus.cpp \
-	core/shape/triangle.cpp core/shape/truetype.cpp \
-	core/support/imageutil.cpp core/support/octree.cpp \
-	core/support/statisticids.cpp \
-	core/support/statistics.cpp \
+	povcore/bounding/boundingbox.cpp \
+	povcore/bounding/bounding.cpp \
+	povcore/bounding/boundingcylinder.cpp \
+	povcore/bounding/boundingsphere.cpp \
+	povcore/bounding/bsptree.cpp povcore/colour/spectral.cpp \
+	povcore/lighting/lightgroup.cpp \
+	povcore/lighting/lightsource.cpp \
+	povcore/lighting/photons.cpp \
+	povcore/lighting/radiosity.cpp \
+	povcore/lighting/subsurface.cpp \
+	povcore/material/blendmap.cpp \
+	povcore/material/interior.cpp povcore/material/media.cpp \
+	povcore/material/noise.cpp povcore/material/normal.cpp \
+	povcore/material/pattern.cpp \
+	povcore/material/pigment.cpp \
+	povcore/material/portablenoise.cpp \
+	povcore/material/texture.cpp povcore/material/warp.cpp \
+	povcore/math/chi2.cpp povcore/math/hypercomplex.cpp \
+	povcore/math/jitter.cpp povcore/math/matrix.cpp \
+	povcore/math/polynomialsolver.cpp \
+	povcore/math/quaternion.cpp \
+	povcore/math/randcosweighted.cpp \
+	povcore/math/randomsequence.cpp povcore/math/spline.cpp \
+	povcore/precomp.cpp povcore/render/ray.cpp \
+	povcore/render/trace.cpp povcore/render/tracepixel.cpp \
+	povcore/scene/atmosphere.cpp povcore/scene/camera.cpp \
+	povcore/scene/object.cpp povcore/scene/scenedata.cpp \
+	povcore/scene/tracethreaddata.cpp \
+	povcore/shape/bezier.cpp povcore/shape/blob.cpp \
+	povcore/shape/box.cpp povcore/shape/cone.cpp \
+	povcore/shape/csg.cpp povcore/shape/disc.cpp \
+	povcore/shape/fractal.cpp povcore/shape/heightfield.cpp \
+	povcore/shape/isosurface.cpp povcore/shape/lathe.cpp \
+	povcore/shape/lemon.cpp povcore/shape/mesh.cpp \
+	povcore/shape/ovus.cpp povcore/shape/parametric.cpp \
+	povcore/shape/plane.cpp povcore/shape/polygon.cpp \
+	povcore/shape/polynomial.cpp povcore/shape/prism.cpp \
+	povcore/shape/quadric.cpp povcore/shape/sor.cpp \
+	povcore/shape/sphere.cpp povcore/shape/spheresweep.cpp \
+	povcore/shape/superellipsoid.cpp povcore/shape/torus.cpp \
+	povcore/shape/triangle.cpp povcore/shape/truetype.cpp \
+	povcore/support/imageutil.cpp povcore/support/octree.cpp \
+	povcore/support/statisticids.cpp \
+	povcore/support/statistics.cpp \
 	frontend/animationprocessing.cpp \
 	frontend/console.cpp frontend/display.cpp \
 	frontend/filemessagehandler.cpp \

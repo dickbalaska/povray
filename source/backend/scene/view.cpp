@@ -44,10 +44,10 @@
 #include "base/path.h"
 #include "base/timer.h"
 
-#include "core/lighting/photons.h"
-#include "core/lighting/radiosity.h"
-#include "core/math/matrix.h"
-#include "core/support/octree.h"
+#include "povcore/lighting/photons.h"
+#include "povcore/lighting/radiosity.h"
+#include "povcore/math/matrix.h"
+#include "povcore/support/octree.h"
 
 #include "povms/povmscpp.h"
 #include "povms/povmsid.h"

@@ -44,7 +44,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 // POV-Ray header files (core module)
-#include "core/scene/scenedata.h"
+#include "povcore/scene/scenedata.h"
 
 // this must be the last file included
 #include "base/povdebug.h"

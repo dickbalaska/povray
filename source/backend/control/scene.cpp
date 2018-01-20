@@ -42,7 +42,7 @@
 #include "backend/frame.h"
 #include "backend/control/scene.h"
 
-#include "core/scene/tracethreaddata.h"
+#include "povcore/scene/tracethreaddata.h"
 
 #include "parser/parser.h"
 

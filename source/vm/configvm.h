@@ -38,7 +38,7 @@
 #ifndef POVRAY_VM_CONFIGVM_H
 #define POVRAY_VM_CONFIGVM_H
 
-#include "core/configcore.h"
+#include "povcore/configcore.h"
 #include "syspovconfigvm.h"
 
 //##############################################################################

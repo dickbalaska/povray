@@ -42,11 +42,11 @@
 #include "backend/frame.h"
 #include "backend/render/tracetask.h"
 
-#include "core/material/normal.h"
-#include "core/math/chi2.h"
-#include "core/math/jitter.h"
-#include "core/math/matrix.h"
-#include "core/render/trace.h"
+#include "povcore/material/normal.h"
+#include "povcore/math/chi2.h"
+#include "povcore/math/jitter.h"
+#include "povcore/math/matrix.h"
+#include "povcore/render/trace.h"
 
 #include "backend/scene/backendscenedata.h"
 #include "backend/scene/view.h"

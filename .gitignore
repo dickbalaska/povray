@@ -118,6 +118,7 @@ ClientBin/
 *.[Pp]ublish.xml
 *.pfx
 *.publishsettings
+*.swp
 
 # Backup & report files from converting an old project file to a newer
 # Visual Studio version. Backup files are not needed, because we have git ;-)
@@ -212,6 +213,7 @@ $RECYCLE.BIN/
 /source/Makefile
 /unix/Makefile
 /vfe/Makefile
+/qt/gui
 # Directories created by configure script
 .deps/
 
@@ -221,6 +223,11 @@ $RECYCLE.BIN/
 /unix/povray
 # Files created by make in various subdirectories
 .dirstamp
+
+# =====================
+# POV-Ray QMake build artifacts.
+# =====================
+.qmake.stash
 
 # =====================
 # POV-Ray Miscellaneous

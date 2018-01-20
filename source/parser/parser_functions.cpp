@@ -41,7 +41,7 @@
 
 #include "base/mathutil.h"
 
-#include "core/scene/scenedata.h"
+#include "povcore/scene/scenedata.h"
 
 #include "vm/fnpovfpu.h"
 

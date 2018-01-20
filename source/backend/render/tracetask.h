@@ -40,9 +40,9 @@
 
 #include "base/image/colourspace.h"
 
-#include "core/lighting/radiosity.h"
-#include "core/material/media.h"
-#include "core/render/tracepixel.h"
+#include "povcore/lighting/radiosity.h"
+#include "povcore/material/media.h"
+#include "povcore/render/tracepixel.h"
 
 #include "backend/frame.h"
 #include "backend/render/rendertask.h"

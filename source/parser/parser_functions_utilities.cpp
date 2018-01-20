@@ -39,10 +39,10 @@
 // Unit header file must be the first file included within POV-Ray *.cpp files (pulls in config)
 #include "parser/parser.h"
 
-#include "core/material/pigment.h"
-#include "core/math/matrix.h"
-#include "core/math/spline.h"
-#include "core/scene/scenedata.h"
+#include "povcore/material/pigment.h"
+#include "povcore/math/matrix.h"
+#include "povcore/math/spline.h"
+#include "povcore/scene/scenedata.h"
 
 #include "vm/fnpovfpu.h"
 
