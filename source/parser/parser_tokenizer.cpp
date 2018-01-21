@@ -49,8 +49,8 @@
 #include "base/stringutilities.h"
 #include "base/version_info.h"
 
-#include "povcore/material/noise.h"
-#include "povcore/scene/scenedata.h"
+#include "core/material/noise.h"
+#include "core/scene/scenedata.h"
 
 // this must be the last file included
 #include "base/povdebug.h"

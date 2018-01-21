@@ -36,7 +36,7 @@
 #ifndef PHOTONSTRATEGYTASK_H
 #define PHOTONSTRATEGYTASK_H
 
-#include "povcore/render/trace.h"
+#include "core/render/trace.h"
 
 #include "backend/frame.h"
 #include "backend/render/rendertask.h"

@@ -47,7 +47,7 @@
 
 #include "base/textstream.h"
 
-#include "povcore/coretypes.h"
+#include "core/coretypes.h"
 
 namespace pov
 {

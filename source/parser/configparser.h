@@ -38,7 +38,7 @@
 #ifndef POVRAY_PARSER_CONFIGPARSER_H
 #define POVRAY_PARSER_CONFIGPARSER_H
 
-#include "povcore/configcore.h"
+#include "core/configcore.h"
 #include "syspovconfigparser.h"
 
 //##############################################################################

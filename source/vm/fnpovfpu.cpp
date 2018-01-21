@@ -239,7 +239,7 @@ Density of instruction set: 916 / 1024 = 0.8945
 
 #include "base/mathutil.h"
 
-#include "povcore/scene/tracethreaddata.h"
+#include "core/scene/tracethreaddata.h"
 
 #include "vm/fnintern.h"
 

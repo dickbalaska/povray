@@ -36,7 +36,7 @@
 #ifndef POVRAY_BACKEND_VIEWTHREADDATA_H
 #define POVRAY_BACKEND_VIEWTHREADDATA_H
 
-#include "povcore/scene/tracethreaddata.h"
+#include "core/scene/tracethreaddata.h"
 
 namespace pov
 {

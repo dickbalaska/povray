@@ -51,8 +51,8 @@
 #include "base/timer.h"
 #include "base/types.h"
 
-#include "povcore/material/noise.h"
-#include "povcore/material/pattern.h"
+#include "core/material/noise.h"
+#include "core/material/pattern.h"
 
 #include "backend/control/renderbackend.h"
 #include "backend/support/task.h"

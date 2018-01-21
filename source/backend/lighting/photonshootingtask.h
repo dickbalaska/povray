@@ -36,8 +36,8 @@
 #ifndef PHOTONSHOOTINGTASK_H
 #define PHOTONSHOOTINGTASK_H
 
-#include "povcore/lighting/photons.h"
-#include "povcore/render/trace.h"
+#include "core/lighting/photons.h"
+#include "core/render/trace.h"
 
 #include "backend/frame.h"
 #include "backend/render/rendertask.h"

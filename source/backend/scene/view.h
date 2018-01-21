@@ -38,9 +38,9 @@
 
 #include <vector>
 
-#include "povcore/bounding/bsptree.h"
-#include "povcore/lighting/radiosity.h"
-#include "povcore/scene/camera.h"
+#include "core/bounding/bsptree.h"
+#include "core/lighting/radiosity.h"
+#include "core/scene/camera.h"
 
 #include "backend/support/taskqueue.h"
 

@@ -36,10 +36,10 @@
 #ifndef POVRAY_BACKEND_RADIOSITYTASK_H
 #define POVRAY_BACKEND_RADIOSITYTASK_H
 
-#include "povcore/lighting/photons.h"
-#include "povcore/lighting/radiosity.h"
-#include "povcore/material/media.h"
-#include "povcore/render/tracepixel.h"
+#include "core/lighting/photons.h"
+#include "core/lighting/radiosity.h"
+#include "core/material/media.h"
+#include "core/render/tracepixel.h"
 
 #include "backend/render/rendertask.h"
 #include "backend/scene/view.h"

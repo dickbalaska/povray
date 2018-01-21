@@ -44,13 +44,13 @@
 
 #include "base/mathutil.h"
 
-#include "povcore/material/noise.h"
-#include "povcore/material/pigment.h"
-#include "povcore/material/warp.h"
-#include "povcore/math/matrix.h"
-#include "povcore/math/spline.h"
-#include "povcore/scene/scenedata.h"
-#include "povcore/scene/tracethreaddata.h"
+#include "core/material/noise.h"
+#include "core/material/pigment.h"
+#include "core/material/warp.h"
+#include "core/math/matrix.h"
+#include "core/math/spline.h"
+#include "core/scene/scenedata.h"
+#include "core/scene/tracethreaddata.h"
 
 #include "vm/fnpovfpu.h"
 

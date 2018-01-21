@@ -42,7 +42,7 @@
 
 #include <boost/thread.hpp>
 
-#include "povcore/scene/tracethreaddata.h"
+#include "core/scene/tracethreaddata.h"
 
 #include "backend/control/renderbackend.h"
 #include "backend/scene/backendscenedata.h"

@@ -36,7 +36,7 @@
 #ifndef POVRAY_BACKEND_BACKENDSCENEDATA_H
 #define POVRAY_BACKEND_BACKENDSCENEDATA_H
 
-#include "povcore/scene/scenedata.h"
+#include "core/scene/scenedata.h"
 
 #include "backend/control/renderbackend.h"
 
