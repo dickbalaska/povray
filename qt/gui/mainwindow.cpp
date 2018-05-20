@@ -28,7 +28,7 @@
 #include "dock/consoledock.h"
 #include "dock/statusbar.h"
 #include "dock/searchman.h"
-#include "wsclient.h"
+#include "vfeclient.h"
 #include "workspace.h"
 #include "preferences.h"
 #include "dock/filterdialog.h"
@@ -47,7 +47,7 @@ QStringList streams = {"banner", "status", "debug", "fatal", "render", "statisti
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-	wsClient(NULL),					prefVersionWidget(NULL),
+	prefVersionWidget(NULL),
 	m_shortcutConfigure(this),		shortcutRender(this),
 	shortcutNextError(this),		shortcutPreviousError(this),
 	shortcutBookmarkToggle(this),	shortcutBookmarkNext(this),
@@ -62,10 +62,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     ui->setupUi(this);
+#ifdef USE_WEBSOCKETS
+	wsClient = NULL;
+#endif
 	editorTabs = NULL;
 	CodeEditor::init();
 	PovColor::init();
-	setWindowTitle("qtpov");
+	setWindowTitle("qtpovray");
 	mainPixmap = new QPixmap(":/resources/icons/Povray_logo_sphere.png");
 	setWindowIcon(QIcon(*mainPixmap));
 	connect(this, SIGNAL(emitNeedWorkspace()), this, SLOT(needWorkspace()), Qt::QueuedConnection);
@@ -135,9 +138,14 @@ MainWindow::MainWindow(QWidget *parent) :
 //	connect(&m_shortcutEditToggleComments, SIGNAL(activated()),
 //			this, SLOT(editToggleComments()));
 	setShortcutKeys();
+	m_vfeClient = new VfeClient(true, this);
+	connect(m_vfeClient, SIGNAL(messageReceived(QString,QString)), this, SLOT(wsMessageReceived(QString,QString)));
+	connect(m_vfeClient, SIGNAL(binaryMessageReceived(QByteArray)), m_dockMan->getRenderDock(), SLOT(binaryMessageReceived(QByteArray)));
+
 }
 
 MainWindow::~MainWindow() {
+	delete m_vfeClient;
 	delete m_searchMan;
 	delete m_findMan;
 	delete m_insertMenuMan;
@@ -604,6 +612,11 @@ void MainWindow::loadPreferences() {
 //		QCoreApplication::processEvents( QEventLoop::AllEvents, 20 );
 //	}
 //}
+#ifndef USE_WEBSOCKETS
+bool MainWindow::validateExe(const QString&, QTextEdit*) {
+	return(true);
+}
+#else
 bool MainWindow::validateExe(const QString &file, QTextEdit *statusArea) {
 	if (getWsClient() && getWsClient()->isConnected()) {
 		//connect(getWsClient(), SIGNAL(messageReceived(QString,QString)), this, SLOT(wsMessageReceived(QString,QString)));
@@ -625,6 +638,7 @@ bool MainWindow::validateExe(const QString &file, QTextEdit *statusArea) {
 	}
 	return(false);
 }
+#endif
 
 void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 {
@@ -684,15 +698,21 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 	qWarning() << "unhandled message: command:" << command << "text:" << text;
 }
 
-void MainWindow::sendWsMessage(const QString& msg)
+void MainWindow::sendPovrayMessage(const QString& msg)
 {
+	m_vfeClient->sendMessage(msg);
+#ifdef USE_WEBSOCKETS
 	if (wsClient) {
 		wsClient->sendMessage(msg);
 	}
+#else
+
+#endif
 }
 
-void	MainWindow::launchPovray(const QString& file)
+void	MainWindow::launchPovray(const QString& file __attribute__ ((unused)))
 {
+#ifdef USE_WEBSOCKETS
 	qDebug() << "launchPovray";
 	if (wsClient) {
 		wsClient->close();
@@ -740,6 +760,7 @@ void	MainWindow::launchPovray(const QString& file)
 //		QThread::msleep(20);
 //		i += sleepInterval;
 //	}
+#endif
 }
 
 void MainWindow::onRenderStartIfNotRunning()
@@ -754,7 +775,7 @@ void MainWindow::onRenderAction()
 	qDebug() << "onRenderAction";
 	if (!m_mainToolbar->isRenderButtonStart()) {
 		this->statusBar->showMessage(tr("Canceling render"));
-		sendWsMessage("cancel");
+		sendPovrayMessage("cancel");
 		return;
 	}
 	saveAllEditors();
@@ -791,7 +812,7 @@ void MainWindow::onRenderAction()
 	d = "command: ";
 	d += rcl;
 	emit(emitStatusMessage(QTINFO_STREAM, d));
-	wsClient->sendMessage(cl);
+	m_vfeClient->sendMessage(cl);
 
 }
 void MainWindow::povrayWsStateChanged(bool connected)

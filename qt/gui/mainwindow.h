@@ -48,9 +48,12 @@ class InsertMenuMan;
 class MainToolbar;
 class SearchMan;
 class StatusBar;
+class VfeClient;
 class Workspace;
-class WsClient;
 
+#ifdef USE_WEBSOCKETS
+class WsClient;
+#endif
 enum
 {
 	BANNER_STREAM = 0,
@@ -105,8 +108,10 @@ public:
 	bool		validateExe(const QString& file, QTextEdit* statusArea = NULL);
 	void		launchPovray(const QString& file);
 	const QString& getPovProcessErrorMsg() { return(povProcessErrorMsg); }
+#ifdef USE_WEBSOCKETS
 	WsClient*	getWsClient() { return(wsClient); }
-	void		sendWsMessage(const QString& msg);
+#endif
+	void		sendPovrayMessage(const QString& msg);
 	void		setPrefVersionWidget(QTextEdit* w) { prefVersionWidget = w; }
 
 	const PreferenceData& getPreferenceData() const { return(preferenceData); }
@@ -150,7 +155,9 @@ private:
 	QString findFile(const QString& file);		// Given a file name, find the full path
 	void	setShortcutKeys();
 
+#ifdef USE_WEBSOCKETS
 	WsClient*		wsClient;
+#endif
 	QTextEdit*		prefVersionWidget;		// If prefs are open, this points to where the version is displayed
 	QShortcut		m_shortcutConfigure;
 	QShortcut		shortcutRender;
@@ -173,6 +180,7 @@ private:
 	QShortcut		m_shortcutEditGotoMatchingBrace;
 
 	Ui::MainWindow* ui;
+	VfeClient*		m_vfeClient;
 	QTabWidget*		editorTabs;
 	QSize			editorTabsCloseSize;
 	DockMan*		m_dockMan;
@@ -184,7 +192,6 @@ private:
 	StatusBar*		statusBar;
 	PreferenceData	preferenceData;
 	QString			povProcessErrorMsg;
-
 };
 
 inline QTabWidget* MainWindow::getEditorTabs() { return(editorTabs); }
