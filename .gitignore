@@ -213,7 +213,6 @@ $RECYCLE.BIN/
 /source/Makefile
 /unix/Makefile
 /vfe/Makefile
-/qt/gui
 # Directories created by configure script
 .deps/
 
@@ -228,6 +227,12 @@ $RECYCLE.BIN/
 # POV-Ray QMake build artifacts.
 # =====================
 .qmake.stash
+moc_*
+
+/qt/gui/ui_mainwindow.h
+/qt/gui/qrc_qtpov.cpp
+/qt/gui/Makefile
+/qt/libpovray/Makefile
 
 # =====================
 # POV-Ray Miscellaneous
