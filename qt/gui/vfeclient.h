@@ -29,18 +29,22 @@ QT_BEGIN_NAMESPACE
 class QProcess;
 QT_END_NAMESPACE
 
+namespace vfe {
+class QtVfe;
+}
+using vfe::QtVfe;
 
-class WsClient : public QObject
+class VfeClient : public QObject
 {
 	Q_OBJECT
 public:
-	explicit WsClient(const QUrl &url, bool debug = false, QObject *parent = Q_NULLPTR);
-	virtual ~WsClient();
+	explicit VfeClient(bool debug = false, QObject *parent = Q_NULLPTR);
+	virtual ~VfeClient();
 
 	const QString& getWsErrorMsg() { return(wsErrorMsg); }
-	void setPovrayProcess(QProcess* p) { povrayProcess = p; }
-	void connectToPovray();
-	bool isConnected() { return(m_connected); }
+//	void setPovrayProcess(QProcess* p) { povrayProcess = p; }
+	virtual void connectToPovray() {}
+//	bool isConnected() { return(m_connected); }
 	void close();
 	void sendMessage(const QString& msg);
 
@@ -50,18 +54,20 @@ Q_SIGNALS:
 	void binaryMessageReceived(const QByteArray& data);
 
 private Q_SLOTS:
-	void onConnected();
-	void onDisconnected();
-	void onTextMessageReceived(QString msg);
+	//void onConnected();
+	//void onDisconnected();
+	void onTextMessageReceived(const QString& msg);
+	void onTextMessageReceived(const QString& command, const QString& msg);
 	void onBinaryMessageReceived(const QByteArray& data);
 
 private:
-	QWebSocket m_webSocket;
-	QUrl	m_url;
+//	QWebSocket m_webSocket;
 	bool	m_debug;
+	//	QUrl	m_url;
 	QString	wsErrorMsg = "";
-	QProcess*	povrayProcess;
-	bool	m_connected;
+//	QProcess*	povrayProcess;
+//	bool	m_connected;
+	QtVfe*	m_qtVfe;
 };
 
 #endif // _WSCLIENT_H_

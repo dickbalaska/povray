@@ -23,67 +23,58 @@
 #include <QProcess>
 #include <QDataStream>
 
-#include "wsclient.h"
+#include "vfeclient.h"
+#include "qt/qtvfe.h"
 
+using vfe::QtVfe;
 
-WsClient::WsClient(const QUrl &url, bool debug, QObject *parent) :
-	QObject(parent),
-	m_url(url),
-	m_debug(debug),
-	povrayProcess(NULL),
-	m_connected(false)
-
+VfeClient::VfeClient(bool debug, QObject *parent) :
+	QObject(parent)
+	,m_debug(debug)
+#ifdef USE_WEBSOCKETS
+	,povrayProcess(NULL)
+	,m_connected(false)
+#endif
 {
-	if (m_debug)
-		qDebug() << "WebSocket server:" << url;
-	connect(&m_webSocket, &QWebSocket::connected, this, &WsClient::onConnected);
-	connect(&m_webSocket, &QWebSocket::disconnected, this, &WsClient::onDisconnected);
+//	if (m_debug)
+//		qDebug() << "WebSocket server:" << url;
+//	connect(&m_webSocket, &QWebSocket::connected, this, &WsClient::onConnected);
+//	connect(&m_webSocket, &QWebSocket::disconnected, this, &WsClient::onDisconnected);
+	m_qtVfe = new QtVfe(this);
+	connect(m_qtVfe, &QtVfe::emitPovrayBinaryMessage,
+			this, &VfeClient::onBinaryMessageReceived);
+	connect(m_qtVfe, SIGNAL(emitPovrayTextMessage(QString)),
+			this, SLOT(onTextMessageReceived(QString)));
+	connect(m_qtVfe, SIGNAL(emitPovrayTextMessage(QString,QString)),
+			this, SLOT(onTextMessageReceived(QString,QString)));
 }
 
-WsClient::~WsClient()
+VfeClient::~VfeClient()
 {
-	if (povrayProcess) {
-		povrayProcess->kill();
-		povrayProcess = NULL;
+//	if (povrayProcess) {
+//		povrayProcess->kill();
+//		povrayProcess = NULL;
+//	}
+	delete m_qtVfe;
+}
+
+void VfeClient::close()
+{
+//	if (!m_url.isEmpty()) {
+//		m_webSocket.sendTextMessage("quit");
+//		m_webSocket.close();
+//	}
+	if (m_qtVfe) {
+		sendMessage("quit");
+		delete m_qtVfe;
+		m_qtVfe = NULL;
 	}
-}
-void WsClient::connectToPovray() {
-	if (m_debug)
-		qDebug() << "WebSocket connectToPovray";
-	m_webSocket.open(m_url);
-}
 
-void WsClient::close()
-{
-	if (!m_url.isEmpty()) {
-		m_webSocket.sendTextMessage("quit");
-		m_webSocket.close();
-	}
 }
-void WsClient::onConnected()
+void VfeClient::onTextMessageReceived(const QString &msg)
 {
 	if (m_debug)
-		qDebug() << "WebSocket connected";
-	connect(&m_webSocket, &QWebSocket::binaryMessageReceived,
-			this, &WsClient::onBinaryMessageReceived);
-	connect(&m_webSocket, &QWebSocket::textMessageReceived,
-			this, &WsClient::onTextMessageReceived);
-	m_connected = true;
-	emit(clientStateChanged(true));
-	//m_webSocket.sendTextMessage(QStringLiteral("Hello, world!"));
-}
-
-void WsClient::onDisconnected()
-{
-	if (m_debug)
-		qDebug() << "Websocket disconnected:" << m_webSocket.errorString();
-	m_connected = false;
-	emit(clientStateChanged(false));
-}
-void WsClient::onTextMessageReceived(QString msg)
-{
-	if (m_debug)
-		qDebug() << "Message received:" << msg;
+		qDebug() << "VfeClient::onTextMessageReceived:" << msg;
 	int i = msg.indexOf(' ');
 	if (i == -1) {
 		//qCritical() << "Malformed message received: " << msg;
@@ -96,14 +87,21 @@ void WsClient::onTextMessageReceived(QString msg)
 	emit(messageReceived(command, text));
 }
 
-void WsClient::sendMessage(const QString& msg)
+void VfeClient::onTextMessageReceived(const QString& command, const QString& msg)
 {
 	if (m_debug)
-		qDebug() << "Message sent:" << msg;
-	m_webSocket.sendTextMessage(msg);
+		qDebug() << "VfeClient::onTextMessageReceived:" << command << msg;
+	emit(messageReceived(command, msg));
 }
 
-void WsClient::onBinaryMessageReceived(const QByteArray& data)
+void VfeClient::sendMessage(const QString& msg)
+{
+	if (m_debug)
+		qDebug() << "VfeClient::sendMessage:" << msg;
+	m_qtVfe->sendMessageToPovray(msg);
+}
+
+void VfeClient::onBinaryMessageReceived(const QByteArray& data)
 {
 	emit(binaryMessageReceived(data));
 }
