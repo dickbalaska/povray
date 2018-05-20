@@ -161,6 +161,7 @@ void RenderLabel::onSetRefreshDelay()
 void RenderDock::binaryMessageReceived(const QByteArray& data)
 {
 	QDataStream ds(data);
+	ds.setByteOrder(QDataStream::LittleEndian);
 	quint32 opcode;
 	ds >> opcode;
 	if (opcode == WSG_INIT) {
