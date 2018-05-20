@@ -1,4 +1,4 @@
-# source.pro - qmake for povray/source
+# libpovray.pro - qmake for povray/source
 # builds: libpovray.a - The main povray library
 # Copyright 2018 BuckoSoft
 #
@@ -25,6 +25,7 @@ DEFINES += OPENEXR_MISSING
 DEFINES += BUILD_ARCH="\"$$QMAKE_HOST.arch\""
 QMAKE_CLEAN += libpovray.a
 
+QMAKE_SUBSTITUTES += config.h.in
 sDIR = ../../source
 
 INCLUDEPATH += "../../source"
