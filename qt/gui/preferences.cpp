@@ -23,7 +23,6 @@
 #include <QDebug>
 
 #include "mainwindow.h"
-#include "wsclient.h"
 #include "preferences.h"
 
 Preferences::Preferences(MainWindow *parent, PreferenceData* d)
