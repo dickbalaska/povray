@@ -109,7 +109,7 @@ void CodeEditor::configure(PreferenceData* prefs) {
 	QString spaces;
 	for (int i=0; i<tabstop; i++)
 		spaces += " ";
-	this->setTabStopWidth(fm.width(spaces));
+	this->setTabStopDistance(fm.width(spaces));
 
 	this->setLineWrapMode(prefs->getEditorWrapText() ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
 	this->m_highlighter = new Highlighter(prefs, this->document());
