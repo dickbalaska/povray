@@ -147,6 +147,7 @@ PovrayTab::PovrayTab(Preferences* parent)
 	QGroupBox* gridGroupBox = new QGroupBox(tr("POV-Ray"));
 	QGridLayout* layout = new QGridLayout(this);
 
+#ifdef USE_WEBSOCKETS
 	povrayExecutableStatus = new QLabel(this);
 	povrayExecutableStatus->setPixmap(parent->iconBad->pixmap(16));
 	layout->addWidget(povrayExecutableStatus, 0, 0, 1, 1, Qt::AlignLeft);
@@ -156,6 +157,7 @@ PovrayTab::PovrayTab(Preferences* parent)
 	layout->addWidget(povrayExecutable, 0, 2, 1, 1);
 	QPushButton* browseExeButton = new QPushButton(tr("Browse"), this);
 	layout->addWidget(browseExeButton, 0, 3, 1, 1, Qt::AlignRight);
+#endif
 
 	povrayIncludesStatus = new QLabel(this);
 	povrayIncludesStatus->setPixmap(parent->iconBad->pixmap(16));
@@ -179,12 +181,6 @@ PovrayTab::PovrayTab(Preferences* parent)
 	gridGroupBox->setLayout(layout);
 	mainLayout->addWidget(gridGroupBox);
 
-	connect(browseExeButton, SIGNAL(clicked(bool)), this, SLOT(browseExeClicked(bool)));
-	connect(browseIncButton, SIGNAL(clicked(bool)), this, SLOT(browseIncClicked(bool)));
-	connect(browseInsButton, SIGNAL(clicked(bool)), this, SLOT(browseInsClicked(bool)));
-	connect(povrayExecutable, SIGNAL(textEdited(QString)), this, SLOT(textExeEdited(QString)));
-	connect(povrayIncludes, SIGNAL(textEdited(QString)), this, SLOT(textIncEdited(QString)));
-	connect(povrayInsertMenu, SIGNAL(textEdited(QString)), this, SLOT(textInsEdited(QString)));
 	gridGroupBox = new QGroupBox(tr("POV-Ray Banner"));
 	povrayBanner = new QTextEdit(this);
 	povrayBanner->setReadOnly(true);
@@ -192,14 +188,31 @@ PovrayTab::PovrayTab(Preferences* parent)
 	layout->addWidget(povrayBanner);
 	gridGroupBox->setLayout(layout);
 	mainLayout->addWidget(gridGroupBox);
+
+	QPushButton* benchmarkButton = new QPushButton(tr("Run Benchmark"), this);
+	mainLayout->addWidget(benchmarkButton);
+
+#ifdef USE_WEBSOCKETS
+	connect(browseExeButton, SIGNAL(clicked(bool)), this, SLOT(browseExeClicked(bool)));
+	connect(povrayExecutable, SIGNAL(textEdited(QString)), this, SLOT(textExeEdited(QString)));
+#endif
+	connect(browseIncButton, SIGNAL(clicked(bool)), this, SLOT(browseIncClicked(bool)));
+	connect(browseInsButton, SIGNAL(clicked(bool)), this, SLOT(browseInsClicked(bool)));
+	connect(povrayIncludes, SIGNAL(textEdited(QString)), this, SLOT(textIncEdited(QString)));
+	connect(povrayInsertMenu, SIGNAL(textEdited(QString)), this, SLOT(textInsEdited(QString)));
+	connect(benchmarkButton, SIGNAL(clicked(bool)), this, SLOT(benchmarkButtonClicked(bool)));
 	this->setLayout(mainLayout);
 }
 
 void PovrayTab::validateData() {
 	validateInc();
 	validateIns();
+#ifdef USE_WEBSOCKETS
 	validateExe();
+#endif
 }
+
+#ifdef USE_WEBSOCKETS
 void PovrayTab::browseExeClicked(bool) {
 	QString dir = QFileDialog::getOpenFileName(this, tr("Select POV-Ray Executable"));
 	if (!dir.isEmpty()) {
@@ -208,6 +221,8 @@ void PovrayTab::browseExeClicked(bool) {
 	}
 	validateExe();
 }
+#endif
+
 void PovrayTab::browseIncClicked(bool) {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"));
 	if (!dir.isEmpty()) {
@@ -226,10 +241,13 @@ void PovrayTab::browseInsClicked(bool) {
 	validateIns();
 }
 
+#ifdef USE_WEBSOCKETS
 void PovrayTab::textExeEdited(const QString& text) {
 	parent->prefData->setPovrayExecutable(text);
 	validateExe();
 }
+#endif
+
 void PovrayTab::textIncEdited(const QString& text) {
 	parent->prefData->setPovrayIncludes(text);
 	validateInc();
@@ -273,11 +291,17 @@ bool Preferences::validateIns(const QString &file) {
 	return(insStat);
 }
 
+#ifdef USE_WEBSOCKETS
 void PovrayTab::validateExe() {
 	if (parent->mainWindow->validateExe(parent->prefData->getPovrayExecutable(), povrayBanner))
 		povrayExecutableStatus->setPixmap(parent->iconOk->pixmap(16));
 	else
 		povrayExecutableStatus->setPixmap(parent->iconBad->pixmap(16));
+}
+#endif
+
+void PovrayTab::benchmarkButtonClicked(bool ) {
+
 }
 
 ///////////////////////////////////////////////////////////////////

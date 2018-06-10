@@ -58,27 +58,34 @@ public:
 	QTextEdit* getPovrayBanner() { return(povrayBanner); }
 
 public slots:
+#ifdef USE_WEBSOCKETS
 	void browseExeClicked(bool b);
-	void browseIncClicked(bool b);
-	void browseInsClicked(bool b);
 	void textExeEdited(const QString& text);
+#endif
+	void browseIncClicked(bool b);
 	void textIncEdited(const QString& text);
+	void browseInsClicked(bool b);
 	void textInsEdited(const QString& text);
+	void benchmarkButtonClicked(bool);
 
 private:
+#ifdef USE_WEBSOCKETS
 	void validateExe();
+#endif
 	void validateInc();
 	void validateIns();
 
 	Preferences* parent;
 
+#ifdef USE_WEBSOCKETS
 	QLineEdit*	povrayExecutable;
-	QLineEdit*	povrayIncludes;
-	QLineEdit*	povrayInsertMenu;
-	QTextEdit*	povrayBanner;		// output of talking to POV-Ray
 	QLabel*		povrayExecutableStatus;
+#endif
+	QLineEdit*	povrayIncludes;
 	QLabel*		povrayIncludesStatus;
+	QLineEdit*	povrayInsertMenu;
 	QLabel*		povrayInsertMenuStatus;
+	QTextEdit*	povrayBanner;		// output of talking to POV-Ray
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
