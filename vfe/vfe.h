@@ -75,7 +75,7 @@ namespace vfe
       vfeException() : runtime_error("") {}
       vfeException(const string str) : runtime_error(str) {}
       virtual ~vfeException() throw() {}
-  } ;
+  };
 
   class vfeCriticalError : public vfeException
   {

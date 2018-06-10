@@ -61,11 +61,6 @@
 #include "qt/qtvfe.h"
 #include "qt/qtoptions.h"
 
-//namespace povray {
-//namespace websockets {
-//extern void wsSend(websocketpp::connection_hdl hdl, const char* msg);
-//inline void wsSend(websocketpp::connection_hdl hdl, const string& msg) { wsSend(hdl, msg.c_str()); }
-//}}
 
 namespace vfePlatform
 {
