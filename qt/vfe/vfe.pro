@@ -58,6 +58,9 @@ SOURCES += \
 
 HEADERS += \
 	$$vDIR/vfe.h \
+	$$vDIR/vfesession.h \
+	$$vDIR/vfepovms.h \
+	$$vqDIR/vfeplatform.h \
 	$$vqDIR/qtvfe.h \
 	$$vqDIR/qtoptions.h \
 	$$vqDIR/qtgraphics.h \
