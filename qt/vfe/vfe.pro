@@ -51,9 +51,6 @@ SOURCES += \
 	$$vqDIR/vfeplatform.cpp \
 	$$vqDIR/qtgraphics.cpp \
 	$$vqDIR/qtoptions.cpp \
-#	$$vqDIR/qtconsole.cpp \
-#	$$vqDIR/qthandler.cpp \
-#	$$vqDIR/qtserver.cpp \
 
 
 HEADERS += \
