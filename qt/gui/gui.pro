@@ -102,9 +102,19 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../vfe/debug/vfe.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../vfe/libvfe.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libpovray/release/ -lpovray
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libpovray/debug/ -lpovray
-else:unix: LIBS += -L$$OUT_PWD/../libpovray/ -lpovray
+#INCLUDEPATH += $$PWD/../platform
+#DEPENDPATH += $$PWD/../platform
+
+#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/release/libplatform.a
+#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/debug/libplatform.a
+#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/release/platform.lib
+#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/debug/platform.lib
+#else:unix: PRE_TARGETDEPS += $$OUT_PWD/../platform/libplatform.a
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../platform/release/ -lplatform
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../platform/debug/ -lplatform
+#else:unix: LIBS += -L$$OUT_PWD/../platform/ -lplatform
+
 
 INCLUDEPATH += $$PWD/../libpovray
 DEPENDPATH += $$PWD/../libpovray
@@ -114,6 +124,11 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libp
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libpovray/release/povray.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libpovray/debug/povray.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../libpovray/libpovray.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libpovray/release/ -lpovray
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libpovray/debug/ -lpovray
+else:unix: LIBS += -L$$OUT_PWD/../libpovray/ -lpovray
+
 
 unix|win32: LIBS += -lz
 
