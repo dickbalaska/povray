@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SUBDIRS = qt/libpovray \
+			qt/platform \
 			qt/vfe \
 			qt/gui
 
@@ -24,11 +25,12 @@ CONFIG += ordered
 
 PACKAGE_NAME = "qtpovray"
 libpovray.subdir = libpovray
+platform.subdir = platform
 qtgui.subdir = qt/gui
 qtconsole.subdir = qt/console
 qtwebsockets.subdir = qt/websockets
 
-qtgui.depends = libpovray
+qtgui.depends = libpovray platform
 qtconsole.depends = libpovray
 qtwebsockets.depends = libpovray
 
