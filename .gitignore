@@ -232,7 +232,9 @@ moc_*
 /qt/gui/ui_mainwindow.h
 /qt/gui/qrc_qtpov.cpp
 /qt/gui/Makefile
+/qt/gui/qtpovray
 /qt/libpovray/Makefile
+/qt/platform/Makefile
 
 # =====================
 # POV-Ray Miscellaneous
