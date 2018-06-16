@@ -17,10 +17,10 @@ TEMPLATE = app
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-#CONFIG(debug) {
-#	message(Build debug version)
-#	DEFINES += _DEBUG
-#}
+CONFIG(debug, debug|release) {
+	message(Build GUI debug version)
+	DEFINES += _DEBUG
+}
 #release {		# DIK: Includes this define in debug builds. ??
 #	DEFINES += _NDEBUG
 #}
@@ -102,19 +102,6 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../vfe/debug/vfe.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../vfe/libvfe.a
 
-#INCLUDEPATH += $$PWD/../platform
-#DEPENDPATH += $$PWD/../platform
-
-#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/release/libplatform.a
-#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/debug/libplatform.a
-#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/release/platform.lib
-#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/debug/platform.lib
-#else:unix: PRE_TARGETDEPS += $$OUT_PWD/../platform/libplatform.a
-
-#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../platform/release/ -lplatform
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../platform/debug/ -lplatform
-#else:unix: LIBS += -L$$OUT_PWD/../platform/ -lplatform
-
 
 INCLUDEPATH += $$PWD/../libpovray
 DEPENDPATH += $$PWD/../libpovray
@@ -129,6 +116,18 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libpovray/release/ 
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libpovray/debug/ -lpovray
 else:unix: LIBS += -L$$OUT_PWD/../libpovray/ -lpovray
 
+INCLUDEPATH += $$PWD/../platform
+DEPENDPATH += $$PWD/../platform
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/release/libplatform.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/debug/libplatform.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/release/platform.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../platform/debug/platform.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../platform/libplatform.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../platform/release/ -lplatform
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../platform/debug/ -lplatform
+else:unix: LIBS += -L$$OUT_PWD/../platform/ -lplatform
 
 unix|win32: LIBS += -lz
 

@@ -28,9 +28,11 @@ QMAKE_CLEAN += libpovray.a
 #QMAKE_SUBSTITUTES += config.h.in
 
 sDIR = ../../source
+cDIR = ../../unix/povconfig
 
 INCLUDEPATH += "../../source"
 INCLUDEPATH += "../../platform/unix"
+INCLUDEPATH += "../../platform/x86"
 INCLUDEPATH += "../../unix/povconfig"
 INCLUDEPATH += "../../vfe"
 
@@ -210,7 +212,6 @@ HEADERS += \
 	$$sDIR/backend/lighting/photonshootingtask.h \
 	$$sDIR/backend/lighting/photonsortingtask.h \
 	$$sDIR/backend/lighting/photonstrategytask.h \
-	$$sDIR/backend/povray.h \
 	$$sDIR/backend/render/radiositytask.h \
 	$$sDIR/backend/render/rendertask.h \
 	$$sDIR/backend/render/tracetask.h \
@@ -219,6 +220,8 @@ HEADERS += \
 	$$sDIR/backend/scene/viewthreaddata.h \
 	$$sDIR/backend/support/task.h \
 	$$sDIR/backend/support/taskqueue.h \
+	$$sDIR/backend/frame.h \
+	$$sDIR/backend/povray.h \
 	$$sDIR/base/animation/animation.h \
 	$$sDIR/base/animation/moov.h \
 	$$sDIR/base/build.h \
@@ -351,10 +354,15 @@ HEADERS += \
 	$$sDIR/povms/povmsutil.h \
 	$$sDIR/vm/fnintern.h \
 	$$sDIR/vm/fnpovfpu.h \
+	$$cDIR/syspovconfig.h \
 
+#unix {
+#    target.path = /usr/lib
+#    INSTALLS += target
+#}
 
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
+linux-g++ {
+	DEFINES += TRY_OPTIMIZED_NOISE
+	DEFINES += BUILD_X86
 }
 

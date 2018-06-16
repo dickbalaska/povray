@@ -43,10 +43,11 @@ HEADERS += \
 	$$pDIR/cpuid.h \
 	$$pDIR/optimizednoise.h \
 	$$pDIR/avx/avxnoise.h \
+	$$pDIR/avx/avxportablenoise.h \
 	$$pDIR/avx2fma3/avx2fma3noise.h \
 	$$pDIR/avxfma4/avxfma4noise.h \
 
-SOURCES_AVX = $$pDIR/avx/avxnoise.cpp
+SOURCES_AVX = $$pDIR/avx/avxnoise.cpp $$pDIR/avx/avxportablenoise.cpp
 avx.name = avx
 avx.input = SOURCES_AVX
 avx.dependency_type = TYPE_C
@@ -72,6 +73,19 @@ avxfma4.variable_out = OBJECTS
 avxfma4.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_IN_BASE}$${first(QMAKE_EXT_OBJ)}
 avxfma4.commands = $${QMAKE_CXX} $(CXXFLAGS) -mavx -mfma4 $(INCPATH) -c ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
 QMAKE_EXTRA_COMPILERS += avxfma4
+
+linux-g++ {
+	DEFINES += TRY_OPTIMIZED_NOISE
+	DEFINES += TRY_OPTIMIZED_NOISE_AVX_PORTABLE
+	DEFINES += TRY_OPTIMIZED_NOISE_AVX
+	DEFINES += TRY_OPTIMIZED_NOISE_AVX2FMA3
+	DEFINES += TRY_OPTIMIZED_NOISE_AVXFMA4
+}
+
+CONFIG(debug, debug|release) {
+	message(Build platform debug version)
+	DEFINES += _DEBUG
+}
 
 #unix {
 #    target.path = /usr/lib
