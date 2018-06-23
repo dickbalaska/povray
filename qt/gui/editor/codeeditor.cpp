@@ -30,6 +30,7 @@
 #include "codeeditor.h"
 
 #include <QtWidgets>
+#include <QtGlobal>
 
 QHash<QString, int>	editKeywords;
 
@@ -109,8 +110,11 @@ void CodeEditor::configure(PreferenceData* prefs) {
 	QString spaces;
 	for (int i=0; i<tabstop; i++)
 		spaces += " ";
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
 	this->setTabStopDistance(fm.width(spaces));
-
+#else
+	this->setTabStopWidth(fm.width(spaces));
+#endif
 	this->setLineWrapMode(prefs->getEditorWrapText() ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
 	this->m_highlighter = new Highlighter(prefs, this->document());
 	this->bAutoIndent = prefs->getAutoIndent();
