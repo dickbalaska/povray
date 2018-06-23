@@ -1,5 +1,5 @@
-# source.pro - qmake for povray/source
-# builds: libpovray.a - The main povray library
+# vfe.pro - qmake for povray/vfe
+# builds: libvfe.a - The vfe interface between libpovray and a frontend
 # Copyright 2018 BuckoSoft
 #
 
@@ -9,6 +9,7 @@ TARGET = vfe
 TEMPLATE = lib
 CONFIG += staticlib warn_off
 CONFIG += object_parallel_to_source
+CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
