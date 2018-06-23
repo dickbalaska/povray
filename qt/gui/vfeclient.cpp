@@ -22,6 +22,7 @@
 #include <QFile>
 #include <QProcess>
 #include <QDataStream>
+#include <QDebug>
 
 #include "vfeclient.h"
 #include "qt/qtvfe.h"

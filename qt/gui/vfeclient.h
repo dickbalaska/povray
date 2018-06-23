@@ -1,15 +1,15 @@
 /******************************************************************************
- * wsclient.h - The WebSockets client to connect to povrayws
+ * vfeclient.h - The client to connect the gui to povray's vfe
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -19,11 +19,10 @@
  *
  *****************************************************************************/
 
-#ifndef _WSCLIENT_H_
-#define _WSCLIENT_H_
+#ifndef _VFECLIENT_H_
+#define _VFECLIENT_H_
 
 #include <QObject>
-#include <QtWebSockets/QWebSocket>
 
 QT_BEGIN_NAMESPACE
 class QProcess;
@@ -70,4 +69,4 @@ private:
 	QtVfe*	m_qtVfe;
 };
 
-#endif // _WSCLIENT_H_
+#endif // _VFECLIENT_H_
