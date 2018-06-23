@@ -1,0 +1,12 @@
+Source: qtpovray
+Maintainer: Dick Balaska <dick@buckosoft.com>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 9)
+
+Package: qtpovray
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Qt IDE for POV-Ray
+ An Eclipse-like GUI for developing POV-Ray scenes.
