@@ -237,6 +237,14 @@ moc_*
 /qt/platform/Makefile
 
 # =====================
+# qtpovray debian build foo
+# =====================
+/bin/
+/debian/debhelper-build-stamp
+/debian/.debhelper/
+/debian/qtpovray/
+
+# =====================
 # POV-Ray Miscellaneous
 # =====================
 
