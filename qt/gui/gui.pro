@@ -146,3 +146,13 @@ unix|win32: LIBS += -lpng
 unix|win32: LIBS += -ltiff
 
 unix|win32: LIBS += -lboost_date_time
+
+includes.path = /usr/share/qtpovray-3.8/include
+includes.files = ../../distribution/include
+INSTALLS += includes
+
+inserts.path = "/usr/share/qtpovray-3.8/Insert Menu"
+inserts.files = "../../distribution/platform-specific/windows/Insert Menu"
+INSTALLS += inserts
+
+
