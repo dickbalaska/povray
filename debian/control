@@ -1,12 +1,53 @@
 Source: qtpovray
+Section: graphics
+Priority: extra
 Maintainer: Dick Balaska <dick@buckosoft.com>
-Section: misc
-Priority: optional
-Standards-Version: 3.9.2
-Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
+Build-Depends: 
+ debhelper (>= 9),
+ qtbase5-dev, 
+ qtbase5-dev-tools, 
+ qt5-qmake,
+ libpng-dev,
+ zlib1g-dev,
+ libx11-dev,
+ libxt-dev,
+ libice-dev,
+ libjpeg-dev,
+ libtiff-dev,
+ pkg-config,
+ libboost-thread-dev,
+ libopenexr-dev,
+ libsdl-dev,
+ libxpm-dev,
+
 
 Package: qtpovray
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Qt IDE for POV-Ray
- An Eclipse-like GUI for developing POV-Ray scenes.
+Depends: libqt5gui5, libqt5widgets5, libqt5core5a, ${shlibs:Depends}, ${misc:Depends}
+Recommends: qtpovray-includes
+Description: Qt IDE for POV-Ray (a 3D renderer)
+ qtpovray is an Eclipse-like GUI for developing POV-Ray scenes.
+ POV-Ray is a full-featured ray tracer that reads and interprets text 
+ files and outputs images.
+ .
+ qtpovray wraps POV-Ray inside of a GUI to assist in managing and creating
+ POV-Ray SDL (Scene Description Language) text files.  Images are rendered
+ and displayed from within qtpovray.
+ .
+ qtpovray-includes is highly recommended in addition to this package.
+
+Package: qtpovray-includes
+Architecture: all
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}
+Description: Qt IDE for POV-Ray (a 3D renderer)
+ qtpovray is an Eclipse-like GUI for developing POV-Ray scenes.
+ POV-Ray is a full-featured ray tracer that reads and interprets text 
+ files and outputs images.
+ .
+ qtpovray wraps POV-Ray inside of a GUI to assist in managing and creating
+ POV-Ray SDL (Scene Description Language) text files.  Images are rendered
+ and displayed from within qtpovray.
+ .
+ This package contains architecture independent include files.
