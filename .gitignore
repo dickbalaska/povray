@@ -243,6 +243,8 @@ moc_*
 /debian/debhelper-build-stamp
 /debian/.debhelper/
 /debian/qtpovray/
+/debian/qtpovray-includes/
+/debian/tmp/
 
 # =====================
 # POV-Ray Miscellaneous
