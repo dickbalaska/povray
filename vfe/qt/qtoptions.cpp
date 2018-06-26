@@ -1,6 +1,6 @@
 //******************************************************************************
 ///
-/// @file vfe/websockets/websockoptions.cpp
+/// @file vfe/qt/qtoptions.cpp
 ///
 /// Processing system for options in povray.conf, command line and environment
 /// variables.
@@ -48,13 +48,12 @@
 
 
 #include "qtoptions.h"
-//#include "qthandler.h"
 #include "qtvfe.h"
 
 #undef UNIX_DEBUG
 
 #ifndef PACKAGE
-#define	PACKAGE	"povray"
+#define	PACKAGE	"qtpovray"
 #endif
 
 #ifndef VERSION_BASE			// FIXME!

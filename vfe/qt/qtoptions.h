@@ -1,10 +1,11 @@
 //******************************************************************************
 ///
-/// @file vfe/websockets/wsoptions.h
+/// @file vfe/qt/qtoptions.h
 ///
 /// Processing system for options in povray.conf, command line and environment
 /// variables.
 ///
+/// @author Dick Balaska <dick@buckosoft.com>
 /// @author Christoph Hormann <chris_hormann@gmx.de>
 /// @author based on unix.cpp Elements by Nicolas Calimet
 ///
@@ -40,9 +41,6 @@
 #ifndef _OPTIONS_H
 #define _OPTIONS_H
 
-//#include "websocketpp/config/asio_no_tls.hpp"
-//#include "websocketpp/server.hpp"
-
 
 #include <list>
 #include <vector>
@@ -61,15 +59,15 @@ using boost::to_lower_copy;
  * These constants don't have to be in config.h .
  */
 #ifndef POVLIBDIR
-# define POVLIBDIR  "/usr/local/share/" PACKAGE "-" VERSION_BASE
+# define POVLIBDIR  "/usr/share/" PACKAGE "-" VERSION_BASE
 #endif
 
 #ifndef POVCONFDIR
-# define POVCONFDIR  "/usr/local/etc/" PACKAGE "/" VERSION_BASE
+# define POVCONFDIR  "/etc/" PACKAGE "/" VERSION_BASE
 #endif
 
 #ifndef POVCONFDIR_BACKWARD
-# define POVCONFDIR_BACKWARD  "/usr/local/etc"
+# define POVCONFDIR_BACKWARD  "/etc"
 #endif
 
 namespace vfe {
