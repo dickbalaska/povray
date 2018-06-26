@@ -10,6 +10,7 @@ TEMPLATE = lib
 CONFIG += staticlib warn_off
 CONFIG += object_parallel_to_source
 CONFIG += c++11
+CONFIG += precompile_header
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -39,6 +40,7 @@ INCLUDEPATH += "../../vfe"
 
 # QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
 
+PRECOMPILED_HEADER = $$sDIR/base/precomp.h
 
 SOURCES += \
 	$$sDIR/backend/bounding/boundingtask.cpp \
@@ -54,7 +56,6 @@ SOURCES += \
 	$$sDIR/backend/lighting/photonsortingtask.cpp \
 	$$sDIR/backend/lighting/photonstrategytask.cpp \
 	$$sDIR/backend/povray.cpp \
-	$$sDIR/backend/precomp.cpp \
 	$$sDIR/backend/render/radiositytask.cpp \
 	$$sDIR/backend/render/rendertask.cpp \
 	$$sDIR/backend/render/tracetask.cpp \
@@ -93,7 +94,6 @@ SOURCES += \
 	$$sDIR/base/platformbase.cpp \
 	$$sDIR/base/pov_err.cpp \
 	$$sDIR/base/pov_mem.cpp \
-	$$sDIR/base/precomp.cpp \
 	$$sDIR/base/stringutilities.cpp \
 	$$sDIR/base/textstreambuffer.cpp \
 	$$sDIR/base/textstream.cpp \
@@ -128,7 +128,6 @@ SOURCES += \
 	$$sDIR/core/math/randcosweighted.cpp \
 	$$sDIR/core/math/randomsequence.cpp \
 	$$sDIR/core/math/spline.cpp \
-	$$sDIR/core/precomp.cpp \
 	$$sDIR/core/render/ray.cpp \
 	$$sDIR/core/render/trace.cpp \
 	$$sDIR/core/render/tracepixel.cpp \
@@ -174,7 +173,6 @@ SOURCES += \
 	$$sDIR/frontend/imagemessagehandler.cpp \
 	$$sDIR/frontend/imageprocessing.cpp \
 	$$sDIR/frontend/parsermessagehandler.cpp \
-	$$sDIR/frontend/precomp.cpp \
 	$$sDIR/frontend/processoptions.cpp \
 	$$sDIR/frontend/processrenderoptions.cpp \
 	$$sDIR/frontend/renderfrontend.cpp \
@@ -189,15 +187,12 @@ SOURCES += \
 	$$sDIR/parser/parser_obj.cpp \
 	$$sDIR/parser/parser_strings.cpp \
 	$$sDIR/parser/parser_tokenizer.cpp \
-	$$sDIR/parser/precomp.cpp \
 	$$sDIR/parser/reservedwords.cpp \
 	$$sDIR/povms/povms.cpp \
 	$$sDIR/povms/povmscpp.cpp \
 	$$sDIR/povms/povmsutil.cpp \
-	$$sDIR/povms/precomp.cpp \
 	$$sDIR/vm/fnintern.cpp \
 	$$sDIR/vm/fnpovfpu.cpp \
-	$$sDIR/vm/precomp.cpp
 
 
 HEADERS += \
