@@ -143,6 +143,7 @@ void DockMan::showAbout()
 #endif
 	l = new QLabel(v);
 	mainLayout->addWidget(l);
+#pragma GCC diagnostic ignored "-Wdate-time"
 	QString compilationTime = QString("Built on: %1 %2").arg(__DATE__).arg(__TIME__);
 	l = new QLabel(compilationTime);
 	mainLayout->addWidget(l);
@@ -150,7 +151,8 @@ void DockMan::showAbout()
 	l->setText("<a href=\"http://www.buckosoft.com/qtpov/\">www.buckosoft.com/qtpov</a>");
 	l->setTextFormat(Qt::RichText);
 	l->setTextInteractionFlags(Qt::TextBrowserInteraction);
-	l->setOpenExternalLinks(true);	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
+	l->setOpenExternalLinks(true);
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
 	mainLayout->addWidget(l);
 	connect(buttonBox, &QDialogButtonBox::accepted, &d, &QDialog::accept);
 	mainLayout->addWidget(buttonBox);
