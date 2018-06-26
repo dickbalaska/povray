@@ -125,7 +125,7 @@
 /// platforms where development builds typically cannot run stand-alone, but require an existing
 /// host installation to be dropped into. Define as the latest installable release's major and
 /// minor version number for vX.Y.0.0 pre-beta versions, or leave undefined otherwise.
-#define POV_RAY_HOST_VERSION        "3.7"
+#define POV_RAY_HOST_VERSION        "3.8"
 
 #if defined(DOXYGEN) && !defined(POV_RAY_HOST_VERSION)
     // Work around doxygen being unable to document undefined macros.
