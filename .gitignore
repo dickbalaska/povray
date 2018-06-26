@@ -228,6 +228,7 @@ $RECYCLE.BIN/
 # =====================
 .qmake.stash
 moc_*
+*.gch
 
 /qt/gui/ui_mainwindow.h
 /qt/gui/qrc_qtpov.cpp
