@@ -4,7 +4,11 @@
 #
 #-------------------------------------------------
 
+# Used by make install for directory location
+QPVERSION=3.8
+
 QT       += core gui
+
 
 CONFIG += c++11
 
@@ -27,12 +31,7 @@ CONFIG(debug, debug|release) {
 #	DEFINES += _NDEBUG
 #}
 
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-DESTDIR = ../../bin
+DESTDIR = ../../usr/bin
 
 INCLUDEPATH += "../../vfe"
 
@@ -147,12 +146,35 @@ unix|win32: LIBS += -ltiff
 
 unix|win32: LIBS += -lboost_date_time
 
-includes.path = /usr/share/qtpovray-3.8
+#
+# In debian package qtpovray
+#
+etc.path = /etc/qtpovray/$$QPVERSION
+etc.files = ../../unix/povray.conf ../../distribution/ini/povray.ini
+INSTALLS += etc
+
+man.path = /usr/share/man/man1
+man.files = ../../qt/install/qtpovray.1
+INSTALLS += man
+
+#
+# In debian package qtpovray-includes
+#
+includes.path = /usr/share/qtpovray-$$QPVERSION
 includes.files = ../../distribution/include
 INSTALLS += includes
 
-inserts.path = "/usr/share/qtpovray-3.8"
+#
+# In debian package qtpovray-extras
+#
+inserts.path = /usr/share/qtpovray-$$QPVERSION
 inserts.files = "../../distribution/platform-specific/windows/Insert Menu"
 INSTALLS += inserts
 
+scenes.path = /usr/share/qtpovray-$$QPVERSION
+scenes.files = ../../distribution/scenes
+INSTALLS += scenes
 
+help.path = /usr/share/qtpovray-$$QPVERSION
+help.files = ../../doc/html
+INSTALLS += help
