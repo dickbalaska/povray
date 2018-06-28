@@ -22,6 +22,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QTime>
+#include "version.h"
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -51,6 +52,12 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
+	if (argc > 1) {
+		if (!strncmp(argv[1], "-version", 8) || !strncmp(argv[1], "--version", 9)) {
+			printf("qtpovray %s\n", VERSION);
+			exit(0);
+		}
+	}
 	qInstallMessageHandler(myMessageOutput);
 	QApplication a(argc, argv);
     MainWindow w;
