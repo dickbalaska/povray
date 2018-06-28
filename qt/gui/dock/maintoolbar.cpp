@@ -186,7 +186,9 @@ void MainToolbar::setupMenu()
 
 	////////////////
 	// Help
-	menu = m_mainWindow->menuBar()->addMenu(tr("&Help"));
+	menu = m_mainWindow->menuBar()->addMenu(tr("&Help"));	
+	menu->addAction(tr("&Povray Help"), m_mainWindow->getDockMan(), SLOT(showPovrayHelp()));
+	menu->addAction(tr("&Sample scenes"), m_mainWindow->getDockMan(), SLOT(showSampleScenes()));
 	menu->addAction(tr("&About"), m_mainWindow->getDockMan(), SLOT(showAbout()));
 }
 

@@ -26,6 +26,7 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QScrollBar>
+#include <QDesktopServices>
 #include <QDebug>
 
 #include "../mainwindow.h"
@@ -157,4 +158,15 @@ void DockMan::showAbout()
 	connect(buttonBox, &QDialogButtonBox::accepted, &d, &QDialog::accept);
 	mainLayout->addWidget(buttonBox);
 	d.exec();
+}
+
+void DockMan::showSampleScenes()
+{
+	QUrl url = QUrl::fromLocalFile("/usr/share/qtpovray-3.8/scenes/index.htm");
+	QDesktopServices::openUrl(url);
+}
+void DockMan::showPovrayHelp()
+{
+	QUrl url = QUrl::fromLocalFile("/usr/share/qtpovray-3.8/html/index.html");
+	QDesktopServices::openUrl(url);
 }

@@ -51,6 +51,8 @@ public slots:
 	void switchWorkspace();
 	void openRecentPWS();
 	void showAbout();
+	void showPovrayHelp();
+	void showSampleScenes();
 
 private:
 
