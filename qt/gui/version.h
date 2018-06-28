@@ -22,6 +22,6 @@
 #ifndef _version_h_		// use lower case, because the install builder wants to grep the upper case label
 #define _version_h_
 
-#define VERSION "0.3.1"
+#define VERSION "3.80.0"
 
 #endif // _version_h_
