@@ -1,1 +1,4 @@
-bin/qtpovray usr/bin
+etc
+usr/share/man/man1
+usr/bin
+
