@@ -71,7 +71,6 @@ HEADERS += \
     preferencedata.h \
     editor/highlighter.h \
     dock/renderdock.h \
-    version.h \
     dock/statusbar.h \
     dock/filterdialog.h \
     dock/searchman.h \
@@ -82,7 +81,8 @@ HEADERS += \
     editor/coloreditor.h \
     editor/povcolor.h \
     editor/colormapeditor.h \
-    vfeclient.h
+    vfeclient.h \
+    qtpovrayversion.h
 
 FORMS += \
         mainwindow.ui
