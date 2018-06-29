@@ -1,15 +1,15 @@
 /******************************************************************************
  * preferences.h - The dialog box to control user preferences
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt GUI IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -50,12 +50,14 @@ class MainWindow;
 class Preferences;
 
 ///////////////////////////////////////////////////////////////////////////////////////
-class PovrayTab : public QWidget {
+class SystemTab : public QWidget {
 	Q_OBJECT
 public:
-	PovrayTab(Preferences *parent);
+	SystemTab(Preferences *parent);
 	void validateData();
+#ifdef USE_WEBSOCKETS
 	QTextEdit* getPovrayBanner() { return(povrayBanner); }
+#endif
 
 public slots:
 #ifdef USE_WEBSOCKETS
@@ -66,6 +68,11 @@ public slots:
 	void textIncEdited(const QString& text);
 	void browseInsClicked(bool b);
 	void textInsEdited(const QString& text);
+	void browseInhClicked(bool b);
+	void textInhEdited(const QString& text);
+	void browseIndClicked(bool b);
+	void textIndEdited(const QString& text);
+
 	void benchmarkButtonClicked(bool);
 
 private:
@@ -74,6 +81,10 @@ private:
 #endif
 	void validateInc();
 	void validateIns();
+	void validateInh();
+	void validateInd();
+	void validateHelpDirectory();
+	void validateSceneDirectory();
 
 	Preferences* parent;
 
@@ -85,7 +96,14 @@ private:
 	QLabel*		povrayIncludesStatus;
 	QLineEdit*	povrayInsertMenu;
 	QLabel*		povrayInsertMenuStatus;
+	QLineEdit*	povrayHelpDirectory;
+	QLabel*		povrayHelpDirectoryStatus;
+	QLineEdit*	povraySceneDirectory;
+	QLabel*		povraySceneDirectoryStatus;
+
+#ifdef USE_WEBSOCKETS
 	QTextEdit*	povrayBanner;		// output of talking to POV-Ray
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -224,7 +242,7 @@ private:
 class Preferences : public QDialog
 {
 	Q_OBJECT
-	friend class PovrayTab;
+	friend class SystemTab;
 	friend class EditorTab;
 	friend class ColorTab;
 	friend class KeyTab;
@@ -234,6 +252,8 @@ public:
 
 	static bool validateInc(const QString& file);
 	static bool validateIns(const QString& file);
+	static bool validateInh(const QString& file);
+	static bool validateInd(const QString& file);
 private:
 	//MainWindow*	mainWindow;
 	QIcon* iconOk;
@@ -242,7 +262,7 @@ private:
 	PreferenceData*	prefData;
 	MainWindow*	mainWindow;
 	QTabWidget* tabWidget;
-	PovrayTab*	povrayTab;
+	SystemTab*	systemTab;
 	EditorTab*	editorTab;
 	ColorTab*	colorTab;
 	KeyTab*		keyTab;

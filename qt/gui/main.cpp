@@ -22,7 +22,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QTime>
-#include "version.h"
+#include "qtpovrayversion.h"
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {

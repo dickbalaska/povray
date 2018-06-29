@@ -1,15 +1,15 @@
 /******************************************************************************
  * preferences.cpp - The dialog box to control user preferences
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt GUI IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -36,8 +36,8 @@ Preferences::Preferences(MainWindow *parent, PreferenceData* d)
 	iconBad = new QIcon(":/resources/icons/Cancel_16x16.png");
 
 	QTabWidget* tabWidget = new QTabWidget(this);
-	povrayTab = new PovrayTab(this);
-	tabWidget->addTab(povrayTab, tr("POV-Ray"));
+	systemTab = new SystemTab(this);
+	tabWidget->addTab(systemTab, tr("System"));
 	editorTab = new EditorTab(this);
 	tabWidget->addTab(editorTab, tr("Editor"));
 	colorTab = new ColorTab(this);
@@ -54,8 +54,10 @@ Preferences::Preferences(MainWindow *parent, PreferenceData* d)
 	connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 	mainLayout->addWidget(buttonBox);
 	setLayout(mainLayout);
+#ifdef USE_WEBSOCKETS
 	mainWindow->setPrefVersionWidget(povrayTab->getPovrayBanner());
-	povrayTab->validateData();
+#endif
+	systemTab->validateData();
 	//qDebug() << "PostColor" << data->getEditorColors()->comment.getColor() << &data->getEditorColors()->comment;
 }
 
@@ -138,7 +140,7 @@ void ColorButton::boldChecked(int state) {
 	this->highlight->setBold(state == Qt::Checked);
 }
 
-PovrayTab::PovrayTab(Preferences* parent)
+SystemTab::SystemTab(Preferences* parent)
 	: QWidget(parent),
 	  parent(parent) {
 	PreferenceData* prefData = parent->prefData;
@@ -179,8 +181,32 @@ PovrayTab::PovrayTab(Preferences* parent)
 	QPushButton* browseInsButton = new QPushButton(tr("Browse"), this);
 	layout->addWidget(browseInsButton, 2, 3, 1, 1, Qt::AlignRight);
 	gridGroupBox->setLayout(layout);
+
+	povrayHelpDirectoryStatus = new QLabel(this);
+	povrayHelpDirectoryStatus->setPixmap(parent->iconBad->pixmap(16));
+	layout->addWidget(povrayHelpDirectoryStatus, 3, 0, 1, 1, Qt::AlignLeft);
+	layout->addWidget(new QLabel(tr("Povray Help"), this), 3, 1, 1, 1, Qt::AlignLeft);
+	povrayHelpDirectory = new QLineEdit(this);
+	povrayHelpDirectory->setText(prefData->getPovrayHelpDirectory());
+	layout->addWidget(povrayHelpDirectory, 3, 2, 1, 1);
+	QPushButton* browseInhButton = new QPushButton(tr("Browse"), this);
+	layout->addWidget(browseInhButton, 3, 3, 1, 1, Qt::AlignRight);
+	gridGroupBox->setLayout(layout);
+
+	povraySceneDirectoryStatus = new QLabel(this);
+	povraySceneDirectoryStatus->setPixmap(parent->iconBad->pixmap(16));
+	layout->addWidget(povraySceneDirectoryStatus, 4, 0, 1, 1, Qt::AlignLeft);
+	layout->addWidget(new QLabel(tr("Sample Scenes"), this), 4, 1, 1, 1, Qt::AlignLeft);
+	povraySceneDirectory = new QLineEdit(this);
+	povraySceneDirectory->setText(prefData->getPovraySceneDirectory());
+	layout->addWidget(povraySceneDirectory, 4, 2, 1, 1);
+	QPushButton* browseIndButton = new QPushButton(tr("Browse"), this);
+	layout->addWidget(browseIndButton, 4, 3, 1, 1, Qt::AlignRight);
+	gridGroupBox->setLayout(layout);
+
 	mainLayout->addWidget(gridGroupBox);
 
+#ifdef USE_WEBSOCKETS
 	gridGroupBox = new QGroupBox(tr("POV-Ray Banner"));
 	povrayBanner = new QTextEdit(this);
 	povrayBanner->setReadOnly(true);
@@ -188,9 +214,14 @@ PovrayTab::PovrayTab(Preferences* parent)
 	layout->addWidget(povrayBanner);
 	gridGroupBox->setLayout(layout);
 	mainLayout->addWidget(gridGroupBox);
+#else
+	mainLayout->addStretch(1);
+#endif
 
+#if 0
 	QPushButton* benchmarkButton = new QPushButton(tr("Run Benchmark"), this);
 	mainLayout->addWidget(benchmarkButton);
+#endif
 
 #ifdef USE_WEBSOCKETS
 	connect(browseExeButton, SIGNAL(clicked(bool)), this, SLOT(browseExeClicked(bool)));
@@ -198,15 +229,22 @@ PovrayTab::PovrayTab(Preferences* parent)
 #endif
 	connect(browseIncButton, SIGNAL(clicked(bool)), this, SLOT(browseIncClicked(bool)));
 	connect(browseInsButton, SIGNAL(clicked(bool)), this, SLOT(browseInsClicked(bool)));
+	connect(browseInhButton, SIGNAL(clicked(bool)), this, SLOT(browseInhClicked(bool)));
+	connect(browseIndButton, SIGNAL(clicked(bool)), this, SLOT(browseIndClicked(bool)));
 	connect(povrayIncludes, SIGNAL(textEdited(QString)), this, SLOT(textIncEdited(QString)));
-	connect(povrayInsertMenu, SIGNAL(textEdited(QString)), this, SLOT(textInsEdited(QString)));
+	connect(povrayHelpDirectory, SIGNAL(textEdited(QString)), this, SLOT(textInhEdited(QString)));
+	connect(povraySceneDirectory, SIGNAL(textEdited(QString)), this, SLOT(textIndEdited(QString)));
+#if 0
 	connect(benchmarkButton, SIGNAL(clicked(bool)), this, SLOT(benchmarkButtonClicked(bool)));
+#endif
 	this->setLayout(mainLayout);
 }
 
-void PovrayTab::validateData() {
+void SystemTab::validateData() {
 	validateInc();
 	validateIns();
+	validateInh();
+	validateInd();
 #ifdef USE_WEBSOCKETS
 	validateExe();
 #endif
@@ -223,7 +261,7 @@ void PovrayTab::browseExeClicked(bool) {
 }
 #endif
 
-void PovrayTab::browseIncClicked(bool) {
+void SystemTab::browseIncClicked(bool) {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"));
 	if (!dir.isEmpty()) {
 		povrayIncludes->setText(dir);
@@ -232,7 +270,7 @@ void PovrayTab::browseIncClicked(bool) {
 	validateInc();
 	qDebug() << "browseIncClicked" << dir;
 }
-void PovrayTab::browseInsClicked(bool) {
+void SystemTab::browseInsClicked(bool) {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"));
 	if (!dir.isEmpty()) {
 		povrayInsertMenu->setText(dir);
@@ -240,24 +278,48 @@ void PovrayTab::browseInsClicked(bool) {
 	}
 	validateIns();
 }
+void SystemTab::browseInhClicked(bool) {
+	QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"));
+	if (!dir.isEmpty()) {
+		povrayHelpDirectory->setText(dir);
+		parent->prefData->setPovrayHelpDirectory(dir);
+	}
+	validateIns();
+}
+void SystemTab::browseIndClicked(bool) {
+	QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"));
+	if (!dir.isEmpty()) {
+		povraySceneDirectory->setText(dir);
+		parent->prefData->setPovraySceneDirectory(dir);
+	}
+	validateIns();
+}
 
 #ifdef USE_WEBSOCKETS
-void PovrayTab::textExeEdited(const QString& text) {
+void SystemTab::textExeEdited(const QString& text) {
 	parent->prefData->setPovrayExecutable(text);
 	validateExe();
 }
 #endif
 
-void PovrayTab::textIncEdited(const QString& text) {
+void SystemTab::textIncEdited(const QString& text) {
 	parent->prefData->setPovrayIncludes(text);
 	validateInc();
 }
-void PovrayTab::textInsEdited(const QString& text) {
+void SystemTab::textInsEdited(const QString& text) {
 	parent->prefData->setPovrayInsertMenu(text);
 	validateIns();
 }
+void SystemTab::textInhEdited(const QString& text) {
+	parent->prefData->setPovrayHelpDirectory(text);
+	validateInh();
+}
+void SystemTab::textIndEdited(const QString& text) {
+	parent->prefData->setPovraySceneDirectory(text);
+	validateInd();
+}
 
-void PovrayTab::validateInc() {
+void SystemTab::validateInc() {
 	if (Preferences::validateInc(parent->prefData->getPovrayIncludes()))
 		povrayIncludesStatus->setPixmap(parent->iconOk->pixmap(16));
 	else
@@ -274,7 +336,7 @@ bool Preferences::validateInc(const QString &file) {
 	return(incStat);
 }
 
-void PovrayTab::validateIns() {
+void SystemTab::validateIns() {
 	if (Preferences::validateIns(parent->prefData->getPovrayInsertMenu()))
 		povrayInsertMenuStatus->setPixmap(parent->iconOk->pixmap(16));
 	else
@@ -291,8 +353,42 @@ bool Preferences::validateIns(const QString &file) {
 	return(insStat);
 }
 
+void SystemTab::validateInh() {
+	if (Preferences::validateInh(parent->prefData->getPovrayHelpDirectory()))
+		povrayHelpDirectoryStatus->setPixmap(parent->iconOk->pixmap(16));
+	else
+		povrayHelpDirectoryStatus->setPixmap(parent->iconBad->pixmap(16));
+}
+
+bool Preferences::validateInh(const QString &file) {
+	bool insStat = false;
+	if (!file.isEmpty()) {
+		QDir dir(file);
+		if (dir.exists("index.html"))
+			insStat = true;
+	}
+	return(insStat);
+}
+
+void SystemTab::validateInd() {
+	if (Preferences::validateInd(parent->prefData->getPovraySceneDirectory()))
+		povraySceneDirectoryStatus->setPixmap(parent->iconOk->pixmap(16));
+	else
+		povraySceneDirectoryStatus->setPixmap(parent->iconBad->pixmap(16));
+}
+
+bool Preferences::validateInd(const QString &file) {
+	bool insStat = false;
+	if (!file.isEmpty()) {
+		QDir dir(file);
+		if (dir.exists("index.htm"))
+			insStat = true;
+	}
+	return(insStat);
+}
+
 #ifdef USE_WEBSOCKETS
-void PovrayTab::validateExe() {
+void SystemTab::validateExe() {
 	if (parent->mainWindow->validateExe(parent->prefData->getPovrayExecutable(), povrayBanner))
 		povrayExecutableStatus->setPixmap(parent->iconOk->pixmap(16));
 	else
@@ -300,7 +396,7 @@ void PovrayTab::validateExe() {
 }
 #endif
 
-void PovrayTab::benchmarkButtonClicked(bool ) {
+void SystemTab::benchmarkButtonClicked(bool ) {
 
 }
 

@@ -153,6 +153,7 @@ private:
 	void	savePreferences();
 	bool	maybeSaveEditor(CodeEditor* ce);	// return true if ok to close
 	QString findFile(const QString& file);		// Given a file name, find the full path
+	QString findPath(const QString& in);		// search for this subdirectory
 	void	setShortcutKeys();
 
 #ifdef USE_WEBSOCKETS

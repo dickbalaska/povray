@@ -35,7 +35,7 @@
 #include "resourcedock.h"
 #include "renderdock.h"
 #include "dockman.h"
-#include "version.h"
+#include "qtpovrayversion.h"
 
 
 DockMan::DockMan(MainWindow* mainWindow)
@@ -134,9 +134,9 @@ void DockMan::activateWorkspace(const QString& pws)
 void DockMan::showAbout()
 {
 	QDialog d(m_mainWindow);
-	d.setWindowTitle("About qtpov");
+	d.setWindowTitle("About qtpovray");
 	QVBoxLayout* mainLayout = new QVBoxLayout(&d);
-	QLabel* l = new QLabel(tr("qtpov - A multiplatform POV-Ray IDE"));
+	QLabel* l = new QLabel(tr("qtpovray - A multiplatform POV-Ray IDE"));
 	mainLayout->addWidget(l);
 	QString v(tr("Version %1").arg(VERSION));
 #ifdef _DEBUG
@@ -149,7 +149,7 @@ void DockMan::showAbout()
 	l = new QLabel(compilationTime);
 	mainLayout->addWidget(l);
 	l = new QLabel();
-	l->setText("<a href=\"http://www.buckosoft.com/qtpov/\">www.buckosoft.com/qtpov</a>");
+	l->setText("<a href=\"http://www.buckosoft.com/qtpovray/\">www.buckosoft.com/qtpovray</a>");
 	l->setTextFormat(Qt::RichText);
 	l->setTextInteractionFlags(Qt::TextBrowserInteraction);
 	l->setOpenExternalLinks(true);

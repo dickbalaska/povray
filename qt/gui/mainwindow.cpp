@@ -1,15 +1,15 @@
 /******************************************************************************
- * mainwindow.cpp - The Qt QMainWindow for qtpov
+ * mainwindow.cpp - The Qt QMainWindow for qtpovray
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt GUI IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -35,9 +35,10 @@
 #include "editor/bookmarkman.h"
 #include "findman.h"
 #include "insertmenuman.h"
+#include "qtpovrayversion.h"
 
-QString	s_companyName = "povray";
-QString	s_productName = "qtpov";
+QString	s_companyName = "qtpovray";
+QString	s_productName = "qtpovray";
 QString s_recentWsList = "recentWorkspaces";
 
 bool DEBUG = false;
@@ -86,7 +87,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	bool b = Preferences::validateIns(preferenceData.getPovrayInsertMenu());
 	m_mainToolbar->enableInsertMenu(b);
 	m_insertMenuMan->populateMenu(b);
+
+#ifdef USE_WEBSOCKETS
 	m_mainToolbar->enableRender((validateExe(preferenceData.getPovrayExecutable())));
+#endif
 	QStringList files = settings.value(s_recentWsList).toStringList();
 	if (!files.isEmpty())
 		m_dockMan->activateWorkspace(files.first());
@@ -459,7 +463,9 @@ void MainWindow::onPreferences() {
 		bool b = Preferences::validateIns(preferenceData.getPovrayInsertMenu());
 		m_mainToolbar->enableInsertMenu(b);
 		m_insertMenuMan->populateMenu(b);
+#ifdef USE_WEBSOCKETS
 		m_mainToolbar->enableRender((validateExe(preferenceData.getPovrayExecutable())));
+#endif
 		if (editorTabs) {
 			for (int i=0; i<editorTabs->count(); i++) {
 				CodeEditor* ce = (CodeEditor*)editorTabs->widget(i);
@@ -478,18 +484,26 @@ static QString s_EditorHighlightTokens	("EditorHighlightTokens");
 static QString s_EditorTabWidth			("EditorTabWidth");
 static QString s_EditorWrapText			("EditorWrapText");
 static QString s_Keys					("Keys");
+#ifdef USE_WEBSOCKETS
 static QString s_PovrayExecutable		("PovrayExecutable");
+#endif
 static QString s_PovrayIncludes			("PovrayIncludes");
 static QString s_PovrayInsertMenu		("PovrayInsertMenu");
+static QString s_PovrayHelpDirectory	("PovrayHelpDirectory");
+static QString s_PovraySceneDirectory	("PovraySceneDirectory");
 static QString s_Preferences			("Preferences");
 static QString s_UseLargeIcons			("UseLargeIcons");
 
 void MainWindow::savePreferences() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, s_companyName, s_productName);
 	settings.beginGroup(s_Preferences);
+#ifdef USE_WEBSOCKETS
 	settings.setValue(s_PovrayExecutable,	preferenceData.getPovrayExecutable());
+#endif
 	settings.setValue(s_PovrayIncludes,		preferenceData.getPovrayIncludes());
 	settings.setValue(s_PovrayInsertMenu,	preferenceData.getPovrayInsertMenu());
+	settings.setValue(s_PovrayHelpDirectory,preferenceData.getPovrayHelpDirectory());
+	settings.setValue(s_PovraySceneDirectory, preferenceData.getPovraySceneDirectory());
 	settings.setValue(s_EditorWrapText,		preferenceData.getEditorWrapText());
 	settings.setValue(s_EditorTabWidth,		preferenceData.getEditorTabWidth());
 	settings.setValue(s_EditorAutoIndent,	preferenceData.getAutoIndent());
@@ -534,9 +548,13 @@ void MainWindow::savePreferences() {
 void MainWindow::loadPreferences() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, s_companyName, s_productName);
 	settings.beginGroup(s_Preferences);
+#ifdef USE_WEBSOCKETS
 	preferenceData.setPovrayExecutable(settings.value(s_PovrayExecutable).toString());
+#endif
 	preferenceData.setPovrayIncludes(settings.value(s_PovrayIncludes).toString());
 	preferenceData.setPovrayInsertMenu(settings.value(s_PovrayInsertMenu).toString());
+	preferenceData.setPovrayHelpDirectory(settings.value(s_PovrayHelpDirectory).toString());
+	preferenceData.setPovraySceneDirectory(settings.value(s_PovraySceneDirectory).toString());
 	preferenceData.setEditorWrapText(settings.value(s_EditorWrapText, false).toBool());
 	preferenceData.setEditorTabWidth(settings.value(s_EditorTabWidth, 4).toInt());
 	preferenceData.setAutoIndent(settings.value(s_EditorAutoIndent, true).toBool());
@@ -545,6 +563,8 @@ void MainWindow::loadPreferences() {
 	preferenceData.setEditorHighlightTokens(settings.value(s_EditorHighlightTokens, true).toBool());
 	preferenceData.setUseLargeIcons((settings.value(s_UseLargeIcons, true).toBool()));
 	settings.endGroup();
+
+#ifdef USE_WEBSOCKETS
 	if (preferenceData.getPovrayExecutable().isEmpty()) {
 		QString dir = QCoreApplication::applicationDirPath();
 		dir += "/povrayws";
@@ -555,17 +575,22 @@ void MainWindow::loadPreferences() {
 		if (file.exists())
 			preferenceData.setPovrayExecutable(dir);
 	}
+#endif
 	if (preferenceData.getPovrayInsertMenu().isEmpty()) {
-		QString s = QCoreApplication::applicationDirPath() + "/Insert Menu";
-		QFileInfo fileInfo(s);
-		if (fileInfo.isDir())
-			preferenceData.setPovrayInsertMenu(s);
+		QString s = findPath("Insert Menu");
+		preferenceData.setPovrayInsertMenu(s);
 	}
 	if (preferenceData.getPovrayIncludes().isEmpty()) {
-		QString s = QCoreApplication::applicationDirPath() + "/include";
-		QFileInfo fileInfo(s);
-		if (fileInfo.isDir())
-			preferenceData.setPovrayIncludes(s);
+		QString s = findPath("include");
+		preferenceData.setPovrayIncludes(s);
+	}
+	if (preferenceData.getPovrayHelpDirectory().isEmpty()) {
+		QString s = findPath("html");
+		preferenceData.setPovrayHelpDirectory(s);
+	}
+	if (preferenceData.getPovraySceneDirectory().isEmpty()) {
+		QString s = findPath("scenes");
+		preferenceData.setPovraySceneDirectory(s);
 	}
 
 #define readColor(_highlight, _defaultColor, _defaultBold) \
@@ -602,6 +627,21 @@ void MainWindow::loadPreferences() {
 	settings.endGroup();
 	setShortcutKeys();
 
+}
+
+QString MainWindow::findPath(const QString& in)
+{
+	qDebug() << "findPath:" << in;
+	QString myDir = QString("qtpovray-%1").arg(ROOT_VERSION);
+	QStringList sl = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+	foreach (QString s, sl) {
+		qDebug() << "Check: " << s;
+		QDir qdir(s);
+		if (qdir.cdUp() && qdir.cd(myDir) && qdir.cd(in)) {
+			return(qdir.absolutePath());
+		}
+	}
+	return("");
 }
 
 //void delay( int millisecondsToWait )

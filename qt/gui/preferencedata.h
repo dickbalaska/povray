@@ -1,3 +1,24 @@
+/******************************************************************************
+ * preferencedata.h - Define the user's and system's preferences
+ *
+ * qtpovray - A Qt GUI IDE frontend for POV-Ray
+ * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
+ *
+ * qtpovray is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * qtpovray is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *****************************************************************************/
+
 #ifndef _PREFERENCEDATA_H_
 #define _PREFERENCEDATA_H_
 
@@ -158,14 +179,17 @@ public:
 	{}
 	void operator= (const PreferenceData& );
 
-	const QString& getPovrayExecutable() { return(povrayExecutable); }
-	void setPovrayExecutable(const QString& exe) { povrayExecutable = exe; }
-
 	const QString& getPovrayIncludes() { return(povrayIncludes); }
 	void setPovrayIncludes(const QString& inc) { povrayIncludes = inc; }
 
 	const QString& getPovrayInsertMenu() const { return(povrayInsertMenu); }
 	void setPovrayInsertMenu(const QString& ins) { povrayInsertMenu = ins; }
+
+	const QString& getPovrayHelpDirectory() const { return(povrayHelpDirectory); }
+	void setPovrayHelpDirectory(const QString& inh) { povrayHelpDirectory = inh; }
+
+	const QString& getPovraySceneDirectory() const { return(povraySceneDirectory); }
+	void setPovraySceneDirectory(const QString& ins) { povraySceneDirectory = ins; }
 
 	bool getEditorWrapText() { return(editorWrapText); }
 	void setEditorWrapText(bool wrap) { editorWrapText = wrap; }
@@ -192,9 +216,10 @@ public:
 	void setUseLargeIcons(bool b) { m_useLargeIcons = b; }
 
 private:
-	QString	povrayExecutable;
 	QString	povrayIncludes;
 	QString	povrayInsertMenu;
+	QString	povrayHelpDirectory;
+	QString	povraySceneDirectory;
 
 	bool	editorWrapText;
 	int		editorTabWidth;
@@ -209,9 +234,10 @@ private:
 
 
 inline void PreferenceData::operator=(const PreferenceData& other) {
-	this->povrayExecutable = other.povrayExecutable;
 	this->povrayIncludes = other.povrayIncludes;
 	this->povrayInsertMenu = other.povrayInsertMenu;
+	this->povrayHelpDirectory = other.povrayHelpDirectory;
+	this->povraySceneDirectory = other.povraySceneDirectory;
 	this->m_useLargeIcons = other.m_useLargeIcons;
 	this->editorWrapText = other.editorWrapText;
 	this->editorTabWidth = other.editorTabWidth;
