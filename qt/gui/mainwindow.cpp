@@ -34,11 +34,12 @@
 #include "dock/filterdialog.h"
 #include "editor/bookmarkman.h"
 #include "findman.h"
+#include "helpman.h"
 #include "insertmenuman.h"
 #include "qtpovrayversion.h"
 
-QString	s_companyName = "qtpovray";
-QString	s_productName = "qtpovray";
+QString	s_companyName = "qtpovray";		// directory to put the ini file in
+QString	s_productName = "qtpovray";		// name of the ini file
 QString s_recentWsList = "recentWorkspaces";
 
 bool DEBUG = false;
@@ -77,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_bookmarkMan = new BookmarkMan(this);
 	m_findMan = new FindMan(this);
 	m_dockMan = new DockMan(this);
+	m_helpMan = new HelpMan(this);
 	m_mainToolbar = new MainToolbar("Main", preferenceData.getUseLargeIcons(), this);
 	addToolBar(m_mainToolbar);
 	statusBar = new StatusBar(this);
@@ -686,6 +688,7 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 	if (command == "version") {
 		if (prefVersionWidget)
 			prefVersionWidget->setText(text);
+		m_helpMan->setPovrayVersion(text);
 		return;
 	} else if (command == "done") {
 		m_mainToolbar->renderButtonToStart();

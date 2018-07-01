@@ -43,6 +43,7 @@ class BookmarkMan;
 class CodeEditor;
 class DockMan;
 class FindMan;
+class HelpMan;
 class Highlighter;
 class InsertMenuMan;
 class MainToolbar;
@@ -103,6 +104,7 @@ public:
 	QTabWidget*	getEditorTabs();
 	CodeEditor*	getEditor(int which = -1);
 	DockMan*	getDockMan();
+	HelpMan*	getHelpMan();
 	void		deleteAllEditorTabs();	// delete all CodeEditors. Ask before deleting changed editors.
 
 	bool		validateExe(const QString& file, QTextEdit* statusArea = NULL);
@@ -189,6 +191,7 @@ private:
 	BookmarkMan*	m_bookmarkMan;
 	FindMan*		m_findMan;
 	InsertMenuMan*	m_insertMenuMan;
+	HelpMan*		m_helpMan;
 	MainToolbar*	m_mainToolbar;
 	StatusBar*		statusBar;
 	PreferenceData	preferenceData;
@@ -197,5 +200,5 @@ private:
 
 inline QTabWidget* MainWindow::getEditorTabs() { return(editorTabs); }
 inline DockMan* MainWindow::getDockMan() { return(m_dockMan); }
-
+inline HelpMan* MainWindow::getHelpMan() { return(m_helpMan); }
 #endif // _MAINWINDOW_H_

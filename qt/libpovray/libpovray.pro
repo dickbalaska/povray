@@ -24,10 +24,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 DEFINES += OPENEXR_MISSING
-DEFINES += BUILD_ARCH="\"$$QMAKE_HOST.arch\""
+#DEFINES += BUILD_ARCH="\"$$QMAKE_HOST.arch\""
 QMAKE_CLEAN += libpovray.a
 
-#QMAKE_SUBSTITUTES += config.h.in
 
 sDIR = ../../source
 cDIR = ../../unix/povconfig
@@ -39,7 +38,6 @@ INCLUDEPATH += "../../unix/povconfig"
 INCLUDEPATH += "../../vfe"
 
 # QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
-
 PRECOMPILED_HEADER = $$sDIR/base/precomp.h
 
 SOURCES += \

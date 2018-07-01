@@ -1,15 +1,15 @@
 /******************************************************************************
- * filterdialog.cpp - The dialog to filter which files get displayed in the tree
+ * filterdialog.h - The dialog to filter which files get displayed in the tree
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.

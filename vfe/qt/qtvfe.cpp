@@ -9,6 +9,9 @@
 #include "qtgraphics.h"
 #include "vfeplatform.h"
 #include "qtvfe.h"
+#include "base/version_info.h"
+#include "backend/povray.h"
+#include "config.h"
 
 using namespace std;
 using namespace boost;
@@ -78,11 +81,6 @@ void QtVfe::sendPovrayGraphicsMessage(const uchar* buff, int size)
 {
 	QByteArray ba((const char*)buff, size);
 	emit(emitPovrayBinaryMessage(ba));
-}
-
-void  QtVfe::commandVersion()
-{
-	emit(emitPovrayTextMessage("version", "Unknown for now"));
 }
 
 void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp)
@@ -197,20 +195,6 @@ void  QtVfe::commandRender(const QString& data)
 	// default number of work threads: number of CPUs or 4
 	int nthreads = 1;
 	nthreads = QThread::idealThreadCount();
-
-//#ifdef _SC_NPROCESSORS_ONLN  // online processors
-//	nthreads = sysconf(_SC_NPROCESSORS_ONLN);
-//#endif
-//#ifdef _SC_NPROCESSORS_CONF  // configured processors
-//	if (nthreads < 2)
-//		nthreads = sysconf(_SC_NPROCESSORS_CONF);
-//#endif
-//#ifdef SYSTEM_INFO
-//	SYSTEM_INFO           sysinfo;
-//	GetSystemInfo(&sysinfo);
-//	nthreads = sysinfo.dwNumberOfProcessors;
-//#endif
-
 	if (nthreads < 2)
 		nthreads = 4;
 	m_session->renderOptions->SetThreadCount(nthreads);
@@ -249,7 +233,6 @@ void  QtVfe::commandRender(const QString& data)
 	}
 	deleteArgv(argv);
 	renderMonThread = new boost::thread(RenderMonitor, this, m_session);
-	//RenderMonitor(hdl, session);
 }
 
 void  QtVfe::commandCancel()
@@ -379,4 +362,68 @@ void QtVfe::cancelRender(vfeQtSession* session)
 	printStatus(session);
 }
 
+void  QtVfe::commandVersion()
+{
+	// TODO -- GNU/Linux customs would be to print to stdout (among other differences).
+	QString s = QString("%1 %2\n\n"
+						"%3\n%4\n%5\n"
+						"%6\n%7\n%8\n\n")
+			.arg("povray").arg(POV_RAY_VERSION)
+			.arg(DISTRIBUTION_MESSAGE_1).arg(DISTRIBUTION_MESSAGE_2).arg(DISTRIBUTION_MESSAGE_3)
+			.arg(POV_RAY_COPYRIGHT).arg(DISCLAIMER_MESSAGE_1).arg(DISCLAIMER_MESSAGE_2);
+
+//	fprintf(stderr,
+//		"%s %s\n\n"
+//		"%s\n%s\n%s\n"
+//		"%s\n%s\n%s\n\n",
+//		PACKAGE_NAME, POV_RAY_VERSION,
+//		DISTRIBUTION_MESSAGE_1, DISTRIBUTION_MESSAGE_2, DISTRIBUTION_MESSAGE_3,
+//		POV_RAY_COPYRIGHT, DISCLAIMER_MESSAGE_1, DISCLAIMER_MESSAGE_2
+//	);
+//	fprintf(stderr,
+//		"Built-in features:\n"
+//		"  I/O restrictions:          %s\n"
+//		"  X Window display:          %s\n"
+//		"  Supported image formats:   %s\n"
+//		"  Unsupported image formats: %s\n\n",
+//		BUILTIN_IO_RESTRICTIONS, BUILTIN_XWIN_DISPLAY, BUILTIN_IMG_FORMATS, MISSING_IMG_FORMATS
+//	);
+//	fprintf(stderr,
+//		"Compilation settings:\n"
+//		"  Build architecture:  %s\n"
+//		"  Built/Optimized for: %s\n"
+//		"  Compiler vendor:     %s\n"
+//		"  Compiler version:    %s\n"
+//		"  Compiler flags:      %s\n",
+//		BUILD_ARCH, BUILT_FOR, COMPILER_VENDOR, COMPILER_VERSION, CXXFLAGS
+//	);
+	s = QString("%1"
+				"Compilation settings:\n"
+				"  Build architecture:  %2\n"
+//				"  Built/Optimized for: %3\n"
+				"  Compiler vendor:     %4\n"
+//				"  Compiler version:    %5\n"
+				"  Compiler flags:      %6\n\n")
+			.arg(s)
+			.arg(BUILD_ARCH)
+			//.arg(BUILT_FOR)
+			.arg(COMPILER_VENDOR)
+			//.arg(COMPILER_VERSION)
+			.arg(COMPILER_CXXFLAGS);
+
+	s = QString("%1"
+				"Host info:\n"
+				"  Name:\t\t%2\n"
+				"  OS:\t\t%3\n"
+				"  Architecture:\t%4\n"
+				"  Version:\t\t%5\n"
+				"  CPU count:\t%6\n")
+			.arg(s)
+			.arg(HOST_NAME)
+			.arg(HOST_OS)
+			.arg(HOST_ARCH)
+			.arg(HOST_VERSION)
+			.arg(HOST_CPUNUM);
+	emit(emitPovrayTextMessage("version", s));
+}
 }	// namespace vfe

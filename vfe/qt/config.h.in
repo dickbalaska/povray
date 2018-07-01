@@ -1,0 +1,10 @@
+#define	BUILD_ARCH	\"$$QMAKE_HOST.arch\"
+
+#define COMPILER_VENDOR		\"$$QMAKE_CXX\"
+#define COMPILER_CXXFLAGS	\"$$QMAKE_CXXFLAGS\"
+
+#define	HOST_NAME		\"$$QMAKE_HOST.name\"
+#define HOST_ARCH		\"$$QMAKE_HOST.arch\"
+#define HOST_OS			\"$$QMAKE_HOST.os\"
+#define HOST_CPUNUM		\"$$QMAKE_HOST.cpu_count\"
+#define HOST_VERSION	\"$$QMAKE_HOST.version_string\"

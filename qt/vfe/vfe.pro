@@ -41,6 +41,10 @@ INCLUDEPATH += $$vDIR
 INCLUDEPATH += $$vqDIR
 
 # QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
+configh.input = $$vqDIR/config.h.in
+configh.output = $$vqDIR/config.h
+QMAKE_SUBSTITUTES += configh
+
 
 SOURCES += \
 	$$vDIR/vfe.cpp \
@@ -61,7 +65,8 @@ HEADERS += \
 	$$vqDIR/qtvfe.h \
 	$$vqDIR/qtoptions.h \
 	$$vqDIR/qtgraphics.h \
-	$$vqDIR/vfeplatform.h
+	$$vqDIR/vfeplatform.h \
+$$vqDIR/config.h.in
 
 
 #unix {

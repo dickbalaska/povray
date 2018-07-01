@@ -1,15 +1,15 @@
 /******************************************************************************
- * dockman.cpp - Manage the docking widgets for qtpov
+ * dockman.cpp - Manage the docking widgets for qtpovray
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -129,44 +129,4 @@ void DockMan::activateWorkspace(const QString& pws)
 	if (m_mainWindow->getEditorTabs())
 		m_mainWindow->getEditorTabs()->setCurrentIndex(index);
 	m_mainWindow->initWorkspace();
-}
-
-void DockMan::showAbout()
-{
-	QDialog d(m_mainWindow);
-	d.setWindowTitle("About qtpovray");
-	QVBoxLayout* mainLayout = new QVBoxLayout(&d);
-	QLabel* l = new QLabel(tr("qtpovray - A multiplatform POV-Ray IDE"));
-	mainLayout->addWidget(l);
-	QString v(tr("Version %1").arg(VERSION));
-#ifdef _DEBUG
-	v += " - DEBUG";
-#endif
-	l = new QLabel(v);
-	mainLayout->addWidget(l);
-#pragma GCC diagnostic ignored "-Wdate-time"
-	QString compilationTime = QString("Built on: %1 %2").arg(__DATE__).arg(__TIME__);
-	l = new QLabel(compilationTime);
-	mainLayout->addWidget(l);
-	l = new QLabel();
-	l->setText("<a href=\"http://www.buckosoft.com/qtpovray/\">www.buckosoft.com/qtpovray</a>");
-	l->setTextFormat(Qt::RichText);
-	l->setTextInteractionFlags(Qt::TextBrowserInteraction);
-	l->setOpenExternalLinks(true);
-	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
-	mainLayout->addWidget(l);
-	connect(buttonBox, &QDialogButtonBox::accepted, &d, &QDialog::accept);
-	mainLayout->addWidget(buttonBox);
-	d.exec();
-}
-
-void DockMan::showSampleScenes()
-{
-	QUrl url = QUrl::fromLocalFile("/usr/share/qtpovray-3.8/scenes/index.htm");
-	QDesktopServices::openUrl(url);
-}
-void DockMan::showPovrayHelp()
-{
-	QUrl url = QUrl::fromLocalFile("/usr/share/qtpovray-3.8/html/index.html");
-	QDesktopServices::openUrl(url);
 }

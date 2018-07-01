@@ -1,5 +1,5 @@
 /******************************************************************************
- * dropdown.h - The toolbar dropdown widget that the user types render options into
+ * helpman.h - Manage the Help and About dialog for qtpovray
  *
  * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
@@ -18,36 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
+#ifndef _HELPMAN_H_
+#define _HELPMAN_H_
 
-#ifndef _RENDERCL_H_
-#define _RENDERCL_H_
+#include <QObject>
 
-#include <QComboBox>
-#include <QLineEdit>
+class QTextEdit;
+class MainWindow;
 
-QT_BEGIN_NAMESPACE
-class QKeyEvent;
-QT_END_NAMESPACE
-
-class Dropdown : public QComboBox
+class HelpMan : public QObject
 {
 	Q_OBJECT
 public:
-	Dropdown(QWidget *parent = Q_NULLPTR);
-	~Dropdown() override {}
+	explicit HelpMan(MainWindow* parent);
 
-	QString getValue();
-	void	setValue(const QString& s);
+	void setPovrayVersion(const QString& text);
+signals:
 
-Q_SIGNALS:
-	void enterPressed();
-
-protected:
-	virtual void keyReleaseEvent(QKeyEvent* e);
+public slots:
+	void showAbout();
+	void showPovrayHelp();
+	void showSampleScenes();
 
 private:
-	void	updateValue(const QString& value);
-
+	MainWindow*		m_mainWindow;
+	QTextEdit*		m_povrayBanner;
 };
 
-#endif // _RENDERCL_H_
+#endif // _HELPMAN_H_

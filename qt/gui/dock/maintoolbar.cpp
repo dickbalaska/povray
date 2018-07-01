@@ -31,6 +31,7 @@
 #include "../editor/bookmarkman.h"
 #include "maintoolbar.h"
 #include "dockman.h"
+#include "helpman.h"
 
 QIcon* renderGoIcon;
 QIcon* renderStopIcon;
@@ -187,9 +188,9 @@ void MainToolbar::setupMenu()
 	////////////////
 	// Help
 	menu = m_mainWindow->menuBar()->addMenu(tr("&Help"));	
-	menu->addAction(tr("&Povray Help"), m_mainWindow->getDockMan(), SLOT(showPovrayHelp()));
-	menu->addAction(tr("&Sample scenes"), m_mainWindow->getDockMan(), SLOT(showSampleScenes()));
-	menu->addAction(tr("&About"), m_mainWindow->getDockMan(), SLOT(showAbout()));
+	menu->addAction(tr("&Povray Help"), m_mainWindow->getHelpMan(), SLOT(showPovrayHelp()));
+	menu->addAction(tr("&Sample scenes"), m_mainWindow->getHelpMan(), SLOT(showSampleScenes()));
+	menu->addAction(tr("&About"), m_mainWindow->getHelpMan(), SLOT(showAbout()));
 }
 
 void MainToolbar::updateMRU(const QStringList& mru)
