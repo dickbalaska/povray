@@ -88,7 +88,7 @@ namespace vfePlatform
 		//vfeSession(id),
         m_LastTimestamp(0),
 		m_TimestampOffset(0),
-		renderOptions(NULL),
+		m_renderOptions(NULL),
 		m_qtVfe(qtVfe)
 		//m_hdl(hdl)
     {
@@ -98,7 +98,7 @@ namespace vfePlatform
 
 	vfeQtSession::~vfeQtSession()
 	{
-		if (renderOptions) delete renderOptions;
+		if (m_renderOptions) delete m_renderOptions;
 	}
 
     /////////////////////////////////////////////////////////////////////////

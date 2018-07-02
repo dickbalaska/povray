@@ -103,13 +103,13 @@ namespace vfePlatform
 
         // system configuration file
         m_conf    = "";
-        //m_sysconf = POVCONFDIR "/povray.conf";
+		m_sysconf = POVCONFDIR "/povray.conf";
 
         // user configuration file
         if (m_home.length() > 0)
         {
             m_user_dir = m_home + "/." PACKAGE "/" VERSION_BASE;
-            m_userconf = m_home + "/." PACKAGE "/" VERSION_BASE "/povray.ini";
+			m_userconf = m_home + "/." PACKAGE "/" VERSION_BASE "/povray.conf";
         }
         else
         {
@@ -133,6 +133,7 @@ namespace vfePlatform
             m_userini_old = "";
 
 #ifdef UNIX_DEBUG
+
         cerr << "PATHS" << endl;
         cerr << "  HOME        = " << m_home << endl;
         cerr << "  SYSCONF     = " << m_sysconf << endl;
@@ -1298,5 +1299,18 @@ namespace vfePlatform
         }
 
     }
+
+	QString	QtOptionsProcessor::GetPathsString()
+	{
+		QString s = QString("Paths:\n"
+							"  HOME:\t\t%1\n"
+							"  SYSCONF:\t\t%2\n"
+							"  USERCONF:\t%3\n"
+							"  SYSINI:\t\t%4\n"
+							"  USERINI:\t\t%5\n")
+				.arg(m_home.c_str()).arg(m_sysconf.c_str()).arg(m_userconf.c_str())
+				.arg(m_sysini.c_str()).arg(m_userini.c_str());
+		return(s);
+	}
 
 }

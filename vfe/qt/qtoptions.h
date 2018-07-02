@@ -330,6 +330,8 @@ namespace vfePlatform
 
 		//void setWebSocketHdl(websocketpp::connection_hdl hdl) { this->m_hdl = hdl; }
 
+		QString	GetPathsString();
+
      protected:
         /// list of standard options
         static const Option_Info Standard_Options[];

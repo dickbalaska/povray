@@ -185,7 +185,7 @@ void  QtVfe::commandRender(const QString& data)
 		return;
 	}
 	m_session = new vfeQtSession(this);
-	m_session->renderOptions = new vfeRenderOptions();
+	m_session->m_renderOptions = new vfeRenderOptions();
 	if (m_session->Initialize(NULL, NULL) != vfe::vfeNoError) {
 
 		sessionErrorExit();
@@ -197,11 +197,11 @@ void  QtVfe::commandRender(const QString& data)
 	nthreads = QThread::idealThreadCount();
 	if (nthreads < 2)
 		nthreads = 4;
-	m_session->renderOptions->SetThreadCount(nthreads);
+	m_session->m_renderOptions->SetThreadCount(nthreads);
 	m_session->GetUnixOptions()->ProcessOptions(&argc, &argv);
-	m_session->GetUnixOptions()->Process_povray_ini(*m_session->renderOptions);
+	m_session->GetUnixOptions()->Process_povray_ini(*m_session->m_renderOptions);
 	while (*++argv)
-		m_session->renderOptions->AddCommand (*argv);
+		m_session->m_renderOptions->AddCommand (*argv);
 
 	char** pp = oldargv;
 	while (*pp) {
@@ -210,7 +210,7 @@ void  QtVfe::commandRender(const QString& data)
 	}
 	delete oldargv;
 
-	if (m_session->SetOptions(*m_session->renderOptions) != vfeNoError) {
+	if (m_session->SetOptions(*m_session->m_renderOptions) != vfeNoError) {
 		string s = s_stream_fatal;
 		s += "Problem with option setting";
 //		wsSend(hdl, s);
@@ -417,13 +417,19 @@ void  QtVfe::commandVersion()
 				"  OS:\t\t%3\n"
 				"  Architecture:\t%4\n"
 				"  Version:\t\t%5\n"
-				"  CPU count:\t%6\n")
+				"  CPU count:\t%6\n\n")
 			.arg(s)
 			.arg(HOST_NAME)
 			.arg(HOST_OS)
 			.arg(HOST_ARCH)
 			.arg(HOST_VERSION)
 			.arg(HOST_CPUNUM);
+
+	vfeQtSession* tSession = new vfeQtSession(this);
+	QString t = tSession->GetUnixOptions()->GetPathsString();
+	delete tSession;
+	s = s + t;
+
 	emit(emitPovrayTextMessage("version", s));
 }
 }	// namespace vfe

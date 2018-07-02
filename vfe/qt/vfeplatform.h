@@ -116,7 +116,7 @@ namespace vfePlatform
 		shared_ptr<QtOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
 
 		//void setWebSocketHdl(websocketpp::connection_hdl hdl) { this->m_hdl = hdl; }
-		vfeRenderOptions*		renderOptions;
+		vfeRenderOptions*		m_renderOptions;
 
 
 	protected:
