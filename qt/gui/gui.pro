@@ -136,9 +136,7 @@ else:unix: LIBS += -L$$OUT_PWD/../platform/ -lplatform
 
 unix|win32: LIBS += -lz
 
-unix|win32: LIBS += -lboost_system
-
-unix|win32: LIBS += -lboost_thread
+unix|win32: LIBS += -lboost_system -lboost_thread
 
 unix|win32: LIBS += -ljpeg
 
@@ -146,7 +144,14 @@ unix|win32: LIBS += -lpng
 
 unix|win32: LIBS += -ltiff
 
+unix|win32: LIBS += -lIlmThread -lIlmImf -lHalf -lSDL -lIex
+
 unix|win32: LIBS += -lboost_date_time
+
+###############################################################################
+# make install options.
+# I wanted these in their own .pro but I couldn't get qmake to cooperate.
+#
 
 #
 # In debian package qtpovray
