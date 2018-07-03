@@ -696,6 +696,9 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 		this->statusBar->renderDone();
 		m_dockMan->getRenderDock()->repaint();
 		return;
+	} else if (command == "fatal") {
+		emit(emitStatusMessage(fatal, text));
+		return;
 	} else if (command == "stream") {
 		int i = text.indexOf(' ');
 		if (i == -1) {

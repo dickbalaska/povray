@@ -20,8 +20,8 @@ using povray::qtpov::QtGraphics;
 namespace vfe {
 
 const char* s_stream = "stream";
-const char* s_stream_fatal	 = "stream fatal ";
-const char* s_stream_warning = "stream warning ";
+const char* s_stream_fatal	 = "fatal";
+const char* s_stream_warning = "warning";
 
 bool gCancelRender = false;
 
@@ -75,6 +75,11 @@ void QtVfe::sendPovrayTextMessage(const QString& command)
 void QtVfe::sendPovrayTextMessage(const char* command)
 {
 	emit(emitPovrayTextMessage(command));
+}
+
+void QtVfe::sendPovrayWarningMessage(const QString& msg)
+{
+	emit(emitPovrayTextMessage(s_stream_warning, msg));
 }
 
 void QtVfe::sendPovrayGraphicsMessage(const uchar* buff, int size)
@@ -372,31 +377,6 @@ void  QtVfe::commandVersion()
 			.arg(DISTRIBUTION_MESSAGE_1).arg(DISTRIBUTION_MESSAGE_2).arg(DISTRIBUTION_MESSAGE_3)
 			.arg(POV_RAY_COPYRIGHT).arg(DISCLAIMER_MESSAGE_1).arg(DISCLAIMER_MESSAGE_2);
 
-//	fprintf(stderr,
-//		"%s %s\n\n"
-//		"%s\n%s\n%s\n"
-//		"%s\n%s\n%s\n\n",
-//		PACKAGE_NAME, POV_RAY_VERSION,
-//		DISTRIBUTION_MESSAGE_1, DISTRIBUTION_MESSAGE_2, DISTRIBUTION_MESSAGE_3,
-//		POV_RAY_COPYRIGHT, DISCLAIMER_MESSAGE_1, DISCLAIMER_MESSAGE_2
-//	);
-//	fprintf(stderr,
-//		"Built-in features:\n"
-//		"  I/O restrictions:          %s\n"
-//		"  X Window display:          %s\n"
-//		"  Supported image formats:   %s\n"
-//		"  Unsupported image formats: %s\n\n",
-//		BUILTIN_IO_RESTRICTIONS, BUILTIN_XWIN_DISPLAY, BUILTIN_IMG_FORMATS, MISSING_IMG_FORMATS
-//	);
-//	fprintf(stderr,
-//		"Compilation settings:\n"
-//		"  Build architecture:  %s\n"
-//		"  Built/Optimized for: %s\n"
-//		"  Compiler vendor:     %s\n"
-//		"  Compiler version:    %s\n"
-//		"  Compiler flags:      %s\n",
-//		BUILD_ARCH, BUILT_FOR, COMPILER_VENDOR, COMPILER_VERSION, CXXFLAGS
-//	);
 	s = QString("%1"
 				"Compilation settings:\n"
 				"  Build architecture:  %2\n"

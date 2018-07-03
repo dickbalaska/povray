@@ -29,6 +29,7 @@ public:
 	void	sendPovrayTextMessage(const char* command);
 	void	sendPovrayTextMessage(const QString& command);
 	void	sendPovrayTextMessage(const QString& command, const QString& msg);
+	void	sendPovrayWarningMessage(const QString& msg);
 
 //	void	sendPovrayTextMessage(const string& command, const string& msg);
 //	void	sendPovrayTextMessage(const string& msg);
