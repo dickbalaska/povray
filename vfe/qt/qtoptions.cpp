@@ -52,12 +52,16 @@
 
 #undef UNIX_DEBUG
 
+// Note: I use povray for the PACKAGE here, so that is what gets reported in the error messages.
+// Use PRODUCT when specifically meaning qtpovray.
+
+#define PRODUCT "qtpovray"
+
 #ifndef PACKAGE
-#define	PACKAGE	"qtpovray"
+#define	PACKAGE	"povray"
 #endif
 
-#ifndef VERSION_BASE			// FIXME!
-//#define VERSION_BASE "v3.7"
+#ifndef VERSION_BASE
 #include "base/version.h"
 #define VERSION_BASE	POV_RAY_HOST_VERSION
 #endif
@@ -108,8 +112,8 @@ namespace vfePlatform
         // user configuration file
         if (m_home.length() > 0)
         {
-            m_user_dir = m_home + "/." PACKAGE "/" VERSION_BASE;
-			m_userconf = m_home + "/." PACKAGE "/" VERSION_BASE "/povray.conf";
+			m_user_dir = m_home + "/." PRODUCT "/" VERSION_BASE;
+			m_userconf = m_home + "/." PRODUCT "/" VERSION_BASE "/povray.conf";
         }
         else
         {
@@ -691,12 +695,15 @@ namespace vfePlatform
                         break;
                     ++i;
                 }
-                if(quote  &&  s[i] != quote)  // no closing quote
+				if(quote  &&  s[i] != quote) { // no closing quote
                     fprintf(stderr,
                         "%s: %s: %lu: ignored entry: missing closing %c quote\n",
                         PACKAGE, conf_name.c_str(), line_number, quote
                     );
-                else if(i-begin)  // store given directory
+					QString s = QString("%1: %2: %3: ignored entry: missing closing %4 quote")
+							.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number).arg(quote);
+					m_qtVfe->sendPovrayWarningMessage(s);
+				} else if(i-begin)  // store given directory
                 {
                     string directory = s.substr(begin, i-begin) + "/";
                     s = CanonicalizePath(directory);
@@ -706,24 +713,36 @@ namespace vfePlatform
 #endif
                     paths.push_back(UnixPath(s, descend, writable));
                 }
-                else  // nothing found after the equal sign
+				else { // nothing found after the equal sign
                     fprintf(stderr,
                         "%s: %s: %lu: ignored entry: missing directory\n",
                         PACKAGE, conf_name.c_str(), line_number
                     );
+					QString s = QString("%1: %2: %3: ignored entry: missing directory")
+							.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number);
+					m_qtVfe->sendPovrayWarningMessage(s);
+				}
             }
-            else  // equal sign not found
+			else { // equal sign not found
                 fprintf(stderr,
                     "%s: %s: %lu: ignored entry: missing equal sign\n",
                     PACKAGE, conf_name.c_str(), line_number
                 );
+				QString s = QString("%1: %2: %3: ignored entry: missing equal sign")
+						.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number);
+				m_qtVfe->sendPovrayWarningMessage(s);
+			}
         }
         // unknown entry
-        else if(input.length() > 0)
+		else if(input.length() > 0) {
             fprintf(stderr,
                 "%s: %s: %lu: unknown '%s' setting\n",
                 PACKAGE, conf_name.c_str(), line_number, input.c_str()
             );
+			QString s = QString("%1: %2: %3: unknown '%4' setting")
+					.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number).arg(input.c_str());
+			m_qtVfe->sendPovrayWarningMessage(s);
+		}
     }
 
     // based on 3.6 unix_parse_conf_file()
@@ -802,6 +821,9 @@ namespace vfePlatform
                 {
                     fprintf(stderr, "%s: error while reading/opening configuration file ", PACKAGE);
                     perror(conf_name.c_str());
+					QString s = QString("%1: error while reading/opening configuration file %2")
+							.arg(PACKAGE).arg(conf_name.c_str());
+					m_qtVfe->sendPovrayWarningMessage(s);
                 }
                 break;
             }
@@ -869,11 +891,15 @@ namespace vfePlatform
                 file_io = io_settings[i].value;
 
                 // multiple settings were found
-                if(file_io_is_set)
+				if(file_io_is_set) {
                     fprintf(stderr,
                         "%s: %s: %lu: multiple settings for %s\n",
                         PACKAGE, conf_name.c_str(), line_number, sections[section].label
                     );
+					QString s = QString("%1: %2: %3: multiple settings for %4")
+							.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number).arg(sections[section].label);
+					m_qtVfe->sendPovrayWarningMessage(s);
+				}
                 if(file_io != IO_UNSET)
                     file_io_is_set = true;
 
@@ -890,12 +916,16 @@ namespace vfePlatform
                             "using system setting '%s'\n",
                             io_settings[m_file_io].label
                         );
+						QString s = QString("usering system setting '%1'")
+								.arg(io_settings[m_file_io].label);
+						m_qtVfe->sendPovrayWarningMessage(s);
                         file_io = m_file_io;
                         user_file_io_rejected = true;  // won't account for the user paths
                     }
                     else
                     {
                         fprintf(stderr, "I/O restrictions are disabled\n");
+						m_qtVfe->sendPovrayWarningMessage("I/O restrictions are disabled");
                         file_io = IO_NONE;
                     }
                 }
@@ -911,6 +941,13 @@ namespace vfePlatform
                         io_settings[  file_io].label, sections[section].label,
                         io_settings[m_file_io].label, m_conf.c_str()
                     );
+					QString s = QString("%1: %2: %3: "
+										"the user setting '%4' for %5 is less restrictive than "
+										"the system setting '%6' in '%7': using system setting")
+							.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number)
+							.arg(io_settings[file_io].label).arg(sections[section].label)
+							.arg(io_settings[m_file_io].label).arg(m_conf.c_str());
+					m_qtVfe->sendPovrayWarningMessage(s);
                     file_io = m_file_io;
                     user_file_io_rejected = true;  // won't account for the user paths
                 }
@@ -928,11 +965,15 @@ namespace vfePlatform
                 shellout = shl_settings[i].value;
 
                 // multiple settings were found
-                if(shellout_is_set)
+				if(shellout_is_set) {
                     fprintf(stderr,
                         "%s: %s: %lu: multiple settings for %s\n",
                         PACKAGE, conf_name.c_str(), line_number, sections[section].label
                     );
+					QString s = QString("%1: %2: %3: multiple settings for %4")
+							.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number).arg(sections[section].label);
+					m_qtVfe->sendPovrayWarningMessage(s);
+				}
                 if(shellout != SHL_UNSET)
                     shellout_is_set = true;
 
@@ -943,18 +984,26 @@ namespace vfePlatform
                         "%s: %s: %lu: unknown '%s' setting for %s: ",
                         PACKAGE, conf_name.c_str(), line_number, line.c_str(), sections[section].label
                     );
+					QString s = QString("%1: %2: %3: unknown '%4' setting for %5")
+							.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number)
+							.arg(line.c_str()).arg(sections[section].label);
+					m_qtVfe->sendPovrayWarningMessage(s);
                     if(user_mode)
                     {
                         fprintf(stderr,
                             "using system setting '%s'\n",
                             shl_settings[m_shellout].label
                         );
+						QString s = QString("using system setting '%1'")
+								.arg(shl_settings[m_shellout].label);
+						m_qtVfe->sendPovrayWarningMessage(s);
                         shellout = m_shellout;
                     }
                     else
                     {
                         fprintf(stderr, "shellout security is disabled\n");
-                        shellout = SHL_ALLOWED;
+						m_qtVfe->sendPovrayWarningMessage("shellout security is disabled");
+						shellout = SHL_ALLOWED;
                     }
                 }
 
@@ -971,6 +1020,13 @@ namespace vfePlatform
                         shl_settings[  shellout].label, sections[section].label,
                         shl_settings[m_shellout].label, m_conf.c_str()
                     );
+					QString s = QString("%s: %s: %lu: "
+										"the user setting '%s' for %s is less restrictive than "
+										"the system '%s' setting in '%s': using system setting")
+								.arg(PACKAGE).arg(conf_name.c_str()).arg(line_number)
+								.arg(shl_settings[  shellout].label).arg(sections[section].label)
+								.arg(shl_settings[m_shellout].label).arg(m_conf.c_str());
+					m_qtVfe->sendPovrayWarningMessage(s);
                     shellout = m_shellout;
                 }
 
@@ -991,6 +1047,9 @@ namespace vfePlatform
         {
             fprintf(stderr, "%s: error while reading/opening config file ", PACKAGE);
             perror(conf_name.c_str());
+			QString s = QString("%1: error while reading/opening config file")
+					.arg(PACKAGE).arg(conf_name.c_str());
+			m_qtVfe->sendPovrayWarningMessage(s);
         }
 
 #ifdef UNIX_DEBUG
@@ -1012,6 +1071,9 @@ namespace vfePlatform
                     "%s: %s: user permitted paths are ignored: using system paths\n",
                     PACKAGE, conf_name.c_str()
                 );
+				QString s = QString("%1: %2: user permitted paths are ignored: using system paths")
+						.arg(PACKAGE).arg(conf_name.c_str());
+				m_qtVfe->sendPovrayWarningMessage(s);
             }
             else
             {
@@ -1027,7 +1089,7 @@ namespace vfePlatform
         m_Session->AddExcludedPath(string(POVCONFDIR));
         if (m_user_dir.length() != 0)
             m_Session->AddExcludedPath(m_user_dir);
-
+		//bool sysRead = false;
         // read system configuration file
         if(m_sysconf.length() != 0)
         {
@@ -1037,23 +1099,14 @@ namespace vfePlatform
                 m_conf = m_sysconf;
             }
 			else {
-				QString qs = QString("warning %1: cannot open the user configuration file %2 : %3")
-									 .arg(PACKAGE)
-									 .arg(m_userconf.c_str())
+				QString qs = QString("warning %1: cannot open the system configuration file %2 : %3")
+									 .arg(PRODUCT)
+									 .arg(m_sysconf.c_str())
 									 .arg(strerror(errno));
 #ifdef _DEBUG
 				qWarning() << qs;
 #endif
-//            	stringstream ss;
-//            	ss << PACKAGE << ": cannot open the system configuration file " << m_sysconf;
-//            	ss << ": " << strerror(errno);
-//            	cerr << ss.str();
-//				string command = "stream warning";
-//            	povray::websockets::wsSend(m_hdl, s);
-//				m_qtVfe->sendPovrayTextMessage(command, ss.str());
 				m_qtVfe->sendPovrayTextMessage(s_stream, qs);
-//                fprintf(stderr, "%s: cannot open the system configuration file ", PACKAGE);
-//                perror(m_sysconf.c_str());
             }
         }
 
@@ -1154,6 +1207,8 @@ namespace vfePlatform
             {
                 fprintf(stderr, "%s: POVINI environment: cannot open ", PACKAGE);
                 perror(povini.c_str());
+				QString s = QString("%1: POVINI environment: cannot open").arg(PACKAGE);
+				m_qtVfe->sendPovrayWarningMessage(s);
             }
         }
 #ifdef _WINDOWS
@@ -1206,6 +1261,8 @@ namespace vfePlatform
 
         // warn that no INI file was found and add minimal library_path setting
         fprintf(stderr, "%s: cannot open an INI file, adding default library path\n", PACKAGE);
+		QString s = QString("%1: cannot open an INI file, adding default library path").arg(PACKAGE);
+		m_qtVfe->sendPovrayWarningMessage(s);
         opts.AddLibraryPath(string(POVLIBDIR "/include"));
     }
 
@@ -1286,17 +1343,25 @@ namespace vfePlatform
 
 	void QtOptionsProcessor::IORestrictionsError(const string &fnm, bool write, bool is_user_setting)
     {
+		QString s;
         if (is_user_setting)
         {
-            if (write)
+			if (write) {
                 fprintf(stderr, "%s: writing to '%s' is not permitted; check the configuration in '%s'\n", PACKAGE, fnm.c_str(), m_conf.c_str());
-            else
+				s = QString("%1: writing to '%2' is not permitted; check the configuration in '%3'")
+						.arg(PACKAGE).arg(fnm.c_str()).arg(m_conf.c_str());
+			} else {
                 fprintf(stderr, "%s: reading from '%s' is not permitted; check the configuration in '%s'\n", PACKAGE, fnm.c_str(), m_conf.c_str());
+				s = QString("%1: reading from '%2' is not permitted; check the configuration in '%3'")
+						.arg(PACKAGE).arg(fnm.c_str()).arg(m_conf.c_str());
+			}
         }
         else
         {
             fprintf(stderr, "%s: writing to '%s' is not permitted\n", PACKAGE, fnm.c_str());
+			s = QString("%1: writing to '%2' is not permitted").arg(PACKAGE).arg(fnm.c_str());
         }
+		m_qtVfe->sendPovrayWarningMessage(s);
 
     }
 
