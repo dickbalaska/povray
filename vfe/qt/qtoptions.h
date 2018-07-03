@@ -59,11 +59,11 @@ using boost::to_lower_copy;
  * These constants don't have to be in config.h .
  */
 #ifndef POVLIBDIR
-# define POVLIBDIR  "/usr/share/" PACKAGE "-" VERSION_BASE
+# define POVLIBDIR  "/usr/share/" PRODUCT "-" VERSION_BASE
 #endif
 
 #ifndef POVCONFDIR
-# define POVCONFDIR  "/etc/" PACKAGE "/" VERSION_BASE
+# define POVCONFDIR  "/etc/" PRODUCT "/" VERSION_BASE
 #endif
 
 #ifndef POVCONFDIR_BACKWARD
