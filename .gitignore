@@ -236,6 +236,7 @@ moc_*
 /qt/gui/qtpovray
 /qt/libpovray/Makefile
 /qt/platform/Makefile
+/vfe/qt/config.h
 
 # =====================
 # qtpovray debian build foo
