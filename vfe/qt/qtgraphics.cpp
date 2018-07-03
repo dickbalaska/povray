@@ -5,9 +5,8 @@
  *      Author: dick
  */
 
-//#include <QtEndian>
+#include <QDebug>
 #include "qtgraphics.h"
-//#include "qtserver.h"
 #include "qtvfe.h"
 
 #ifdef _DEBUG
@@ -44,17 +43,20 @@ void QtGraphics::SendInit()
 }
 void QtGraphics::DrawPixel(unsigned int x, unsigned int y, const RGBA8& colour)
 {
-	std::cerr << "QtGraphics::DrawPixel: x=" << x << " y=" << y << std::endl;
+	//std::cerr << "QtGraphics::DrawPixel: x=" << x << " y=" << y << std::endl;
+	qWarning() << "QtGraphics::DrawPixel: x=" << x << " y=" << y;
 
 }
 void QtGraphics::DrawRectangleFrame(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8& colour)
 {
-	std::cerr << "QtGraphics::DrawRectangleFrame: x1=" << x1 << " y1=" << y1 << std::endl;
+	//std::cerr << "QtGraphics::DrawRectangleFrame: x1=" << x1 << " y1=" << y1 << std::endl;
+	qWarning() << "QtGraphics::DrawRectangleFrame: x1=" << x1 << " y1=" << y1;
 
 }
 void QtGraphics::DrawFilledRectangle(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8& colour)
 {
-	std::cerr << "QtGraphics::DrawFilledRectangle: x1=" << x1 << " y1=" << y1 << std::endl;
+	//std::cerr << "QtGraphics::DrawFilledRectangle: x1=" << x1 << " y1=" << y1 << std::endl;
+	qWarning() << "QtGraphics::DrawFilledRectangle: x1=" << x1 << " y1=" << y1;
 
 }
 void QtGraphics::DrawPixelBlock(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8 *colour)
