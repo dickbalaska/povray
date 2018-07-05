@@ -29,6 +29,7 @@
 
 #include "mainwindow.h"
 #include "helpman.h"
+#include "workspace.h"
 #include "qtpovrayversion.h"
 
 HelpMan::HelpMan(MainWindow* parent)
@@ -73,7 +74,15 @@ void HelpMan::showAbout()
 	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
 	connect(buttonBox, &QDialogButtonBox::accepted, &d, &QDialog::accept);
 	mainLayout->addWidget(buttonBox);
+	QRect rect = m_mainWindow->getWorkspace()->getAboutRect();
+	if (!rect.topLeft().isNull()) {
+		d.move(rect.topLeft());
+		d.resize(rect.size());
+	}
+
 	d.exec();
+	m_mainWindow->getWorkspace()->setAboutRect(QRect(d.pos(), d.size()));
+
 	m_povrayBanner = NULL;
 }
 

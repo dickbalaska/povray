@@ -185,11 +185,14 @@ public:
 	const QString& getPovrayInsertMenu() const { return(povrayInsertMenu); }
 	void setPovrayInsertMenu(const QString& ins) { povrayInsertMenu = ins; }
 
+	const QString& getPovraySceneDirectory() const { return(povraySceneDirectory); }
+	void setPovraySceneDirectory(const QString& ins) { povraySceneDirectory = ins; }
+
 	const QString& getPovrayHelpDirectory() const { return(povrayHelpDirectory); }
 	void setPovrayHelpDirectory(const QString& inh) { povrayHelpDirectory = inh; }
 
-	const QString& getPovraySceneDirectory() const { return(povraySceneDirectory); }
-	void setPovraySceneDirectory(const QString& ins) { povraySceneDirectory = ins; }
+	const QString& getQtpovrayHelpDirectory() const { return(qtpovrayHelpDirectory); }
+	void setQtpovrayHelpDirectory(const QString& inh) { qtpovrayHelpDirectory = inh; }
 
 	bool getEditorWrapText() { return(editorWrapText); }
 	void setEditorWrapText(bool wrap) { editorWrapText = wrap; }
@@ -218,8 +221,9 @@ public:
 private:
 	QString	povrayIncludes;
 	QString	povrayInsertMenu;
-	QString	povrayHelpDirectory;
 	QString	povraySceneDirectory;
+	QString	povrayHelpDirectory;
+	QString	qtpovrayHelpDirectory;
 
 	bool	editorWrapText;
 	int		editorTabWidth;
@@ -236,8 +240,9 @@ private:
 inline void PreferenceData::operator=(const PreferenceData& other) {
 	this->povrayIncludes = other.povrayIncludes;
 	this->povrayInsertMenu = other.povrayInsertMenu;
-	this->povrayHelpDirectory = other.povrayHelpDirectory;
 	this->povraySceneDirectory = other.povraySceneDirectory;
+	this->povrayHelpDirectory = other.povrayHelpDirectory;
+	this->qtpovrayHelpDirectory = other.qtpovrayHelpDirectory;
 	this->m_useLargeIcons = other.m_useLargeIcons;
 	this->editorWrapText = other.editorWrapText;
 	this->editorTabWidth = other.editorTabWidth;

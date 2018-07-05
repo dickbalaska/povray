@@ -35,6 +35,7 @@
 
 #include "workspace.h"
 
+static QString s_aboutRect			("aboutRect");
 static QString s_activeEditor		("activeEditor");
 static QString s_bookmarks			("bookmarks");
 static QString s_bmP				("bmP");
@@ -53,6 +54,7 @@ static QString s_geometry			("geometry");
 static QString s_MainWindow			("MainWindow");
 static QString s_openEditors		("openEditors");
 static QString s_povrayConsoleFilters("povrayConsoleFilters");
+static QString s_prefsRect			("prefsRect");
 static QString s_renderFile			("renderFile");
 static QString s_resourceFilters	("resourceFilters");
 static QString s_resourceFilterType	("resourceFilterType");
@@ -127,7 +129,12 @@ void Workspace::load(const QString& filename)
 	qv = settings.value(s_colorModelessRect);
 	if (qv.isValid())
 		m_colorModelessRect = qv.toRect();
-
+	qv = settings.value(s_aboutRect);
+	if (qv.isValid())
+		m_aboutRect = qv.toRect();
+	qv = settings.value(s_prefsRect);
+	if (qv.isValid())
+		m_prefsRect = qv.toRect();
 	settings.beginGroup(s_CL);
 	QComboBox* cb = m_mainWindow->m_mainToolbar->getRenderCL();
 	cb->clear();
@@ -190,6 +197,8 @@ void Workspace::save()
 	settings.setValue(s_colormapRect, m_colormapRect);
 	settings.setValue(s_colorRect, m_colorRect);
 	settings.setValue(s_colorModelessRect, m_colorModelessRect);
+	settings.setValue(s_aboutRect, m_aboutRect);
+	settings.setValue(s_prefsRect, m_prefsRect);
 	settings.beginGroup(s_CL);
 	QComboBox* cb = m_mainWindow->m_mainToolbar->getRenderCL();
 	QString index;

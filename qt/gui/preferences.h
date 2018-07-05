@@ -68,10 +68,12 @@ public slots:
 	void textIncEdited(const QString& text);
 	void browseInsClicked(bool b);
 	void textInsEdited(const QString& text);
-	void browseInhClicked(bool b);
-	void textInhEdited(const QString& text);
 	void browseIndClicked(bool b);
 	void textIndEdited(const QString& text);
+	void browseInhClicked(bool b);
+	void textInhEdited(const QString& text);
+	void browseInqClicked(bool b);
+	void textInqEdited(const QString& text);
 
 	void benchmarkButtonClicked(bool);
 
@@ -81,8 +83,9 @@ private:
 #endif
 	void validateInc();
 	void validateIns();
-	void validateInh();
 	void validateInd();
+	void validateInh();
+	void validateInq();
 	void validateHelpDirectory();
 	void validateSceneDirectory();
 
@@ -96,10 +99,12 @@ private:
 	QLabel*		povrayIncludesStatus;
 	QLineEdit*	povrayInsertMenu;
 	QLabel*		povrayInsertMenuStatus;
-	QLineEdit*	povrayHelpDirectory;
-	QLabel*		povrayHelpDirectoryStatus;
 	QLineEdit*	povraySceneDirectory;
 	QLabel*		povraySceneDirectoryStatus;
+	QLineEdit*	povrayHelpDirectory;
+	QLabel*		povrayHelpDirectoryStatus;
+	QLineEdit*	qtpovrayHelpDirectory;
+	QLabel*		qtpovrayHelpDirectoryStatus;
 
 #ifdef USE_WEBSOCKETS
 	QTextEdit*	povrayBanner;		// output of talking to POV-Ray
@@ -249,23 +254,26 @@ class Preferences : public QDialog
 
 public:
 	Preferences(MainWindow* parent, PreferenceData* data);
+	virtual ~Preferences();
 
 	static bool validateInc(const QString& file);
 	static bool validateIns(const QString& file);
-	static bool validateInh(const QString& file);
 	static bool validateInd(const QString& file);
+	static bool validateInh(const QString& file);
+	static bool validateInq(const QString& file);
+
 private:
 	//MainWindow*	mainWindow;
-	QIcon* iconOk;
-	QIcon* iconBad;
+	QIcon* m_iconOk;
+	QIcon* m_iconBad;
 
-	PreferenceData*	prefData;
-	MainWindow*	mainWindow;
-	QTabWidget* tabWidget;
-	SystemTab*	systemTab;
-	EditorTab*	editorTab;
-	ColorTab*	colorTab;
-	KeyTab*		keyTab;
+	PreferenceData*	m_prefData;
+	MainWindow*	m_mainWindow;
+	QTabWidget* m_tabWidget;
+	SystemTab*	m_systemTab;
+	EditorTab*	m_editorTab;
+	ColorTab*	m_colorTab;
+	KeyTab*		m_keyTab;
 };
 
 #endif // _PREFERENCES_H_

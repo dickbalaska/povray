@@ -76,6 +76,12 @@ public:
 	const QRect&	getColorModelessRect() { return(m_colorModelessRect); }
 	void			setColorModelessRect(const QRect& rect) { m_colorModelessRect = rect; }
 
+	const QRect&	getPreferencesRect() { return(m_prefsRect); }
+	void			setPreferencesRect(const QRect& rect) { m_prefsRect = rect; }
+
+	const QRect&	getAboutRect() { return(m_aboutRect); }
+	void			setAboutRect(const QRect& rect) { m_aboutRect = rect; }
+
 private:
 	void			updateEditorPositions();
 
@@ -92,9 +98,12 @@ private:
 	int				m_activeEditorIndex;	// which editor is open
 	QList<QVariant>	m_editorPositions;		// ints.
 	QList<QVariant>	m_editorScrolls;		// scroll position goes
+
 	QRect			m_colormapRect;
 	QRect			m_colorRect;
 	QRect			m_colorModelessRect;
+	QRect			m_prefsRect;
+	QRect			m_aboutRect;
 	MainWindow*		m_mainWindow;
 };
 

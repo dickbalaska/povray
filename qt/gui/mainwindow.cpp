@@ -494,6 +494,7 @@ static QString s_PovrayInsertMenu		("PovrayInsertMenu");
 static QString s_PovrayHelpDirectory	("PovrayHelpDirectory");
 static QString s_PovraySceneDirectory	("PovraySceneDirectory");
 static QString s_Preferences			("Preferences");
+static QString s_QtpovrayHelpDirectory	("QtpovrayHelpDirectory");
 static QString s_UseLargeIcons			("UseLargeIcons");
 
 void MainWindow::savePreferences() {
@@ -502,17 +503,18 @@ void MainWindow::savePreferences() {
 #ifdef USE_WEBSOCKETS
 	settings.setValue(s_PovrayExecutable,	preferenceData.getPovrayExecutable());
 #endif
-	settings.setValue(s_PovrayIncludes,		preferenceData.getPovrayIncludes());
-	settings.setValue(s_PovrayInsertMenu,	preferenceData.getPovrayInsertMenu());
-	settings.setValue(s_PovrayHelpDirectory,preferenceData.getPovrayHelpDirectory());
-	settings.setValue(s_PovraySceneDirectory, preferenceData.getPovraySceneDirectory());
-	settings.setValue(s_EditorWrapText,		preferenceData.getEditorWrapText());
-	settings.setValue(s_EditorTabWidth,		preferenceData.getEditorTabWidth());
-	settings.setValue(s_EditorAutoIndent,	preferenceData.getAutoIndent());
-	settings.setValue(s_EditorAutoBrace,	preferenceData.getAutoBraceCompletion());
-	settings.setValue(s_EditorHighlightLine,preferenceData.getEditorHighlightCurrentLine());
-	settings.setValue(s_EditorHighlightTokens,preferenceData.getEditorHighlightTokens());
-	settings.setValue(s_UseLargeIcons,		preferenceData.getUseLargeIcons());
+	settings.setValue(s_PovrayIncludes,			preferenceData.getPovrayIncludes());
+	settings.setValue(s_PovrayInsertMenu,		preferenceData.getPovrayInsertMenu());
+	settings.setValue(s_PovraySceneDirectory,	preferenceData.getPovraySceneDirectory());
+	settings.setValue(s_PovrayHelpDirectory,	preferenceData.getPovrayHelpDirectory());
+	settings.setValue(s_QtpovrayHelpDirectory,	preferenceData.getQtpovrayHelpDirectory());
+	settings.setValue(s_EditorWrapText,			preferenceData.getEditorWrapText());
+	settings.setValue(s_EditorTabWidth,			preferenceData.getEditorTabWidth());
+	settings.setValue(s_EditorAutoIndent,		preferenceData.getAutoIndent());
+	settings.setValue(s_EditorAutoBrace,		preferenceData.getAutoBraceCompletion());
+	settings.setValue(s_EditorHighlightLine,	preferenceData.getEditorHighlightCurrentLine());
+	settings.setValue(s_EditorHighlightTokens,	preferenceData.getEditorHighlightTokens());
+	settings.setValue(s_UseLargeIcons,			preferenceData.getUseLargeIcons());
 	settings.endGroup();
 
 #define writeColor(_highlight) \
@@ -555,8 +557,9 @@ void MainWindow::loadPreferences() {
 #endif
 	preferenceData.setPovrayIncludes(settings.value(s_PovrayIncludes).toString());
 	preferenceData.setPovrayInsertMenu(settings.value(s_PovrayInsertMenu).toString());
-	preferenceData.setPovrayHelpDirectory(settings.value(s_PovrayHelpDirectory).toString());
 	preferenceData.setPovraySceneDirectory(settings.value(s_PovraySceneDirectory).toString());
+	preferenceData.setPovrayHelpDirectory(settings.value(s_PovrayHelpDirectory).toString());
+	preferenceData.setQtpovrayHelpDirectory(settings.value(s_QtpovrayHelpDirectory).toString());
 	preferenceData.setEditorWrapText(settings.value(s_EditorWrapText, false).toBool());
 	preferenceData.setEditorTabWidth(settings.value(s_EditorTabWidth, 4).toInt());
 	preferenceData.setAutoIndent(settings.value(s_EditorAutoIndent, true).toBool());
@@ -586,13 +589,13 @@ void MainWindow::loadPreferences() {
 		QString s = findPath("include");
 		preferenceData.setPovrayIncludes(s);
 	}
-	if (preferenceData.getPovrayHelpDirectory().isEmpty()) {
-		QString s = findPath("html");
-		preferenceData.setPovrayHelpDirectory(s);
-	}
 	if (preferenceData.getPovraySceneDirectory().isEmpty()) {
 		QString s = findPath("scenes");
 		preferenceData.setPovraySceneDirectory(s);
+	}
+	if (preferenceData.getQtpovrayHelpDirectory().isEmpty()) {
+		QString s = findPath("qtpovrayHelp");
+		preferenceData.setQtpovrayHelpDirectory(s);
 	}
 
 #define readColor(_highlight, _defaultColor, _defaultBold) \
