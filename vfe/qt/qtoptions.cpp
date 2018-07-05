@@ -1089,7 +1089,8 @@ namespace vfePlatform
         m_Session->AddExcludedPath(string(POVCONFDIR));
         if (m_user_dir.length() != 0)
             m_Session->AddExcludedPath(m_user_dir);
-		//bool sysRead = false;
+		bool sysRead = false;
+		bool userRead = false;
         // read system configuration file
         if(m_sysconf.length() != 0)
         {
@@ -1097,16 +1098,7 @@ namespace vfePlatform
 			if ( stream.is_open() ) {
                 parse_conf_file(stream, m_sysconf, false);
                 m_conf = m_sysconf;
-            }
-			else {
-				QString qs = QString("warning %1: cannot open the system configuration file %2 : %3")
-									 .arg(PRODUCT)
-									 .arg(m_sysconf.c_str())
-									 .arg(strerror(errno));
-#ifdef _DEBUG
-				qWarning() << qs;
-#endif
-				m_qtVfe->sendPovrayTextMessage(s_stream, qs);
+				sysRead = true;
             }
         }
 
@@ -1118,27 +1110,26 @@ namespace vfePlatform
             {
                 parse_conf_file(stream, m_userconf, true);
                 m_conf = m_userconf;
+				userRead = true;
             }
-            else
-            {
-				QString qs = QString("warning %1: cannot open the user configuration file %2 : %3")
-									 .arg(PACKAGE)
-									 .arg(m_userconf.c_str())
-									 .arg(strerror(errno));
-//            	stringstream ss;
-//           	ss << PACKAGE << ": cannot open the user configuration file " << m_userconf;
-//				ss << ": " << strerror(errno);
-#ifdef _DEBUG
-				qWarning() << qs;
-#endif
-//            	string s = s_stream_warning + ss.str();
-//            	povray::websockets::wsSend(m_hdl, s);
-				m_qtVfe->sendPovrayTextMessage(s_stream, qs);
+		  }
+		if (!(sysRead || userRead)) {
+			if (!sysRead) {
+				QString qs = QString("warning %1: cannot open the system configuration file %2 : %3")
+						.arg(PACKAGE)
+						.arg(m_sysconf.c_str())
+						.arg(strerror(errno));
 
-//                fprintf(stderr, "%s: cannot open the user configuration file ", PACKAGE);
-//                perror(m_userconf.c_str());
-            }
-        }
+				m_qtVfe->sendPovrayTextMessage(s_stream, qs);
+			}
+			if (!userRead) {
+				QString qs = QString("warning %1: cannot open the user configuration file %2 : %3")
+						 .arg(PACKAGE)
+						 .arg(m_userconf.c_str())
+						 .arg(strerror(errno));
+				m_qtVfe->sendPovrayTextMessage(s_stream, qs);
+			}
+		}
 
         // no file was read, disable I/O restrictions
         if(m_conf.length() == 0) {
