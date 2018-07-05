@@ -206,7 +206,7 @@ SystemTab::SystemTab(Preferences* parent)
 	povrayHelpDirectoryStatus = new QLabel(this);
 	povrayHelpDirectoryStatus->setPixmap(parent->m_iconBad->pixmap(16));
 	layout->addWidget(povrayHelpDirectoryStatus, 4, 0, 1, 1, Qt::AlignLeft);
-	layout->addWidget(new QLabel(tr("Povray Help"), this), 4, 1, 1, 1, Qt::AlignLeft);
+	layout->addWidget(new QLabel(tr("POV-Ray Help"), this), 4, 1, 1, 1, Qt::AlignLeft);
 	povrayHelpDirectory = new QLineEdit(this);
 	povrayHelpDirectory->setText(prefData->getPovrayHelpDirectory());
 	layout->addWidget(povrayHelpDirectory, 4, 2, 1, 1);
