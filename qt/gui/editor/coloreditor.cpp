@@ -109,7 +109,7 @@ ColorEditor::ColorEditor(QWidget* parent, MainWindow* mainWindow, PovColor color
 	mainLayout->addLayout(pixmapLayout);
 
 	QStringList sl;
-	sl << tr("R:") << tr("G:") << tr("B") << tr("F:") << tr("T:");
+	sl << tr("R:") << tr("G:") << tr("B:") << tr("F:") << tr("T:");
 
 	QGridLayout* sliderLayout = new QGridLayout();
 	int index = 0;
