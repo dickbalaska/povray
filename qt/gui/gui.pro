@@ -29,11 +29,15 @@ CONFIG(debug, debug|release) {
 #	DEFINES += _NDEBUG
 #}
 
-#DESTDIR = ../../usr/bin
 
 unix:isEmpty(PREFIX) {
  PREFIX = /usr/local
 }
+
+DESTDIR = ../../usr/bin
+#DESTDIR = $$PREFIX
+
+QMAKE_CXXFLAGS -= -Wdate-time
 
 INCLUDEPATH += "../../vfe"
 
@@ -153,15 +157,15 @@ unix|win32: LIBS += -lboost_date_time
 
 ###############################################################################
 # make install options.
-# I wanted these in their own .pro but I couldn't get qmake to cooperate.
+# I wanted these in their own .pro but I couldnt get qmake to cooperate.
 #
 
 #
 # In debian package qtpovray
 #
 
-TARGET.path = $$PREFIX/bin
-INSTALLS += TARGET
+#TARGET.path = $$PREFIX/bin
+#INSTALLS += TARGET
 
 etc.path = /etc/qtpovray/$$QPVERSION
 etc.files = ../../unix/povray.conf ../../distribution/ini/povray.ini
