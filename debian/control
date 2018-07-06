@@ -19,7 +19,6 @@ Build-Depends:
  pkg-config,
  libboost-thread-dev,
  libopenexr-dev,
- libsdl-dev,
  libxpm-dev,
 
 
@@ -51,7 +50,7 @@ Description: Qt IDE for POV-Ray (a 3D renderer)
  POV-Ray SDL (Scene Description Language) text files.  Images are rendered
  and displayed from within qtpovray.
  .
- This package contains architecture independent include files.
+ This package contains architecture independent POV-Ray include files.
 
 Package: qtpovray-extras
 Architecture: all
