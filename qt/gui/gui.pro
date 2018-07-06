@@ -7,12 +7,10 @@
 # Used by make install for directory location
 QPVERSION=3.8
 
-QT       += core gui
+QT       += core gui widgets
 
 
 CONFIG += c++11
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qtpovray
 TEMPLATE = app
@@ -31,7 +29,11 @@ CONFIG(debug, debug|release) {
 #	DEFINES += _NDEBUG
 #}
 
-DESTDIR = ../../usr/bin
+#DESTDIR = ../../usr/bin
+
+unix:isEmpty(PREFIX) {
+ PREFIX = /usr/local
+}
 
 INCLUDEPATH += "../../vfe"
 
@@ -144,7 +146,8 @@ unix|win32: LIBS += -lpng
 
 unix|win32: LIBS += -ltiff
 
-unix|win32: LIBS += -lIlmThread -lIlmImf -lHalf -lSDL -lIex
+#unix|win32: LIBS += -lIlmThread -lIlmImf -lHalf -lSDL -lIex
+unix|win32: LIBS += -lIlmThread -lIlmImf -lHalf -lIex
 
 unix|win32: LIBS += -lboost_date_time
 
@@ -156,6 +159,10 @@ unix|win32: LIBS += -lboost_date_time
 #
 # In debian package qtpovray
 #
+
+TARGET.path = $$PREFIX/bin
+INSTALLS += TARGET
+
 etc.path = /etc/qtpovray/$$QPVERSION
 etc.files = ../../unix/povray.conf ../../distribution/ini/povray.ini
 INSTALLS += etc
@@ -174,14 +181,18 @@ INSTALLS += includes
 #
 # In debian package qtpovray-extras
 #
-inserts.path = /usr/share/qtpovray-$$QPVERSION
+inserts.path = $$PREFIX/share/qtpovray-$$QPVERSION
 inserts.files = "../../distribution/platform-specific/windows/Insert Menu"
 INSTALLS += inserts
 
-scenes.path = /usr/share/qtpovray-$$QPVERSION
+scenes.path = $$PREFIX/share/qtpovray-$$QPVERSION
 scenes.files = ../../distribution/scenes
 INSTALLS += scenes
 
-help.path = /usr/share/qtpovray-$$QPVERSION
+help.path = $$PREFIX/share/qtpovray-$$QPVERSION
 help.files = ../../doc/html
 INSTALLS += help
+
+qtphelp.path = $$PREFIX/share/qtpovray-$$QPVERSION
+qtphelp.files = ../../distribution/qt/qtpovrayHelp
+INSTALLS += qtphelp
