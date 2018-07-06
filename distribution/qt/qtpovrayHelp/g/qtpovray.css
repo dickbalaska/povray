@@ -1,0 +1,77 @@
+h1 { margin-top: 0 ; margin-bottom: 0 }
+h2 { margin-top: 0 ; margin-bottom: 0 }
+#BuckoTop {
+	overflow:auto;
+	position: fixed;
+	padding: 0;
+	top:0em;
+	left:0em;
+	right:0em;
+	bottom: auto;
+}
+body>#BuckoTop {
+	left:2px;
+	top:2px;
+	right:2em;
+}
+
+body {
+	background-color: #C0C0C0 ;
+	background: url(backchoo.png) ; 
+	color: #000000
+	 }
+
+a:link { text-decoration: none ; color: #0000F8 }
+a:hover { text-decoration: underline ; color: #ff0000 }
+a:visited { text-decoration: none ; color: #640051 }
+a.external { background: url(external_link.png) center right no-repeat ; padding-right: 13px ;}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* compassNS.css - The style sheet for the BuckoSoft compass - Gecko style
+ * $Id$
+ */
+#compass {
+	overflow:auto;
+	position: fixed;
+	/*float: top;*/
+	padding: 0;
+	top:	0px;
+	left:	0px;
+}
+#compassHelp {
+	position:		fixed;
+	left:			0px;
+	top:			20px;
+	visibility:		hidden;
+}
+#compassBud {
+	position:		fixed;
+	left:			0px;
+	top:			40px;
+	visibility:		hidden;
+}
+
+#compassText {
+	position:		fixed;
+	left:			24px;
+	top:			24px;
+	visibility:		hidden;
+}
+
+div.compassTextDiv {
+	border:			1px solid #6e615f;
+	/*background-color:	#ead3cd;*/
+	background-color:	#eaceca;
+	color:			black;
+}
+
+img.center {
+	display: block;
+	margin: 0 auto;
+}
+.center { text-align: center; }

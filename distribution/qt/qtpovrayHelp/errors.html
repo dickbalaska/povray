@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!-- errors.html
+   - Copyright(c) 2017 - BuckoSoft, Corp.
+   -->
+<html>
+<head>
+<meta charset="utf-8" />
+<title>qtpovray - POV-Ray Errors</title>
+<link rel="stylesheet" href="g/qtpovray.css" type="text/css" />
+<script language="JavaScript1.2" src="j/compass.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	var compassTextUp = "Up: qtpovray";
+	var compassTextPrev = "Prev: qtpovray - Render";
+	var compassTextNext = "Next: qtpovray - Render View";
+</script>
+</head><body onload="compassInit(); return false;" onunload="compassUnload(); return false;" >
+<script type="text/javascript">var action = window.setInterval("compassTimer()", 10);</script>
+<div class="mainBody"><table width="100%"><tr><td width="20%">&#160;</td><td valign="top"><center><h1>qtpov</h1><h2>POV-Ray Errors</h2>
+</center></td><td width="20%" align="right" valign="top">December 5, 2017</td></tr></table>
+<hr />
+<p>You will likely have errors as you're developing your POV-Ray SDL.</p>
+<a href="g/qtpovPovrayErrorSample.png" class="image-link">
+<img id="foo" class="center" src="g/qtpovPovrayErrorSample_sm.png" /></a>
+<p>qtpovray provides two ways of navigating the errors.</p>
+<ul>
+<li><b>Double-click</b> the red error line in the console.</li>
+<li><b>F4</b> to navigate to the next error
+	<ul><li><b>Shift-F4</b> to navigate to the previous error.</li></ul>
+</li>
+</ul>
+
+
+<hr />
+</div>
+
+<div class="compassTextDiv" id="compassText"></div>
+<div id="compass"><table cellspacing="0" cellpadding="0"><tr>
+<td><a href="index.html"><img border="0" src="g/butUp.png" width="20" height="20" alt="" onmouseover="compassMouseOverUp(); return true;" onmousedown="compassMouseDownUp(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td><a href="render.html"><img border="0" src="g/butLeft.png" width="20" height="20" alt="" onmouseover="compassMouseOverPrev(); return true;" onmousedown="compassMouseDownPrev(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td id="compassNext"><a href="renderView.html"><img border="0" src="g/butRight.png" width="20" height="20" alt="" onmouseover="compassMouseOverNext(); return true;" onmousedown="compassMouseDownNext(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+</tr></table></div>
+</body></html>

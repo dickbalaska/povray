@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!-- /qtpovray/tutorial.html
+   - Copyright(c) 2018 - BuckoSoft, Corp.
+   -->
+<html>
+<head>
+<meta charset="utf-8" />
+<title>qtpovray - Tutorial</title>
+<link rel="stylesheet" href="g/qtpovray.css" type="text/css" />
+<script language="JavaScript1.2" src="j/compass.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	var compassTextUp = "Up: qtpovray";
+	var compassTextPrev = "Prev: qtpovray";
+	var compassTextNext = "Next: qtpov - Developer";
+	var compassTextSkip1 = "";
+	var compassTextSkip2 = "";
+	var compassTextSkip3 = "";
+	var useIE = 0;
+</script>
+</head><body onload="compassInit(); return false;" onunload="compassUnload(); return false;" >
+<script type="text/javascript">var action = window.setInterval("compassTimer()", 10);</script>
+<div class="mainBody"><table width="100%"><tr><td width="20%">&#160;</td><td valign="top"><center><h1>qtpovray</h1><h2>Tutorial</h2>
+</center></td><td width="20%" align="right" valign="top">December 22, 2017</td></tr></table>
+<hr />
+<p>This page describes the minimum steps required to render your first image.</p>
+<p>Start <code>qtpovray</code> or <code>qtpovray.exe</code> either from the shell, or by double-clicking on it.</p>
+<p>You will see a tiny window
+<a href="g/qtpovTutFirstScreen.png" class="image-link">
+<img class="center" src="g/qtpovTutFirstScreen_sm.png" /></a>
+</p>
+<hr width="25%" />
+<p>Define your <a href="workspace.html">workspace</a>. This is just where metadata is stored. The default location is fine.<br>
+Type <code>default</code> for the name of your workspace, and click save.
+<a href="g/qtpovTutSelectWorkspace.png" class="image-link">
+<img class="center" src="g/qtpovTutSelectWorkspace_sm.png" /></a></p>
+<hr width="25%" />
+<p>Next, qtpov needs to know where your actual POV-Ray SDL source will go.
+<a href="g/qtpovTutSelectSourceDir.png" class="image-link">
+<img class="center" src="g/qtpovTutSelectSourceDir_sm.png" /></a></p>
+<hr width="25%" />
+<p>Select a directory. I prefer to group my povray projects under <code>/home/dick/povray/projects</code>.<br />
+Here, I've created a <code>myFirstProject</code> directory.<br />
+Pick a directory and click <code>Choose</code>.
+<a href="g/qtpovTutChooseDirectory.png" class="image-link">
+<img class="center" src="g/qtpovTutChooseDirectory_sm.png" /></a></p>
+<hr width="25%" />
+<p>Now you are ready to create a source file. Click the <code>New File icon</code>
+<img class="center" src="g/qtpovTutCreateNewFile_sm.png" /></p>
+<p>Type in a name for your file.  I chose <code>first.pov</code>, and click Ok.
+<img class="center" src="g/qtpovTutFirstFileName.png" /></p>
+<hr width="25%" />
+A blank file will be created and opened in the editor.<br/>
+Now click the <code>Insert Menu</code> dropdown and select<br/>
+<code>Ready made scenes</code> and <code>Basic scene 01 - Checkered plane</code>
+<a href="g/qtpovTutInsertScene.png" class="image-link">
+<img class="center" src="g/qtpovTutInsertScene_sm.png" /></a></p>
+<hr width="25%" />
+<p>Finally, click the Green <code>Start POV-Ray</code> arrow to begin rendering. 
+<a href="g/qtpovTutStartRender.png" class="image-link">
+<img class="center" src="g/qtpovTutStartRender_sm.png" /></a></p>
+
+
+</div>
+
+<div class="compassTextDiv" id="compassText"></div>
+<div id="compass"><table cellspacing="0" cellpadding="0"><tr>
+<td><a href="index.html"><img border="0" src="g/butUp.png" width="20" height="20" alt="" onmouseover="compassMouseOverUp(); return true;" onmousedown="compassMouseDownUp(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td><a href="index.html"><img border="0" src="g/butLeft.png" width="20" height="20" alt="" onmouseover="compassMouseOverPrev(); return true;" onmousedown="compassMouseDownPrev(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td id="compassNext"><a href="developer.html"><img border="0" src="g/butRight.png" width="20" height="20" alt="" onmouseover="compassMouseOverNext(); return true;" onmousedown="compassMouseDownNext(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+</tr></table></div>
+</body></html>

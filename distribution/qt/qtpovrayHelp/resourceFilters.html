@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!-- resourceFilters.html
+   - Copyright(c) 2017 - BuckoSoft, Corp.
+   -->
+<html>
+<head>
+<meta charset="utf-8" />
+<title>qtpovray - Resource Filters</title>
+<link rel="stylesheet" href="g/qtpovray.css" type="text/css" />
+<script language="JavaScript1.2" src="j/compass.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	var compassTextUp = "Up: qtpovray";
+	var compassTextPrev = "Prev: qtpovray - Bookmarks";
+	var compassTextNext = "Next: qtpovray - Console Filters";
+</script>
+</head><body onload="compassInit(); return false;" onunload="compassUnload(); return false;" >
+<script type="text/javascript">var action = window.setInterval("compassTimer()", 10);</script>
+<div class="mainBody"><table width="100%"><tr><td width="20%">&#160;</td><td valign="top"><center><h1>qtpov</h1><h2>Resource Filters</h2>
+</center></td><td width="20%" align="right" valign="top">December 5, 2017</td></tr></table>
+<hr />
+<p>You can limit the files that are displayed in the Resources tree.</p>
+<p>This is useful if you are building animations; you can quickly get hundreds of output .png files
+cluttering the directory, that you don't need to see here.</p>
+<p>The context right-click menu on the Resources will bring up the filter dialog.</p>
+
+<a href="g/qtpovResourceFiltersContext.png" class="image-link">
+<img id="foo" class="center" src="g/qtpovResourceFilters.png" /></a>
+<p>There are 3 options for filtering. Qt uses an <i>inclusive</i> filter model, you
+specify the files you want displayed, (as opposed to eclipse's <i>exclusive</i> model, which hides the files specified).</p>
+<ul>
+<li><b>Show all files</b> - Display everything in the directory.</li>
+<li><b>Dim filtered files</b> - Greys out and disables the filtered files.</li>
+<li><b>Hide filtered files</b> - Only shows the files the match the below filters.</li>
+</ul>
+<p>You can remove a filter by clicking the red X<br />
+Add a new filter by typing its name and click the green +</p>
+<p>The default filters are the 3 primary POV-Ray file types; <code>*.pov</code>, <code>*.inc</code>, and <code>*.ini</code> .
+<hr />
+</div>
+
+<div class="compassTextDiv" id="compassText"></div>
+<div id="compass"><table cellspacing="0" cellpadding="0"><tr>
+<td><a href="index.html"><img border="0" src="g/butUp.png" width="20" height="20" alt="" onmouseover="compassMouseOverUp(); return true;" onmousedown="compassMouseDownUp(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td><a href="bookmarks.html"><img border="0" src="g/butLeft.png" width="20" height="20" alt="" onmouseover="compassMouseOverPrev(); return true;" onmousedown="compassMouseDownPrev(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td id="compassNext"><a href="consoleFilters.html"><img border="0" src="g/butRight.png" width="20" height="20" alt="" onmouseover="compassMouseOverNext(); return true;" onmousedown="compassMouseDownNext(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+</tr></table></div>
+</body></html>

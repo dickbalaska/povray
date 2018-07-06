@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- workspace.html
+   - Copyright(c) 2017 - BuckoSoft, Corp.
+   -->
+<html>
+<head>
+<meta charset="utf-8" />
+<title>qtpovray - Workspace</title>
+<link rel="stylesheet" href="g/qtpovray.css" type="text/css" />
+<script language="JavaScript1.2" src="j/compass.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	var compassTextUp = "Up: qtpovray";
+	var compassTextPrev = "Prev: qtpovray - Configure Shortcut Keys";
+	var compassTextNext = "Next: qtpovray - Render";
+</script>
+</head><body onload="compassInit(); return false;" onunload="compassUnload(); return false;" >
+<script type="text/javascript">var action = window.setInterval("compassTimer()", 10);</script>
+<div class="mainBody"><table width="100%"><tr><td width="20%">&#160;</td><td valign="top"><center><h1>qtpov</h1><h2>Workspace</h2>
+</center></td><td width="20%" align="right" valign="top">November 23, 2017</td></tr></table>
+<hr />
+<p>
+If you are familiar with eclipse, this is exactly an eclipse workspace,
+</p>
+<p>
+otherwise, a <b>workspace</b> is metadata (a single file) that stores per project preferences;
+window position, open files, etc.
+</p>
+<p>
+The most important of these preferences is the project root directory. This is nominally the directory that
+you will start renders from. (You can choose a subdirectory.)
+</p>
+<p>When you first start qtpovray, it will ask you for a workspace. The default location for workspace files 
+on Ubuntu is <code>~/.cache/qtpovray</code> . Choose a filename that has meaning, 
+like <code>foo</code> for your foo project.</p>
+<p>After you've created a workspace, it will ask you for your POV-Ray directory. This is where you keep your
+<code>foo.pov</code>, and <code>foo.ini</code> files.</p>
+<p>Workspaces are saved automatically and subsequent launches of qtpov should put you back 
+to exactly where you left off.</p>
+<p>After you tire of your foo project, you want to work on your starfield project.<br/>
+Under the <i>File</i> menu, select <i>Switch Workspace</i> -> <i>Other</i>. This will let you create another workspace,
+or choose an existing one.</p>
+<hr width="30%" />
+<p>A workspace is stored as a <code>*.pws</code> file, which is an editable plain text file.</p>
+<p>Linux/Debian workspaces are stored by default in <code>~/.cache/qtpovray</code><br/>
+   Windows workspaces are stored in <code>$HOMEPATH/Appdata/Local/qtpovray/cache</code>
+</p>
+
+<hr />
+</div>
+
+<div class="compassTextDiv" id="compassText"></div>
+<div id="compass"><table cellspacing="0" cellpadding="0"><tr>
+<td><a href="index.html"><img border="0" src="g/butUp.png" width="20" height="20" alt="" onmouseover="compassMouseOverUp(); return true;" onmousedown="compassMouseDownUp(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td><a href="configKeys.html"><img border="0" src="g/butLeft.png" width="20" height="20" alt="" onmouseover="compassMouseOverPrev(); return true;" onmousedown="compassMouseDownPrev(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td id="compassNext"><a href="render.html"><img border="0" src="g/butRight.png" width="20" height="20" alt="" onmouseover="compassMouseOverNext(); return true;" onmousedown="compassMouseDownNext(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+</tr></table></div>
+</body></html>

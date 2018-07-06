@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!-- colormapEditor.html
+   - Copyright(c) 2017 - BuckoSoft, Corp.
+   -->
+<html>
+<head>
+<meta charset="utf-8" />
+<title>qtpovray - Colormap Editor</title>
+<link rel="stylesheet" href="g/qtpovray.css" type="text/css" />
+<script language="JavaScript1.2" src="j/compass.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	var compassTextUp = "Up: qtpovray";
+	var compassTextPrev = "Prev: qtpovray - Color Editor";
+	var compassTextNext = "";
+	var compassTextSkip1 = "";
+	var compassTextSkip2 = "";
+	var compassTextSkip3 = "";
+	var useIE = 0;
+</script>
+</head><body onload="compassInit(); return false;" onunload="compassUnload(); return false;" >
+<script type="text/javascript">var action = window.setInterval("compassTimer()", 10);</script>
+<div class="mainBody"><table width="100%"><tr><td width="20%">&#160;</td><td valign="top"><center>
+<h1>qtpovray</h1><h2>Colormap Editor</h2>
+</center></td><td width="20%" align="right" valign="top">December 30, 2017</td></tr></table>
+<hr />
+<a href="g/qtpovColormapEditor.png" class="image-link">
+<img class="center" src="g/qtpovColormapEditor_sm.png" /></a>
+<p><a href="http://wiki.povray.org/content/Reference:Color_Map" class="external">Color maps</a>
+are a feature of POV-Ray.
+qtpovray provides some support to assist with colormaps.</p>
+<p>Currently, qtpovray only understands the <code>rgb[ft]&lt;&gt;</code> syntax in colormap sub-expressions.</p>
+<p>qtpovray displays a representative tooltip of the colormap if you hover over the <code>color_map</code> keyword.
+<img class="center" src="g/qtpovColormapTooltip.png" />
+</p>
+<p>The Colormap Editor is activated via a context-click (right-click).
+    <a href="g/qtpovContextSelectColormapEditor.png" class="image-link">
+    <img class="center" src="g/qtpovContextSelectColormapEditor_sm.png" /></a>
+</p>
+<p>If the cursor is over a <code>color_map</code> token, that color_map is parsed and edited,
+otherwise a new color_map is created.</p>
+<p>
+There are two sides to the colormap editor, the offset editor on the left and the color editor on the right.
+<ul>
+	<li><b>Offset Editor</b> - There are two operations, add/remove an entry and move an entry.
+		<ul>
+			<li><b>Add/Remove entries</b> - Right click on the space to the left of the swatch to bring up a context menu.
+					If you click over an entry, the menu choice will be to remove it. It you click on a blank area,
+					the menu choice will be to add a new entry at that offset.</li>
+			<li><b>Move existing entry</b> - Left click and drag an exising entry to its desired location.</li>
+		</ul>
+	</li>
+	<li><b>Color Editor</b> - Click over an existing color. This opens a 
+			companion <a href="colorEditor.html">color editor</a>.
+        <a href="g/qtpovColormapEditorWithColorEditor.png" class="image-link">
+        <img class="center" src="g/qtpovColormapEditorWithColorEditor_sm.png" /></a>
+
+        The colormap is updated as you change the color values.
+
+        <a href="g/qtpovColormapEditorAddTransparency.png" class="image-link">
+        <img class="center" src="g/qtpovColormapEditorAddTransparency_sm.png" /></a>
+	</li>
+</ul> 
+</p>
+<p>Press <code>Ok</code> to close the editor and accept the changes. If you are editing an existing color_map,
+it is replaced with the new color_map. Otherwise, the color_map is inserted at the current cursor.</p>
+<hr />
+</div>
+
+<div class="compassTextDiv" id="compassText"></div>
+<div id="compass"><table cellspacing="0" cellpadding="0"><tr>
+<td><a href="index.html"><img border="0" src="g/butUp.png" width="20" height="20" alt="" onmouseover="compassMouseOverUp(); return true;" onmousedown="compassMouseDownUp(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<td><a href="colorEditor.html"><img border="0" src="g/butLeft.png" width="20" height="20" alt="" onmouseover="compassMouseOverPrev(); return true;" onmousedown="compassMouseDownPrev(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td>
+<!-- <td id="compassNext"><a href="/povclipse2/"><img border="0" src="/i/butsm/right.png" width="20" height="20" alt="" onmouseover="compassMouseOverNext(); return true;" onmousedown="compassMouseDownNext(); return true;" onmouseout="compassMouseOut(); return false;" /></a></td> -->
+</tr></table></div>
+</body></html>
