@@ -43,7 +43,7 @@ void HelpMan::showAbout()
 {
 	QDialog d(m_mainWindow);
 	d.setWindowTitle("About qtpovray");
-	QVBoxLayout* mainLayout = new QVBoxLayout(&d);
+	QVBoxLayout* mainLayout = new QVBoxLayout();
 	QLabel* l = new QLabel(tr("qtpovray - A multiplatform POV-Ray IDE"));
 	mainLayout->addWidget(l);
 	QString v(tr("Version %1").arg(VERSION));
@@ -80,6 +80,7 @@ void HelpMan::showAbout()
 		d.resize(rect.size());
 	}
 
+	d.setLayout(mainLayout);
 	d.exec();
 	m_mainWindow->getWorkspace()->setAboutRect(QRect(d.pos(), d.size()));
 
