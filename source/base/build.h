@@ -67,7 +67,7 @@
 /// Specifies the person or organization responsible for this build.
 /// @attention Please set this to your real name, and/or include a working email or website address to contact you.
 #ifndef BUILT_BY
-#define BUILT_BY "Dick Balaska - Qt edition <dick@buckosoft.com>"
+#define BUILT_BY "Dick Balaska - qtpovray edition <dick@buckosoft.com>"
 //#error "Please fill in BUILT_BY, then remove this line"
 #endif
 
