@@ -337,18 +337,21 @@ for extralib in '' '-lboost_system'
 do
   LIBS=$SAVED_LIBS
   LIBS="$LIBS $extralib"
-AC_RUN_IFELSE(
-  [AC_LANG_PROGRAM([[
-#include <boost/thread/thread.hpp>
-    ]],
-    [[boost::defer_lock_t(); return 0;]])],
-  [
+  AC_RUN_IFELSE([
+    AC_LANG_PROGRAM([[
+      #include <boost/thread/thread.hpp>
+    ]],[[
+      boost::mutex m;
+      boost::defer_lock_t();
+      return 0;
+    ]])
+  ],[
     AC_MSG_RESULT([yes])
     BOOST_THREAD_LIB="$BOOST_THREAD_LIB $extralib"
     boost_thread_links=1
-  ],,
-  [AC_MSG_RESULT([cross-compiling])]  # FIXME
-)
+  ],,[
+    AC_MSG_RESULT([cross-compiling])  # FIXME
+  ])
   if test $boost_thread_links = '1'; then
     break
   fi
@@ -609,23 +612,6 @@ AC_LANG_POP([C])
 
 #AC_FUNC_STRFTIME  # FIXME
 #AC_FUNC_VPRINTF   # FIXME
-
-# vsnprintf <stdarg.h> (C99)
-AC_CHECK_FUNC([vsnprintf],
-  [],
-  [AC_MSG_ERROR([
-*** This system does not provide the C99 vsnprintf() function which
-*** is required to compile $PACKAGE_NAME.  You should consider updating
-*** your C library as it is too old.  Alternatively you might install
-*** a specific library implementing the (v)snprintf family of functions.
-*** Searching the web should give you appropriate pointers.
-***
-*** In case you want to try compiling $PACKAGE_NAME while your system lacks
-*** this function (meaning that compilation *will* fail unless you provide
-*** a replacement function), try the --disable-vsnprintf-check option.
-])
-  ]
-)
 
 # getcwd or its equivalent with getenv <unistd.h>
 AC_LANG_PUSH([C])
@@ -1362,6 +1348,7 @@ Compilation settings:
   Compiler vendor:     $pov_compiler_vendor
   Compiler version:    $pov_compiler_version
   Compiler flags:      $CXXFLAGS
+  Libraries:           $LIBS
 
 Type 'make check' to build the program and run a test render.
 Type 'make install' to install $PACKAGE_NAME on your system.
