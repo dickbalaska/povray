@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_helpMan = new HelpMan(this);
 	m_mainToolbar = new MainToolbar("Main", preferenceData.getUseLargeIcons(), this);
 	addToolBar(m_mainToolbar);
+	m_mainToolbar->updateHelpEnabled();
 	statusBar = new StatusBar(this);
 	this->setStatusBar(statusBar);
 	m_insertMenuMan = new InsertMenuMan(this);
@@ -416,6 +417,7 @@ void MainWindow::editorModified(bool changed) {
 	ce->setModified(changed);
 	m_mainToolbar->enableSave(changed);
 }
+
 void MainWindow::moveToEditor(const QString& file, int line, int col)
 {
 	qDebug() << "moveToEditor" << file << line << col;
@@ -464,6 +466,7 @@ void MainWindow::onPreferences() {
 		savePreferences();
 		bool b = Preferences::validateIns(preferenceData.getPovrayInsertMenu());
 		m_mainToolbar->enableInsertMenu(b);
+		m_mainToolbar->updateHelpEnabled();
 		m_insertMenuMan->populateMenu(b);
 #ifdef USE_WEBSOCKETS
 		m_mainToolbar->enableRender((validateExe(preferenceData.getPovrayExecutable())));
@@ -658,9 +661,9 @@ QString MainWindow::findPath(const QString& in)
 //	}
 //}
 #ifndef USE_WEBSOCKETS
-bool MainWindow::validateExe(const QString&, QTextEdit*) {
-	return(true);
-}
+//bool MainWindow::validateExe(const QString&, QTextEdit*) {
+//	return(true);
+//}
 #else
 bool MainWindow::validateExe(const QString &file, QTextEdit *statusArea) {
 	if (getWsClient() && getWsClient()->isConnected()) {
@@ -759,6 +762,7 @@ void MainWindow::sendPovrayMessage(const QString& msg)
 #endif
 }
 
+#if 0
 void	MainWindow::launchPovray(const QString& file __attribute__ ((unused)))
 {
 #ifdef USE_WEBSOCKETS
@@ -811,6 +815,7 @@ void	MainWindow::launchPovray(const QString& file __attribute__ ((unused)))
 //	}
 #endif
 }
+#endif
 
 void MainWindow::onRenderStartIfNotRunning()
 {

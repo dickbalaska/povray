@@ -42,6 +42,7 @@ public:
 	void	renderButtonToStop();
 	void	updateMRU(const QStringList& mru);
 	void	updateUndoRedo(CodeEditor* ce);
+	void	updateHelpEnabled();
 	void	tabChanged(int index);				// user selected a different tab/editor. Update menu states.
 
 	bool	isRenderButtonStart() { return(renderButtonIsStart); }
@@ -82,6 +83,10 @@ private:
 	QAction*	m_editGotoNextBookmark;
 	QAction*	m_editGotoPrevBookmark;
 	QAction*	m_editPreferencesAction;
+
+	QAction*	m_qtpovrayHelpAction;
+	QAction*	m_povrayHelpAction;
+	QAction*	m_sampleScenesHelpAction;
 
 	Dropdown*	renderCl;
 

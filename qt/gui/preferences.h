@@ -261,6 +261,10 @@ public:
 	static bool validateInd(const QString& file);
 	static bool validateInh(const QString& file);
 	static bool validateInq(const QString& file);
+	static bool validateInsertMenu(const PreferenceData& prefs);
+	static bool validatePovraySceneDirectory(const PreferenceData& prefs);
+	static bool validatePovrayHelpDirectory(const PreferenceData& prefs);
+	static bool validateQtpovrayHelpDirectory(const PreferenceData& prefs);
 
 private:
 	//MainWindow*	mainWindow;

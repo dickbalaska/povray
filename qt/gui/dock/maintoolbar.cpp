@@ -1,15 +1,15 @@
 /******************************************************************************
- * maintoolbar.cpp - The primary toolbar for qtpov
+ * maintoolbar.cpp - The primary toolbar for qtpovray
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -27,6 +27,7 @@
 #include <QDialogButtonBox>
 
 #include "../mainwindow.h"
+#include "../preferences.h"
 #include "../editor/codeeditor.h"
 #include "../editor/bookmarkman.h"
 #include "maintoolbar.h"
@@ -188,9 +189,11 @@ void MainToolbar::setupMenu()
 	////////////////
 	// Help
 	menu = m_mainWindow->menuBar()->addMenu(tr("&Help"));	
-	menu->addAction(tr("&Povray Help"), m_mainWindow->getHelpMan(), SLOT(showPovrayHelp()));
-	menu->addAction(tr("&Sample scenes"), m_mainWindow->getHelpMan(), SLOT(showSampleScenes()));
-	menu->addAction(tr("&About"), m_mainWindow->getHelpMan(), SLOT(showAbout()));
+	m_qtpovrayHelpAction = menu->addAction(tr("&qtpovray Help"), m_mainWindow->getHelpMan(), SLOT(showQtpovrayHelp()));
+	m_povrayHelpAction = menu->addAction(tr("&Povray Help"), m_mainWindow->getHelpMan(), SLOT(showPovrayHelp()));
+	menu->addSeparator();
+	m_sampleScenesHelpAction = menu->addAction(tr("&Sample scenes"), m_mainWindow->getHelpMan(), SLOT(showSampleScenes()));
+	menu->addAction(tr("&About qtpovray"), m_mainWindow->getHelpMan(), SLOT(showAbout()));
 }
 
 void MainToolbar::updateMRU(const QStringList& mru)
@@ -204,8 +207,16 @@ void MainToolbar::updateMRU(const QStringList& mru)
 	}
 	for (int j=numRecentFiles; j<MaxRecentFiles; j++)
 		recentFileActions[j]->setVisible(false);
-
 }
+
+void MainToolbar::updateHelpEnabled()
+{
+	const PreferenceData& prefs = m_mainWindow->getPreferenceData();
+	m_qtpovrayHelpAction->setEnabled(Preferences::validateQtpovrayHelpDirectory(prefs));
+	m_povrayHelpAction->setEnabled(Preferences::validatePovrayHelpDirectory(prefs));
+	m_sampleScenesHelpAction->setEnabled(Preferences::validatePovraySceneDirectory(prefs));
+}
+
 void  MainToolbar::renderButtonToStop()
 {
 	renderAction->setIcon(*renderStopIcon);

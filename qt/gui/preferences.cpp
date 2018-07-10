@@ -390,6 +390,11 @@ bool Preferences::validateIns(const QString &file) {
 	return(insStat);
 }
 
+bool Preferences::validateInsertMenu(const PreferenceData& prefs)
+{
+	return(validateIns(prefs.getPovrayInsertMenu()));
+}
+
 void SystemTab::validateInd() {
 	if (Preferences::validateInd(parent->m_prefData->getPovraySceneDirectory()))
 		povraySceneDirectoryStatus->setPixmap(parent->m_iconOk->pixmap(16));
@@ -406,6 +411,12 @@ bool Preferences::validateInd(const QString &file) {
 	}
 	return(insStat);
 }
+
+bool Preferences::validatePovraySceneDirectory(const PreferenceData& prefs)
+{
+	return(validateInd(prefs.getPovraySceneDirectory()));
+}
+
 
 void SystemTab::validateInh() {
 	if (Preferences::validateInh(parent->m_prefData->getPovrayHelpDirectory()))
@@ -424,6 +435,12 @@ bool Preferences::validateInh(const QString &file) {
 	return(insStat);
 }
 
+bool Preferences::validatePovrayHelpDirectory(const PreferenceData& prefs)
+{
+	return(validateInh(prefs.getPovrayHelpDirectory()));
+}
+
+
 void SystemTab::validateInq() {
 	if (Preferences::validateInq(parent->m_prefData->getQtpovrayHelpDirectory()))
 		qtpovrayHelpDirectoryStatus->setPixmap(parent->m_iconOk->pixmap(16));
@@ -441,6 +458,11 @@ bool Preferences::validateInq(const QString &file) {
 	return(inqStat);
 }
 
+bool Preferences::validateQtpovrayHelpDirectory(const PreferenceData& prefs)
+{
+	return(validateInq(prefs.getQtpovrayHelpDirectory()));
+}
+
 #ifdef USE_WEBSOCKETS
 void SystemTab::validateExe() {
 	if (parent->mainWindow->validateExe(parent->prefData->getPovrayExecutable(), povrayBanner))
@@ -450,8 +472,8 @@ void SystemTab::validateExe() {
 }
 #endif
 
-void SystemTab::benchmarkButtonClicked(bool ) {
-
+void SystemTab::benchmarkButtonClicked(bool )
+{
 }
 
 ///////////////////////////////////////////////////////////////////

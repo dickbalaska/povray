@@ -107,8 +107,8 @@ public:
 	HelpMan*	getHelpMan();
 	void		deleteAllEditorTabs();	// delete all CodeEditors. Ask before deleting changed editors.
 
-	bool		validateExe(const QString& file, QTextEdit* statusArea = NULL);
-	void		launchPovray(const QString& file);
+	//bool		validateExe(const QString& file, QTextEdit* statusArea = NULL);
+	//void		launchPovray(const QString& file);
 	const QString& getPovProcessErrorMsg() { return(povProcessErrorMsg); }
 #ifdef USE_WEBSOCKETS
 	WsClient*	getWsClient() { return(wsClient); }

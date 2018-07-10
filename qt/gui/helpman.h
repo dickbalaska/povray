@@ -38,6 +38,7 @@ signals:
 public slots:
 	void showAbout();
 	void showPovrayHelp();
+	void showQtpovrayHelp();
 	void showSampleScenes();
 
 private:

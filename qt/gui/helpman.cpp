@@ -19,6 +19,9 @@
  *
  *****************************************************************************/
 
+#include <QDir>
+#include <QFileInfo>
+#include <QMessageBox>
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -30,13 +33,13 @@
 #include "mainwindow.h"
 #include "helpman.h"
 #include "workspace.h"
+#include "preferencedata.h"
 #include "qtpovrayversion.h"
 
 HelpMan::HelpMan(MainWindow* parent)
 	: QObject(parent),
 	  m_mainWindow(parent)
 {
-
 }
 
 void HelpMan::showAbout()
@@ -53,9 +56,9 @@ void HelpMan::showAbout()
 	l = new QLabel(v);
 	mainLayout->addWidget(l);
 #pragma GCC diagnostic ignored "-Wdate-time"
-	QString compilationTime = QString("Built on: %1 %2").arg(__DATE__).arg(__TIME__);
-	l = new QLabel(compilationTime);
-	mainLayout->addWidget(l);
+//	QString compilationTime = QString("Built on: %1 %2").arg(__DATE__).arg(__TIME__);
+//	l = new QLabel(compilationTime);
+//	mainLayout->addWidget(l);
 	l = new QLabel();
 	l->setText("<a href=\"http://www.buckosoft.com/qtpovray/\">www.buckosoft.com/qtpovray</a>");
 	l->setTextFormat(Qt::RichText);
@@ -89,12 +92,40 @@ void HelpMan::showAbout()
 
 void HelpMan::showSampleScenes()
 {
-	QUrl url = QUrl::fromLocalFile("/usr/share/qtpovray-3.8/scenes/index.htm");
+	const PreferenceData& pd = m_mainWindow->getPreferenceData();
+	QDir dir(pd.getPovraySceneDirectory());
+	QFileInfo fi(dir, "index.htm");
+	if (!fi.exists()) {
+		QMessageBox::critical(m_mainWindow, tr("No help"), tr("Can't open POV-Ray sample scenes.\n File %1 does not exist.").arg(fi.absoluteFilePath()));
+		return;
+	}
+	QUrl url = QUrl::fromLocalFile(fi.absoluteFilePath());
 	QDesktopServices::openUrl(url);
 }
+
+void HelpMan::showQtpovrayHelp()
+{
+	const PreferenceData& pd = m_mainWindow->getPreferenceData();
+	QDir dir(pd.getQtpovrayHelpDirectory());
+	QFileInfo fi(dir, "index.html");
+	if (!fi.exists()) {
+		QMessageBox::critical(m_mainWindow, tr("No help"), tr("Can't open qtpovray help.\n File %1 does not exist.").arg(fi.absoluteFilePath()));
+		return;
+	}
+	QUrl url = QUrl::fromLocalFile(fi.absoluteFilePath());
+	QDesktopServices::openUrl(url);
+}
+
 void HelpMan::showPovrayHelp()
 {
-	QUrl url = QUrl::fromLocalFile("/usr/share/qtpovray-3.8/html/index.html");
+	const PreferenceData& pd = m_mainWindow->getPreferenceData();
+	QDir dir(pd.getPovrayHelpDirectory());
+	QFileInfo fi(dir, "index.html");
+	if (!fi.exists()) {
+		QMessageBox::critical(m_mainWindow, tr("No help"), tr("Can't open POV-Ray help.\n File %1 does not exist.").arg(fi.absoluteFilePath()));
+		return;
+	}
+	QUrl url = QUrl::fromLocalFile(fi.absoluteFilePath());
 	QDesktopServices::openUrl(url);
 }
 
