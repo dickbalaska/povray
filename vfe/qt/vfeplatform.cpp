@@ -164,8 +164,8 @@ namespace vfePlatform
     // name to one that it can use.
 	UCS2String vfeQtSession::CreateTemporaryFile(void) const
     {
-        char str [FILE_NAME_LENGTH] = "";
-        snprintf(str, FILE_NAME_LENGTH, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), getpid ());
+		char str [POV_FILENAME_BUFFER_CHARS] = "";
+		snprintf(str, POV_FILENAME_BUFFER_CHARS, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), getpid ());
         POV_DELETE_FILE (str);
 
         return ASCIItoUCS2String (str);
