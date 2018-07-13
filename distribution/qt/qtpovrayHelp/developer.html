@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>qtpov - Developer</title>
+<title>qtpovray - Developer</title>
 <link rel="stylesheet" href="g/qtpovray.css" type="text/css" />
 <script language="JavaScript1.2" src="j/compass.js" type="text/javascript"></script>
 
@@ -13,67 +13,48 @@
 	var compassTextUp = "Up: qtpovray";
 	var compassTextPrev = "Prev: qtpovray - Tutorial";
 	var compassTextNext = "Next: qtpovray - Configure";
-	var compassTextSkip1 = "";
-	var compassTextSkip2 = "";
-	var compassTextSkip3 = "";
-	var useIE = 0;
 </script>
 </head><body onload="compassInit(); return false;" onunload="compassUnload(); return false;" >
 <script type="text/javascript">var action = window.setInterval("compassTimer()", 10);</script>
-<div class="mainBody"><table width="100%"><tr><td width="20%">&#160;</td><td valign="top"><center><h1>qtpov</h1><h2>Developer</h2>
+<div class="mainBody"><table width="100%"><tr><td width="20%">&#160;</td><td valign="top"><center><h1>qtpovray</h1><h2>Developer</h2>
 </center></td><td width="20%" align="right" valign="top">October 18, 2017</td></tr></table>
 <hr />
 <h3 class="center">Generated Documentation</h3>
 <ul>
-<li><a href="http://git.buckosoft.com/gitweb/pov.cgi/?p=qtpov.git">gitweb</a></li>
-<li><a href="http://git.buckosoft.com/gitstats/qtpov/">gitstats</a></li>
-<li><a href="http://www.buckosoft.com/qtpov/bugzilla/">bugzilla</a>
-	<ul><li><a href="http://www.buckosoft.com/qtpov/bugzilla/buglist.cgi?bug_status=__open__&columnlist=component%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cpriority%2Cbug_severity%2Cchangeddate&no_redirect=1&query_format=specific&order=changeddate%20DESC%2Cbug_status%2Cpriority%2Cassigned_to%2Cbug_id&query_based_on=">Open Bugs</a></li></ul>
+<li><a href="https://github.com/dickbalaska/qtpovray/">github</a></li>
+<li><a href="http://www.buckosoft.com/qtpovray/bugzilla/">bugzilla</a>
+	<ul><li><a href="http://www.buckosoft.com/qtpovray/bugzilla/buglist.cgi?bug_status=__open__&columnlist=component%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cpriority%2Cbug_severity%2Cchangeddate&no_redirect=1&query_format=specific&order=changeddate%20DESC%2Cbug_status%2Cpriority%2Cassigned_to%2Cbug_id&query_based_on=">Open Bugs</a></li></ul>
 </li>
 </ul>
 <hr>
-<h3 class="center">Fetch Source</h3>
-<p>There are two source trees required for the qtpov project, qtpov itself, and a custom povray
-with WebSockets added.<p>
-<ul>
-<li><code>git clone http://git.buckosoft.com/git/pov/qtpov.git</code>
-<li><code>git clone https://github.com/dickbalaska/povray.git</code>
-	<ul><li><code>cd povray ; git checkout network</code></li></ul></li>
-</ul> 
-<p>The easiest way to build the whole shebang is with 
-<a href="http://git.buckosoft.com/gitweb/pov.cgi?p=qtpov.git;a=blob_plain;f=scripts/deploylinux.sh;hb=HEAD">this script.</a>
-
-</p>
-<hr>
 <h2 class="center">Linux</h2>
 <h3 class="center">Setup Qt development</h3>
-<code>$ sudo apt-get install qt5-qmake qt5-default</code>
+<code>$ sudo apt install  \<br>
+&nbsp;&nbsp;git  \<br>
+&nbsp;&nbsp;qt5-qmake  \<br>
+&nbsp;&nbsp;qt5-default \<br>
+&nbsp;&nbsp;libboost-dev \<br>
+&nbsp;&nbsp;libboost-date-time-dev \<br>
+&nbsp;&nbsp;libboost-thread-dev \<br>
+&nbsp;&nbsp;libz-dev \<br>
+&nbsp;&nbsp;libpng-dev \<br>
+&nbsp;&nbsp;libjpeg-dev \<br>
+&nbsp;&nbsp;libtiff-dev \<br>
+&nbsp;&nbsp;libopenexr-dev
+</code>
 <hr width="40%" />
-<h3 class="center">Build qtpov</h3>
-<code><table>
-<tr><td class="aligntop">$<br>&gt;<br>&gt;<br>&gt;</td>
-<td class="aligntop">git clone http://git.buckosoft.com/git/pov/qtpov.git &amp;&amp; \<br>
-cd qtpov &amp;&amp; \<br>
-qmake -config release &amp;&amp; \<br>
-make</td></tr>
-</table></code>
-<hr width="40%" />
-<h3 class="center">Build povrayws</h3>
-<code><table>
-<tr><td class="aligntop">$<br>&gt;<br>&gt;<br>&gt;<br>&gt;<br>&gt;<br>&gt;<br>&gt;</td>
-<td class="aligntop">git clone https://github.com/dickbalaska/povray.git &amp;&amp; \<br>
-cd povray &amp;&amp; \<br>
-git checkout network &amp;&amp; \<br>
-cd unix &amp;&amp; \<br>
-./prebuild.sh --websockets &amp;&amp; \<br>
-cd .. &amp;&amp; \<br>
-./configure COMPILED_BY="Your Name &lt;your@email.com&gt;" &amp;&amp; \<br>
-make -j4</td></tr>
-</table></code>
+<h3 class="center">Build qtpovray</h3>
+<code>
+$ git clone https://github.com/dickbalaska/qtpovray.git &amp;&amp; \<br>
+&nbsp;&nbsp;cd qtpovray &amp;&amp; \<br>
+&nbsp;&nbsp;git checkout qtpovray &amp;&amp; \<br>
+&nbsp;&nbsp;qmake  &amp;&amp; \<br>
+&nbsp;&nbsp;make -j4
+</code>
 <hr />
 <h2 class="center">Windows</h2>
-<h3 class="center">Build qtpov.exe</h3>
-<p>Pick a directory to build in. You should use <code>something/qtpov/qtpov</code> because QtCreator builds into <code>..</code> .</p>
+<h3 class="center">Build qtpovray.exe</h3>
+<p>Pick a directory to build in. You should use <code>something/qtpovray/qtpovray</code> because QtCreator builds into <code>..</code> .</p>
 <p><code>git clone http://git.buckosoft.com/git/pov/qtpov.git</code></p>
 <p>Start QtCreator and open <code>qtpov.pro</code></p> 
 <hr width="40%" />
