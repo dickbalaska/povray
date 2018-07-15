@@ -124,8 +124,10 @@ void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp)
 			qtVfe->printNonStatusMessage(session);
 		}
 		if (flags & stBackendStateChanged) {
-//		   qtVfe->printStatusChanged(session);
-			qWarning() << "\nUnhandled PrintStatusChanged\n";
+			// notification that we are starting parsing or starting rendering. We don't care.
+			// This information is handled by qtpovray via other messages.
+			// qWarning() << "\nUnhandled PrintStatusChanged\n";
+			// ( qtVfe->printStatusChanged(session); )
 		}
 
 	}
