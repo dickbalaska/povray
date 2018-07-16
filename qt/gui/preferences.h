@@ -126,15 +126,17 @@ public slots:
 	void	autoBraceChanged(int state);
 	void	highlightLineChanged(int state);
 	void	highlightTokensChanged(int state);
+	void	useViModeChanged(int state);
 
 private:
-	QCheckBox*	largeIconButton;
-	QCheckBox*	wrapButton;
-	QSpinBox*	tabWidthSpinner;
-	QCheckBox*	autoIndentButton;
-	QCheckBox*	autoBraceButton;
-	QCheckBox*	highlightLineButton;
-	QCheckBox*	highlightTokensButton;
+	QCheckBox*	m_largeIconButton;
+	QCheckBox*	m_wrapButton;
+	QSpinBox*	m_tabWidthSpinner;
+	QCheckBox*	m_autoIndentButton;
+	QCheckBox*	m_autoBraceButton;
+	QCheckBox*	m_highlightLineButton;
+	QCheckBox*	m_highlightTokensButton;
+	QCheckBox*	m_useViModeButton;
 
 	Preferences* parent;
 };

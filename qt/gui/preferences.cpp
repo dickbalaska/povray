@@ -484,44 +484,44 @@ EditorTab::EditorTab(Preferences* parent)
 //	QVBoxLayout* mainLayout = new QVBoxLayout(this);
 	QGridLayout* layout = new QGridLayout(this);
 
-	largeIconButton = new QCheckBox(this);
-	largeIconButton->setChecked(prefData->getUseLargeIcons());
-	largeIconButton->setWhatsThis(tr("Restart required"));
-	wrapButton = new QCheckBox(this);
-	wrapButton->setChecked(prefData->getEditorWrapText());
-	tabWidthSpinner = new QSpinBox(this);
-	tabWidthSpinner->setValue(prefData->getEditorTabWidth());
-	autoIndentButton = new QCheckBox(this);
-	autoIndentButton->setChecked(prefData->getAutoIndent());
-	autoBraceButton = new QCheckBox(this);
-	autoBraceButton->setChecked(prefData->getAutoBraceCompletion());
-	highlightLineButton = new QCheckBox(this);
-	highlightLineButton->setChecked(prefData->getEditorHighlightCurrentLine());
-	highlightTokensButton = new QCheckBox(this);
-	highlightTokensButton->setChecked(prefData->getEditorHighlightTokens());
+	m_largeIconButton = new QCheckBox(this);
+	m_largeIconButton->setChecked(prefData->getUseLargeIcons());
+	m_largeIconButton->setWhatsThis(tr("Restart required"));
+	m_wrapButton = new QCheckBox(this);
+	m_wrapButton->setChecked(prefData->getEditorWrapText());
+	m_tabWidthSpinner = new QSpinBox(this);
+	m_tabWidthSpinner->setValue(prefData->getEditorTabWidth());
+	m_autoIndentButton = new QCheckBox(this);
+	m_autoIndentButton->setChecked(prefData->getAutoIndent());
+	m_autoBraceButton = new QCheckBox(this);
+	m_autoBraceButton->setChecked(prefData->getAutoBraceCompletion());
+	m_highlightLineButton = new QCheckBox(this);
+	m_highlightLineButton->setChecked(prefData->getEditorHighlightCurrentLine());
+	m_highlightTokensButton = new QCheckBox(this);
+	m_highlightTokensButton->setChecked(prefData->getEditorHighlightTokens());
 
-	connect(largeIconButton, SIGNAL(stateChanged(int)), this, SLOT(largeIconButtonChanged(int)));
-	connect(wrapButton, SIGNAL(stateChanged(int)), this, SLOT(wrapButtonChanged(int)));
-	connect(tabWidthSpinner, SIGNAL(valueChanged(int)), this, SLOT(tabWidthChanged(int)));
-	connect(autoIndentButton, SIGNAL(stateChanged(int)), this, SLOT(autoIndentChanged(int)));
-	connect(autoBraceButton, SIGNAL(stateChanged(int)), this, SLOT(autoBraceChanged(int)));
-	connect(highlightLineButton, SIGNAL(stateChanged(int)), this, SLOT(highlightLineChanged(int)));
-	connect(highlightTokensButton, SIGNAL(stateChanged(int)), this, SLOT(highlightTokensChanged(int)));
+	connect(m_largeIconButton, SIGNAL(stateChanged(int)), this, SLOT(largeIconButtonChanged(int)));
+	connect(m_wrapButton, SIGNAL(stateChanged(int)), this, SLOT(wrapButtonChanged(int)));
+	connect(m_tabWidthSpinner, SIGNAL(valueChanged(int)), this, SLOT(tabWidthChanged(int)));
+	connect(m_autoIndentButton, SIGNAL(stateChanged(int)), this, SLOT(autoIndentChanged(int)));
+	connect(m_autoBraceButton, SIGNAL(stateChanged(int)), this, SLOT(autoBraceChanged(int)));
+	connect(m_highlightLineButton, SIGNAL(stateChanged(int)), this, SLOT(highlightLineChanged(int)));
+	connect(m_highlightTokensButton, SIGNAL(stateChanged(int)), this, SLOT(highlightTokensChanged(int)));
 
 	layout->addWidget(new QLabel(tr("Use large icons"), parent), 0, 0, Qt::AlignLeft);
-	layout->addWidget(largeIconButton, 0, 1);
+	layout->addWidget(m_largeIconButton, 0, 1);
 	layout->addWidget(new QLabel(tr("Wrap text"), parent), 1, 0, Qt::AlignLeft);
-	layout->addWidget(wrapButton, 1, 1);
+	layout->addWidget(m_wrapButton, 1, 1);
 	layout->addWidget(new QLabel(tr("Tab width"), parent), 2, 0);
-	layout->addWidget(tabWidthSpinner, 2, 1);
+	layout->addWidget(m_tabWidthSpinner, 2, 1);
 	layout->addWidget(new QLabel(tr("Auto indent"), parent), 3, 0);
-	layout->addWidget(autoIndentButton, 3, 1);
+	layout->addWidget(m_autoIndentButton, 3, 1);
 	layout->addWidget(new QLabel(tr("Auto Brace completion"), parent), 4, 0);
-	layout->addWidget(autoBraceButton, 4, 1);
+	layout->addWidget(m_autoBraceButton, 4, 1);
 	layout->addWidget(new QLabel(tr("Highlight current line"), parent), 5, 0);
-	layout->addWidget(highlightLineButton, 5, 1);
+	layout->addWidget(m_highlightLineButton, 5, 1);
 	layout->addWidget(new QLabel(tr("Highlight matching tokens"), parent), 6, 0);
-	layout->addWidget(highlightTokensButton, 6, 1);
+	layout->addWidget(m_highlightTokensButton, 6, 1);
 	layout->setVerticalSpacing(5);
 	layout->setRowStretch(7, 1);
 //	mainLayout->addLayout(layout);
@@ -549,6 +549,10 @@ void EditorTab::highlightLineChanged(int state) {
 }
 void EditorTab::highlightTokensChanged(int state) {
 	parent->m_prefData->setEditorHighlightTokens(state == Qt::Checked);
+}
+
+void EditorTab::useViModeChanged(int state) {
+	parent->m_prefData->setUseEditorViMode(state == Qt::Checked);
 }
 
 ///////////////////////////////////////////////////////////////////

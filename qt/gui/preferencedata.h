@@ -175,7 +175,9 @@ public:
 		editorAutoBraceCompletion(true),
 		editorHighlightCurrentLine(true),
 		editorHighlightTokens(true),
-		m_useLargeIcons(true)
+		m_useLargeIcons(true),
+		m_useEditorViMode(true)
+
 	{}
 	void operator= (const PreferenceData& );
 
@@ -218,6 +220,9 @@ public:
 	bool getUseLargeIcons() { return(m_useLargeIcons); }
 	void setUseLargeIcons(bool b) { m_useLargeIcons = b; }
 
+	bool getUseEditorViMode() { return(m_useEditorViMode); }
+	void setUseEditorViMode(bool b) { m_useEditorViMode = b; }
+
 private:
 	QString	povrayIncludes;
 	QString	povrayInsertMenu;
@@ -232,6 +237,7 @@ private:
 	bool	editorHighlightCurrentLine;
 	bool	editorHighlightTokens;
 	bool	m_useLargeIcons;
+	bool	m_useEditorViMode;
 	EditorColors	editorColors;
 	GlobalKeys		keys;
 };
