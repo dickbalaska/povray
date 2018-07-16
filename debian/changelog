@@ -1,3 +1,11 @@
+qtpovray (3.80.1~xenial1) xenial; urgency=low
+
+  * Update qtpovray help.
+  * Update to povray-3.8.0-alpha.9606898
+  * Fix extraneous qWarning()s.
+
+ -- Dick Balaska <dick@buckosoft.com>  Mon, 16 Jul 2018 06:40:44 -0400
+
 qtpovray (3.80.0~xenial1) xenial; urgency=low
 
   * Initial release. 
