@@ -157,6 +157,7 @@ private:
 	QString findFile(const QString& file);		// Given a file name, find the full path
 	QString findPath(const QString& in);		// search for this subdirectory
 	void	setShortcutKeys();
+	bool	eventFilter(QObject*, QEvent* e);
 
 #ifdef USE_WEBSOCKETS
 	WsClient*		wsClient;

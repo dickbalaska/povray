@@ -141,14 +141,14 @@ MainWindow::MainWindow(QWidget *parent) :
 			m_mainToolbar, SLOT(doGotoMatchingBrace()));
 	connect(&m_shortcutEditGotoLineNumber, SIGNAL(activated()),
 			m_mainToolbar, SLOT(doGotoLineNumber()));
-//	m_shortcutEditToggleComments.setContext(Qt::ApplicationShortcut);
+	m_shortcutEditToggleComments.setContext(Qt::ApplicationShortcut);
 //	connect(&m_shortcutEditToggleComments, SIGNAL(activated()),
 //			this, SLOT(editToggleComments()));
 	setShortcutKeys();
 	m_vfeClient = new VfeClient(true, this);
 	connect(m_vfeClient, SIGNAL(messageReceived(QString,QString)), this, SLOT(wsMessageReceived(QString,QString)));
 	connect(m_vfeClient, SIGNAL(binaryMessageReceived(QByteArray)), m_dockMan->getRenderDock(), SLOT(binaryMessageReceived(QByteArray)));
-
+	qApp->installEventFilter(this);
 }
 
 MainWindow::~MainWindow() {
@@ -177,6 +177,28 @@ void MainWindow::setShortcutKeys()
 	m_shortcutEditToggleComments.setKey(gk->keyToggleComment);
 	m_shortcutEditGotoLineNumber.setKey(gk->keyGotoLineNumber);
 	m_shortcutEditGotoMatchingBrace.setKey(gk->keyGotoMatchingBrace);
+}
+
+bool MainWindow::eventFilter(QObject*, QEvent* e)
+{
+	switch (e->type()) {
+	case QEvent::Shortcut: {
+		QShortcutEvent* sev = static_cast<QShortcutEvent*>(e);
+		if (sev->isAmbiguous()) {
+			foreach(const auto& action, actions()) {
+				if (action->shortcut() == sev->key()) {
+					action->trigger(); // Trigger the action that matches the ambigous shortcut event.
+					return true;
+				}
+			}
+			return(true);
+		}
+	}
+	// ...
+	default: break;
+	}
+
+	return false;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
