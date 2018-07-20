@@ -199,21 +199,8 @@ void InsertMenuMan::itemHovered()
 	if (!action)
 		return;
 	QString gfile = action->m_filePath.left(action->m_filePath.length()-4) + ".jpg";
-	pm = new QPixmap(gfile);
-	if (!m_preview) {
-		m_preview = new InsertMenuPreview(m_mainWindow, Qt::FramelessWindowHint);
-		m_preview->setMinimumSize(160,120);
-		m_preview->setVisible(true);
-		if (_INSDEBUG) qDebug() << "Created window";
-	}
-	if (m_preview->m_loadedFile == gfile)
+	if (m_preview && m_preview->m_loadedFile == gfile)
 		return;
-	m_preview->m_loadedFile = gfile;
-	m_preview->m_label->setPixmap(*pm);
-	m_preview->m_label->setMinimumSize(pm->size());
-	if (_INSDEBUG) qDebug() << "gfile" << gfile;
-	if (_INSDEBUG) qDebug() << "pm size" << pm->size();
-
 	QMenu* menu = m_mainWindow->getToolbar()->getInsertMenu();
 	QAction* qa = menu->activeAction();
 	while (qa->menu()) {
@@ -224,6 +211,21 @@ void InsertMenuMan::itemHovered()
 		if (_INSDEBUG) qDebug() << "No QAction";
 		return;
 	}
+	pm = new QPixmap(gfile);
+	if (!m_preview) {
+		//QDesktopWidget* desktop = QApplication::desktop();
+		m_preview = new InsertMenuPreview(menu->parentWidget(), Qt::FramelessWindowHint);
+		m_preview->setMinimumSize(160,120);
+		m_preview->setVisible(true);
+		if (_INSDEBUG) qDebug() << "Created window";
+	}
+	m_preview->m_loadedFile = gfile;
+	m_preview->m_label->setPixmap(*pm);
+	m_preview->m_label->setMinimumSize(pm->size());
+	if (_INSDEBUG) qDebug() << "";
+	if (_INSDEBUG) qDebug() << "gfile" << gfile;
+	if (_INSDEBUG) qDebug() << "pm size" << pm->size();
+
 	QRect mainGeom = m_mainWindow->geometry();
 	QRect mgeom = menu->geometry();
 	QPoint mpos = menu->pos();
@@ -235,10 +237,15 @@ void InsertMenuMan::itemHovered()
 	if (_INSDEBUG) qDebug() << "mpos" << mpos << "arect" << arect << "p" << p;
 	if (p.y() < 0)
 		p.ry() = 0;
-	if (_INSDEBUG) qDebug() << "p.y" << p.y() << "mainGeom.height" << mainGeom.height() << "pm.height" << pm->height();
+	if (_INSDEBUG) qDebug() << "p" << p << "mainGeom.height" << mainGeom.height() << "pm.height" << pm->height();
 #define	SLOP	20
 	if (p.y()+pm->height() > mainGeom.height()-SLOP)
 		p.setY(mainGeom.height()-pm->height()-SLOP);
+//	if (p.x()+pm->width() > mainGeom.width()) {
+//		if (_INSDEBUG) qDebug() << "Move to left of menu" << (p.x()+pm->width()) << ">" << mainGeom.width();
+//		p.rx() = mgeom.left()-mainGeom.left()-pm->width();
+//	}
+	if (_INSDEBUG) qDebug() << "final p" << p;
 	m_preview->move(p);
 }
 
