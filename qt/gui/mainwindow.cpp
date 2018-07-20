@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef USE_WEBSOCKETS
 	wsClient = NULL;
 #endif
-	editorTabs = NULL;
+	m_editorTabs = NULL;
 	CodeEditor::init();
 	PovColor::init();
 	setWindowTitle("qtpovray");
@@ -203,9 +203,9 @@ bool MainWindow::eventFilter(QObject*, QEvent* e)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	if (editorTabs) {
-		for (int i=0; i<editorTabs->count(); i++) {
-			CodeEditor* ce = (CodeEditor*)editorTabs->widget(i);
+	if (m_editorTabs) {
+		for (int i=0; i<m_editorTabs->count(); i++) {
+			CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
 			if (!maybeSaveEditor(ce)) {
 				event->ignore();
 				return;
@@ -219,7 +219,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 Workspace* MainWindow::getWorkspace() { return(m_dockMan->getWorkspace()); }
 
-void MainWindow::needWorkspace() {
+void MainWindow::needWorkspace()
+{
 	QMessageBox::information(this, tr("Workspace needed"),
 							 tr("In the following dialog, create a file to store your workspace in"));
 	emit(m_dockMan->emitSwitchWorkspace());
@@ -234,19 +235,19 @@ int MainWindow::openEditor(const QString& filePath)
 {
 	CodeEditor* ce;
 	int i;
-	if (editorTabs == NULL) {
-		editorTabs = new QTabWidget(this);
-		editorTabs->setMinimumSize(400, 205);
-		editorTabs->setTabsClosable(true);
-		connect(editorTabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
-		connect(editorTabs, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorRequested(int)));
-		setCentralWidget(editorTabs);
+	if (m_editorTabs == NULL) {
+		m_editorTabs = new QTabWidget(this);
+		m_editorTabs->setMinimumSize(400, 205);
+		m_editorTabs->setTabsClosable(true);
+		connect(m_editorTabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+		connect(m_editorTabs, SIGNAL(tabCloseRequested(int)), this, SLOT(closeEditorRequested(int)));
+		setCentralWidget(m_editorTabs);
 
 	}
-	for (i=0; i<editorTabs->count(); i++) {
-		ce = (CodeEditor*)editorTabs->widget(i);
+	for (i=0; i<m_editorTabs->count(); i++) {
+		ce = (CodeEditor*)m_editorTabs->widget(i);
 		if (ce && ce->getFilePath() == filePath) {
-			editorTabs->setCurrentIndex(i);
+			m_editorTabs->setCurrentIndex(i);
 			return(i);
 		}
 	}
@@ -257,18 +258,18 @@ int MainWindow::openEditor(const QString& filePath)
 		i = filePath.lastIndexOf('\\');
 	if (i != -1)
 		fileName = filePath.mid(i+1);
+	ce->setFilePath(filePath);
+	ce->setFileName(fileName);
 
-	int index = editorTabs->addTab(ce, fileName);
-	editorTabs->setCurrentWidget(ce);
-	editorTabsCloseSize = editorTabs->tabBar()->tabButton(index, QTabBar::RightSide)->size();
+	int index = m_editorTabs->addTab(ce, fileName);
+	m_editorTabs->setCurrentWidget(ce);
+	editorTabsCloseSize = m_editorTabs->tabBar()->tabButton(index, QTabBar::RightSide)->size();
 	QFile file(filePath);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		return(index);			// XXX report error
 	QTextStream in(&file);
 	QString s = in.readAll();
 	ce->setPlainText(s);
-	ce->setFilePath(filePath);
-	ce->setFileName(fileName);
 	connect(ce, SIGNAL(modificationChanged(bool)), this, SLOT(editorModified(bool)));
 	connect(ce, SIGNAL(copyAvailable(bool)), m_mainToolbar, SLOT(onCopyAvailable(bool)));
 	connect(ce, SIGNAL(bookmarkCommand(int, int)), m_bookmarkMan, SLOT(onBookmarkCommand(int,int)));
@@ -276,45 +277,45 @@ int MainWindow::openEditor(const QString& filePath)
 	connect(ce, SIGNAL(bookmarkNext(int)), m_bookmarkMan, SLOT(onBookmarkNext(int)));
 	connect(ce, SIGNAL(bookmarkPrevious(int)), m_bookmarkMan, SLOT(onBookmarkPrevious(int)));
 	ce->setBookmarks(m_bookmarkMan->gatherBookmarks(ce));
-	editorTabs->widget(editorTabs->currentIndex())->setFocus();
+	m_editorTabs->widget(m_editorTabs->currentIndex())->setFocus();
 	return(index);
 }
 
 void MainWindow::closeCurrentEditor()
 {
-	closeEditorRequested(editorTabs->currentIndex());
+	closeEditorRequested(m_editorTabs->currentIndex());
 }
 
 void MainWindow::closeEditorRequested(int which)
 {
-	CodeEditor* ce = (CodeEditor*)editorTabs->widget(which);
+	CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(which);
 	maybeSaveEditor(ce);
-	editorTabs->removeTab(which);
+	m_editorTabs->removeTab(which);
 	delete ce;
-	qDebug() << "editorTabs" << editorTabs->count();
-	if (editorTabs->count() == 0) {
-		delete editorTabs;
-		editorTabs = NULL;
+	qDebug() << "m_editorTabs" << m_editorTabs->count();
+	if (m_editorTabs->count() == 0) {
+		delete m_editorTabs;
+		m_editorTabs = NULL;
 		QLabel* ql = new QLabel(this);	// puts the icon in the middle,
 		ql->setPixmap(*mainPixmap);		// ugly because it resizes the tabs
 		this->setCentralWidget(ql);
 	} else {
-		editorTabs->widget(editorTabs->currentIndex())->setFocus();
+		m_editorTabs->widget(m_editorTabs->currentIndex())->setFocus();
 	}
 
 }
 void MainWindow::deleteAllEditorTabs()
 {
-	if (editorTabs != NULL) {
-		while (editorTabs->count()) {
-			editorTabs->setCurrentIndex(0);
-			CodeEditor* ce = (CodeEditor*)editorTabs->widget(0);
+	if (m_editorTabs != NULL) {
+		while (m_editorTabs->count()) {
+			m_editorTabs->setCurrentIndex(0);
+			CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(0);
 			maybeSaveEditor(ce);
-			editorTabs->removeTab(0);
+			m_editorTabs->removeTab(0);
 			delete ce;
 		}
 	}
-	editorTabs = NULL;
+	m_editorTabs = NULL;
 	QLabel* ql = new QLabel(this);
 	ql->setPixmap(*mainPixmap);
 	this->setCentralWidget(ql);
@@ -336,7 +337,7 @@ bool MainWindow::maybeSaveEditor(CodeEditor* ce)
 
 void MainWindow::saveCurrentEditor()
 {
-	CodeEditor* ce = (CodeEditor*)editorTabs->widget(editorTabs->currentIndex());
+	CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(m_editorTabs->currentIndex());
 	QString fname = ce->getFilePath();
 	QFile file(fname);
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -351,9 +352,9 @@ void MainWindow::saveCurrentEditor()
 
 void MainWindow::saveAllEditors()
 {
-	if (editorTabs) {
-		for (int i=0; i<editorTabs->count(); i++) {
-			CodeEditor* ce = (CodeEditor*)editorTabs->widget(i);
+	if (m_editorTabs) {
+		for (int i=0; i<m_editorTabs->count(); i++) {
+			CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
 			if (ce->isModified()) {
 				QString fname = ce->getFilePath();
 				QFile file(fname);
@@ -373,16 +374,18 @@ void MainWindow::saveAllEditors()
 CodeEditor*	MainWindow::getEditor(int which)
 {
 	if (which == -1)
-		return((CodeEditor*)editorTabs->widget(editorTabs->currentIndex()));
+		return((CodeEditor*)m_editorTabs->widget(m_editorTabs->currentIndex()));
 	else
-		return((CodeEditor*)editorTabs->widget(which));
+		return((CodeEditor*)m_editorTabs->widget(which));
 }
 
 void MainWindow::tabChanged(int index)
 {
-	for (int i=0; i<editorTabs->count(); i++) {
-		if (editorTabs && editorTabs->tabBar()
-				&& editorTabs->tabBar()->tabButton(i, QTabBar::RightSide)) {
+	if (!m_editorTabs)
+		return;
+	for (int i=0; i<m_editorTabs->count(); i++) {
+		if (m_editorTabs->tabBar()
+				&& m_editorTabs->tabBar()->tabButton(i, QTabBar::RightSide)) {
 // This doesn't work. Puts restored close boxes in the corner, not the middle
 //			if (i == index)
 //				editorTabs->tabBar()->tabButton(i, QTabBar::RightSide)->resize(16,32);
@@ -397,8 +400,19 @@ void MainWindow::tabChanged(int index)
 		}
 	}
 	m_mainToolbar->tabChanged(index);
+	setTitle(index);
 }
 
+void MainWindow::setTitle(int which)
+{
+	if (which == -1)
+		setWindowTitle("qtpovray");
+	else {
+		CodeEditor* ce = getEditor(which);
+		QString s = QString("%1%2 - qtpovray").arg(ce->getFileName()).arg(ce->isModified() ? "*" : "");
+		setWindowTitle(s);
+	}
+}
 QStringList MainWindow::updateMRU(const QString& recent)
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, s_companyName, s_productName);
@@ -412,13 +426,14 @@ QStringList MainWindow::updateMRU(const QString& recent)
 	return(files);
 }
 
-void MainWindow::editorModified(bool changed) {
+void MainWindow::editorModified(bool changed)
+{
 	//qDebug() << "editorModified";
 	CodeEditor* ce = (CodeEditor*)sender();
 	bool found = false;
 	int i;
-	for (i=0; i<editorTabs->count(); i++) {
-		if (editorTabs->widget(i) == ce) {
+	for (i=0; i<m_editorTabs->count(); i++) {
+		if (m_editorTabs->widget(i) == ce) {
 			found = true;
 			break;
 		}
@@ -427,16 +442,20 @@ void MainWindow::editorModified(bool changed) {
 		qCritical() << "MainWindow::editorModified can't find CodeEditor for" << changed;
 		return;
 	}
-	QString s = editorTabs->tabText(i);
-	if (changed) {
-		if (!s.endsWith(" *"))
-			s += " *";
-	} else {
-		if (s.endsWith(" *"))
-			s = s.left(s.size()-2);
-	}
-	editorTabs->setTabText(i, s);
+	QString s = m_editorTabs->tabText(i);
 	ce->setModified(changed);
+	if (changed) {
+		if (!s.endsWith(" *")) {
+			s += " *";
+			setTitle(i);
+		}
+	} else {
+		if (s.endsWith(" *")) {
+			s = s.left(s.size()-2);
+			setTitle(i);
+		}
+	}
+	m_editorTabs->setTabText(i, s);
 	m_mainToolbar->enableSave(changed);
 }
 
@@ -449,7 +468,7 @@ void MainWindow::moveToEditor(const QString& file, int line, int col)
 		return;
 	}
 	int index = openEditor(path);
-	CodeEditor* ce = (CodeEditor*)editorTabs->widget(index);
+	CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(index);
 	QTextCursor tc(ce->document()->findBlockByLineNumber(line-1));
 	tc.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, col-1);
 	ce->setTextCursor(tc);
@@ -493,9 +512,9 @@ void MainWindow::onPreferences() {
 #ifdef USE_WEBSOCKETS
 		m_mainToolbar->enableRender((validateExe(preferenceData.getPovrayExecutable())));
 #endif
-		if (editorTabs) {
-			for (int i=0; i<editorTabs->count(); i++) {
-				CodeEditor* ce = (CodeEditor*)editorTabs->widget(i);
+		if (m_editorTabs) {
+			for (int i=0; i<m_editorTabs->count(); i++) {
+				CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
 				ce->configure(&preferenceData);
 			}
 		}
@@ -621,6 +640,10 @@ void MainWindow::loadPreferences() {
 	if (preferenceData.getQtpovrayHelpDirectory().isEmpty()) {
 		QString s = findPath("qtpovrayHelp");
 		preferenceData.setQtpovrayHelpDirectory(s);
+	}
+	if (preferenceData.getPovrayHelpDirectory().isEmpty()) {
+		QString s = findPath("html");
+		preferenceData.setPovrayHelpDirectory(s);
 	}
 
 #define readColor(_highlight, _defaultColor, _defaultBold) \

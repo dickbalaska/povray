@@ -157,6 +157,7 @@ private:
 	QString findFile(const QString& file);		// Given a file name, find the full path
 	QString findPath(const QString& in);		// search for this subdirectory
 	void	setShortcutKeys();
+	void	setTitle(int which);
 	bool	eventFilter(QObject*, QEvent* e);
 
 #ifdef USE_WEBSOCKETS
@@ -185,7 +186,7 @@ private:
 
 	Ui::MainWindow* ui;
 	VfeClient*		m_vfeClient;
-	QTabWidget*		editorTabs;
+	QTabWidget*		m_editorTabs;
 	QSize			editorTabsCloseSize;
 	DockMan*		m_dockMan;
 	SearchMan*		m_searchMan;
@@ -199,7 +200,7 @@ private:
 	QString			povProcessErrorMsg;
 };
 
-inline QTabWidget* MainWindow::getEditorTabs() { return(editorTabs); }
+inline QTabWidget* MainWindow::getEditorTabs() { return(m_editorTabs); }
 inline DockMan* MainWindow::getDockMan() { return(m_dockMan); }
 inline HelpMan* MainWindow::getHelpMan() { return(m_helpMan); }
 #endif // _MAINWINDOW_H_
