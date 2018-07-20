@@ -36,12 +36,13 @@ Description: Qt IDE for POV-Ray (a 3D renderer)
  and displayed from within qtpovray.
  .
  qtpovray-includes is highly recommended in addition to this package.
+ qtpovray-extras contains help and samples and is recommended in addition to this package.
 
 Package: qtpovray-includes
 Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}
-Description: Qt IDE for POV-Ray (a 3D renderer)
+Description: POV-Ray include files for qtpovray.
  qtpovray is an Eclipse-like GUI for developing POV-Ray scenes.
  POV-Ray is a full-featured ray tracer that reads and interprets text 
  files and outputs images.
@@ -56,7 +57,7 @@ Package: qtpovray-extras
 Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}
-Description: Qt IDE for POV-Ray (a 3D renderer)
+Description: Help, samples, and example data files for qtpovray.
  qtpovray is an Eclipse-like GUI for developing POV-Ray scenes.
  POV-Ray is a full-featured ray tracer that reads and interprets text 
  files and outputs images.
