@@ -175,6 +175,14 @@ man.path = /usr/share/man/man1
 man.files = ../../qt/install/qtpovray.1
 INSTALLS += man
 
+qpicons.path = /usr/share/icons/hicolor/48x48/apps
+qpicons.files = ../../distribution/qt/icons/48x48/*
+INSTALLS += qpicons
+
+desktop.path = /usr/share/applications
+desktop.files = ../../qt/install/qtpovray.desktop
+INSTALLS += desktop
+
 #
 # In debian package qtpovray-includes
 #

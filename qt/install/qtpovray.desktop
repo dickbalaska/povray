@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=qtpovray
+GenericName=qtpovray POV-Ray IDE
+Comment=Edit and render POV-Ray SDL files
+Exec=qtpovray
+Terminal=false
+Type=Application
+StartupNotify=false
+Icon=qtpovray
+Categories=Graphics;3DGraphics;Development;IDE;Qt
