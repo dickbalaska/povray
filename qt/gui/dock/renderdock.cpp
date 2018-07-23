@@ -26,7 +26,6 @@
 #include "workspace.h"
 #include "renderdock.h"
 
-extern QPixmap* mainPixmap;
 
 
 RenderDock::RenderDock(MainWindow* parent, Qt::WindowFlags flags)

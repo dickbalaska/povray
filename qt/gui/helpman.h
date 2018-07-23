@@ -40,8 +40,11 @@ public slots:
 	void showPovrayHelp();
 	void showQtpovrayHelp();
 	void showSampleScenes();
+	bool showVirginSplash();
 
 private:
+	QString		getVersionString();
+
 	MainWindow*		m_mainWindow;
 	QTextEdit*		m_povrayBanner;
 };

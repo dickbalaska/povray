@@ -47,18 +47,25 @@ void HelpMan::showAbout()
 	QDialog d(m_mainWindow);
 	d.setWindowTitle("About qtpovray");
 	QVBoxLayout* mainLayout = new QVBoxLayout();
-	QLabel* l = new QLabel(tr("qtpovray - A multiplatform POV-Ray IDE"));
+	QLabel* l;
+
+	QHBoxLayout* hLayout = new QHBoxLayout();
+	l = new QLabel();
+	l->setPixmap(*mainPixmap);
+	l->setScaledContents(true);
+	l->setAlignment(Qt::AlignCenter);
+	l->setMaximumSize(100,100);
+	hLayout->addWidget(l);
+	mainLayout->addLayout(hLayout);
+
+
+	l = new QLabel();
+	l->setTextFormat(Qt::RichText);
+	l->setText(tr("qtpovray - A POV-Ray&trade; IDE"));
 	mainLayout->addWidget(l);
-	QString v(tr("Version %1").arg(VERSION));
-#ifdef _DEBUG
-	v += " - DEBUG";
-#endif
-	l = new QLabel(v);
+	l = new QLabel(getVersionString());
 	mainLayout->addWidget(l);
-#pragma GCC diagnostic ignored "-Wdate-time"
-//	QString compilationTime = QString("Built on: %1 %2").arg(__DATE__).arg(__TIME__);
-//	l = new QLabel(compilationTime);
-//	mainLayout->addWidget(l);
+
 	l = new QLabel();
 	l->setText("<a href=\"http://www.buckosoft.com/qtpovray/\">www.buckosoft.com/qtpovray</a>");
 	l->setTextFormat(Qt::RichText);
@@ -88,6 +95,58 @@ void HelpMan::showAbout()
 	m_mainWindow->getWorkspace()->setAboutRect(QRect(d.pos(), d.size()));
 
 	m_povrayBanner = NULL;
+}
+
+// Displayed the first time running
+bool HelpMan::showVirginSplash()
+{
+	QDialog d(m_mainWindow);
+	d.setWindowTitle(tr("qtpovray splash"));
+	QVBoxLayout* mainLayout = new QVBoxLayout();
+	QLabel* l;
+
+	QHBoxLayout* hLayout = new QHBoxLayout();
+	l = new QLabel();
+	l->setPixmap(*mainPixmap);
+	l->setScaledContents(true);
+	l->setAlignment(Qt::AlignCenter);
+	l->setMaximumSize(100,100);
+	hLayout->addWidget(l);
+	mainLayout->addLayout(hLayout);
+
+	l = new QLabel();
+	l->setTextFormat(Qt::RichText);
+	l->setText(tr("Welcome to qtpovray - A POV-Ray&trade; IDE"));
+	mainLayout->addWidget(l);
+
+	l = new QLabel(getVersionString());
+	mainLayout->addWidget(l);
+
+	l = new QLabel();
+	l->setText("<a href=\"http://www.buckosoft.com/qtpovray/\">www.buckosoft.com/qtpovray</a>");
+	l->setTextFormat(Qt::RichText);
+	l->setTextInteractionFlags(Qt::TextBrowserInteraction);
+	l->setOpenExternalLinks(true);
+	mainLayout->addWidget(l);
+
+	l = new QLabel("<hr>");
+	mainLayout->addWidget(l);
+
+	l = new QLabel(tr("In the following dialog, create a file to store your workspace in."));
+	mainLayout->addWidget(l);
+	l = new QLabel(tr("This is just metadata about your project, not your POV-Ray source."));
+	mainLayout->addWidget(l);
+	l = new QLabel(tr("You will specify the location of your POV-Ray source later."));
+	mainLayout->addWidget(l);
+
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	connect(buttonBox, &QDialogButtonBox::accepted, &d, &QDialog::accept);
+	connect(buttonBox, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+	mainLayout->addWidget(buttonBox);
+	d.setLayout(mainLayout);
+	int ret = d.exec();
+	qDebug() << "Splash returned" << ret;
+	return(ret == QDialog::Accepted);
 }
 
 void HelpMan::showSampleScenes()
@@ -134,4 +193,13 @@ void HelpMan::setPovrayVersion(const QString& text)
 	if (m_povrayBanner) {
 		m_povrayBanner->setText(text);
 	}
+}
+
+QString HelpMan::getVersionString()
+{
+	QString v(tr("Version %1").arg(VERSION));
+#ifdef _DEBUG
+	v += " - DEBUG";
+#endif
+	return(v);
 }

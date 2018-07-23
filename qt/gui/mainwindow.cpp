@@ -221,8 +221,11 @@ Workspace* MainWindow::getWorkspace() { return(m_dockMan->getWorkspace()); }
 
 void MainWindow::needWorkspace()
 {
-	QMessageBox::information(this, tr("Workspace needed"),
-							 tr("In the following dialog, create a file to store your workspace in"));
+	bool ret = m_helpMan->showVirginSplash();
+	if (!ret) {
+		QApplication::quit();
+		return;
+	}
 	emit(m_dockMan->emitSwitchWorkspace());
 }
 

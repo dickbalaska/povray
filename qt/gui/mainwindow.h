@@ -52,9 +52,6 @@ class StatusBar;
 class VfeClient;
 class Workspace;
 
-#ifdef USE_WEBSOCKETS
-class WsClient;
-#endif
 enum
 {
 	BANNER_STREAM = 0,
@@ -85,6 +82,8 @@ namespace Ui {
 class MainWindow;
 }
 
+extern QPixmap* mainPixmap;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -110,9 +109,6 @@ public:
 	//bool		validateExe(const QString& file, QTextEdit* statusArea = NULL);
 	//void		launchPovray(const QString& file);
 	const QString& getPovProcessErrorMsg() { return(povProcessErrorMsg); }
-#ifdef USE_WEBSOCKETS
-	WsClient*	getWsClient() { return(wsClient); }
-#endif
 	void		sendPovrayMessage(const QString& msg);
 	void		setPrefVersionWidget(QTextEdit* w) { prefVersionWidget = w; }
 
@@ -160,9 +156,6 @@ private:
 	void	setTitle(int which);
 	bool	eventFilter(QObject*, QEvent* e);
 
-#ifdef USE_WEBSOCKETS
-	WsClient*		wsClient;
-#endif
 	QTextEdit*		prefVersionWidget;		// If prefs are open, this points to where the version is displayed
 	QShortcut		m_shortcutConfigure;
 	QShortcut		shortcutRender;
