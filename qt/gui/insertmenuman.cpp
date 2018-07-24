@@ -98,7 +98,7 @@ void InsertMenuMan::itemSelected()
 	if (!file.open(QFile::ReadOnly | QFile::Text))
 		return;
 	QTextStream in(&file);
-	CodeEditor* ce = m_mainWindow->getEditor();
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
 	if (!ce)
 		return;
 	QString s = in.readAll();
@@ -277,7 +277,10 @@ QString InsertMenuMan::processSubstitutions(const QString& in)
 QString	InsertMenuMan::getSubstitution(const QString& token, InsertSubstitutionsDialog* isd)
 {
 	if (!isd && token == "filename") {
-		return(m_mainWindow->getEditor()->getFileName());
+		CodeEditor* ce = m_mainWindow->getCodeEditor();
+		if (ce)
+			return(ce->getFileName());
+		return("***undefined***");
 	} else if (!isd && token == "date") {
 		QDateTime dt = QDateTime::currentDateTime();
 		return(dt.toString("yyyyMMdd"));

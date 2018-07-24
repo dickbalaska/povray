@@ -43,7 +43,7 @@ class LineNumberArea;
 class MainWindow;
 class PreferenceData;
 
-class CodeEditor : public QPlainTextEdit
+class CodeEditor :  public QPlainTextEdit
 {
 	Q_OBJECT
 
@@ -55,12 +55,17 @@ public:
 	CodeEditor(MainWindow *parent, PreferenceData* prefs);
 	static void init();
 
-	void	lineNumberAreaPaintEvent(QPaintEvent* event);
-	int		lineNumberAreaWidth();
 	void	setFilePath(const QString& filePath);
 	const QString& getFilePath();
 	void	setFileName(const QString& filePath);
 	const QString& getFileName();
+
+	//EditorType	getEditorType();
+
+	void setEditorFocus() { setFocus(); }
+
+	void	lineNumberAreaPaintEvent(QPaintEvent* event);
+	int		lineNumberAreaWidth();
 	void	configure(PreferenceData* prefs);
 
 	void	setModified(bool mod);
@@ -73,6 +78,7 @@ public:
 	void	handleEditIndent();
 	void	handleEditUnindent();
 	void	handleEditToggleComments();
+
 
 signals:
 	void	closeEditor();
@@ -124,10 +130,7 @@ private:
 	void		handleHover(const QPoint& globalPos, QPoint& pos, QTextCursor &tc);
 
 	MainWindow*		m_mainWindow;
-	PreferenceData*	m_prefs;
 	LineNumberArea*	m_lineNumberArea;
-	QString			filePath;		// absolute path to the file
-	QString			fileName;		// just the filename displayed in the tab
 	bool			modified;		// editor has unsaved changes
 	Highlighter*	m_highlighter;
 	// preferences quick access
@@ -146,14 +149,18 @@ private:
 	QTextCursor		m_contextCursor;			// where the context menu was popped
 	QPixmap			m_backgroundPixmap;
 	//QPixmap			m_tooltipPixmap;
+
+	QString			m_filePath;		// absolute path to the file
+	QString			m_fileName;		// just the filename displayed in the tab
 };
 
-inline void CodeEditor::setFilePath(const QString& filePath) { this->filePath = filePath; }
-inline const QString& CodeEditor::getFilePath() { return(filePath); }
-inline void CodeEditor::setFileName(const QString& fileName) { this->fileName = fileName; }
-inline const QString& CodeEditor::getFileName() { return(fileName); }
 inline void CodeEditor::setModified(bool mod) { modified = mod; }
 inline bool CodeEditor::isModified() { return(modified); }
+inline void CodeEditor::setFilePath(const QString& filePath) { this->m_filePath = filePath; }
+inline const QString& CodeEditor::getFilePath() { return(m_filePath); }
+inline void CodeEditor::setFileName(const QString& fileName) { this->m_fileName = fileName; }
+inline const QString& CodeEditor::getFileName() { return(m_fileName); }
+//inline EditorType CodeEditor::getEditorType() { return(m_editorType); }
 
 
 ///////////////////////////////////////////////////////////////////////////////

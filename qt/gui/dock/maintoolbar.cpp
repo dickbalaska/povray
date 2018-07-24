@@ -233,12 +233,15 @@ void  MainToolbar::renderButtonToStart()
 void MainToolbar::tabChanged(int index)
 {
 	//qDebug() << "tabChanged";
-	CodeEditor* ce = m_mainWindow->getEditor(index);
+//	EditorBase* eb = m_mainWindow->getEditor(index);
+	CodeEditor* ce = m_mainWindow->getCodeEditor(index);
 	if (ce) {
 		enableSave(ce->isModified());
 		updateUndoRedo(ce);
 		onCopyAvailable(ce->textCursor().hasSelection());
 		ce->setFocus();
+	} else {
+		enableSave(false);
 	}
 }
 void MainToolbar::updateUndoRedo(CodeEditor* ce)
@@ -258,9 +261,12 @@ void MainToolbar::enableSave(bool enable)
 	}
 	bool en = false;
 	for (int i=0; i<m_mainWindow->getEditorTabs()->count(); i++) {
-		CodeEditor* ce = m_mainWindow->getEditor(i);
-		if (ce->isModified())
+//		EditorBase* eb = m_mainWindow->getEditor(i);
+//		if (eb && eb->getEditorType() == EditorTypeCode) {
+		CodeEditor* ce = m_mainWindow->getCodeEditor(i);
+		if (ce && ce->isModified())
 			en = true;
+
 	}
 	saveAllAction->setEnabled(en);
 }
@@ -277,22 +283,53 @@ void MainToolbar::onCopyAvailable(bool yes)
 	m_editCutAction->setEnabled(yes);
 	m_editCopyAction->setEnabled(yes);
 }
-void MainToolbar::doCut() {	if (m_mainWindow->getEditor()) m_mainWindow->getEditor()->cut(); }
-void MainToolbar::doCopy() { if (m_mainWindow->getEditor()) m_mainWindow->getEditor()->copy(); }
-void MainToolbar::doPaste() { if (m_mainWindow->getEditor()) m_mainWindow->getEditor()->paste(); }
-void MainToolbar::doUndo() { if (m_mainWindow->getEditor()) m_mainWindow->getEditor()->undo(); }
-void MainToolbar::doRedo() { if (m_mainWindow->getEditor()) m_mainWindow->getEditor()->redo(); }
+void MainToolbar::doCut()
+{
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (ce)
+		ce->cut();
+}
+
+void MainToolbar::doCopy()
+{
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (ce)
+		ce->copy();
+}
+
+void MainToolbar::doPaste()
+{
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (ce)
+		ce->paste();
+}
+
+void MainToolbar::doUndo()
+{
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (ce)
+		ce->undo();
+}
+
+void MainToolbar::doRedo()
+{
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (ce)
+		ce->redo();
+}
+
 void MainToolbar::doGotoMatchingBrace()
 {
-	if (m_mainWindow->getEditor())
-		m_mainWindow->getEditor()->gotoMatchingBrace();
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (ce)
+		ce->gotoMatchingBrace();
 }
 
 void MainToolbar::doGotoLineNumber()
 {
-	CodeEditor* ce;
-	if ((ce = m_mainWindow->getEditor()) != NULL) {
-		QDialog d(m_mainWindow->getEditor());
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (ce) {
+		QDialog d(ce);
 		d.setWindowTitle(tr("Go to line number"));
 		QVBoxLayout* mainLayout = new QVBoxLayout(&d);
 		QHBoxLayout* hLayout = new QHBoxLayout();
@@ -311,7 +348,7 @@ void MainToolbar::doGotoLineNumber()
 		mainLayout->addWidget(buttonBox);
 		int ret = d.exec();
 		if (ret == QDialog::Accepted) {
-			m_mainWindow->getEditor()->gotoLineNumber(sb->value());
+			ce->gotoLineNumber(sb->value());
 		}
 	}
 }

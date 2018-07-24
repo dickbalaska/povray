@@ -31,6 +31,7 @@
 #include "dock/consoledock.h"
 #include "editor/bookmarkman.h"
 #include "editor/codeeditor.h"
+#include "editor/imagedisplayer.h"
 #include "findman.h"
 
 #include "workspace.h"
@@ -248,12 +249,19 @@ void Workspace::updateEditorPositions()
 	if (!tw)
 		return;
 	for (int i=0; i<tw->count(); i++) {
-		CodeEditor* ce = (CodeEditor*)tw->widget(i);
-		m_openEditors.append(ce->getFilePath());
-		QTextCursor tc = ce->textCursor();
-		m_editorPositions.append(QVariant(tc.position()));
-		QScrollBar* sb = ce->verticalScrollBar();
-		m_editorScrolls.append(QVariant(sb->value()));
+		QWidget* qw = tw->widget(i);
+		CodeEditor* ce = qobject_cast<CodeEditor*>(qw);
+		if (ce) {
+			m_openEditors.append(ce->getFilePath());
+			QTextCursor tc = ce->textCursor();
+			m_editorPositions.append(QVariant(tc.position()));
+			QScrollBar* sb = ce->verticalScrollBar();
+			m_editorScrolls.append(QVariant(sb->value()));
+		}
+		ImageDisplayer* id = qobject_cast<ImageDisplayer*>(qw);
+		if (id) {
+			m_openEditors.append(id->getFilePath());
+		}
 	}
 	m_activeEditorIndex = tw->currentIndex();
 }

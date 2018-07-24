@@ -35,6 +35,14 @@ FindMan::FindMan(MainWindow* parent)
 void FindMan::onFindDialog()
 {
 	qDebug() << "onFindDialog";
+//	EditorBase* eb = m_mainWindow->getEditor();
+//	if (!eb || eb->getEditorType() != EditorTypeCode)
+//		return;
+//	CodeEditor* ce = (CodeEditor*)eb;
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (!ce)
+		return;
+
 	if (!m_findDialog) {
 		m_findDialog = new FindDialog(m_mainWindow, this);
 	}
@@ -42,7 +50,6 @@ void FindMan::onFindDialog()
 	//m_findDialog->setFocus();
 	m_findDialog->activateWindow();
 	m_findDialog->m_findText->setFocus();
-	CodeEditor* ce = m_mainWindow->getEditor();
 	QTextCursor tc = ce->textCursor();
 	if (tc.hasSelection())
 		m_findDialog->m_findText->setText(tc.selectedText());
@@ -62,7 +69,9 @@ void FindMan::onFindDialogClosed()
 void FindMan::onFindDialogFind(int findType)
 {
 	qDebug() << "onFindDialogFind" << findType;
-	CodeEditor* ce = m_mainWindow->getEditor();
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (!ce)
+		return;
 	m_lastFindText = m_findDialog->m_findText->text();
 	QRegExp* re = NULL;
 	int flags = 0;
@@ -115,7 +124,9 @@ void FindMan::onFindDialogFind(int findType)
 void	FindMan::onFindNext()
 {
 	qDebug() << "FindMan::onFindNext";
-	CodeEditor* ce = m_mainWindow->getEditor();
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (!ce)
+		return;
 
 	switch(m_lastFindType) {
 	case FindType::Find:
@@ -180,6 +191,7 @@ FindDialog::FindDialog(MainWindow* mainWindow, FindMan* findMan)
 	: QDialog(mainWindow),
 	  m_mainWindow(mainWindow)
 {
+	CodeEditor* ce = mainWindow->getCodeEditor();
 	m_findMan = findMan;
 	this->setWindowTitle(tr("Find"));
 	QVBoxLayout* mainLayout = new QVBoxLayout(this);
@@ -259,7 +271,6 @@ FindDialog::FindDialog(MainWindow* mainWindow, FindMan* findMan)
 		this->move(m_findMan->m_findDialogPos);
 		this->resize(m_findMan->m_findDialogSize);
 	}
-	CodeEditor* ce = mainWindow->getEditor();
 	QTextCursor tc = ce->textCursor();
 	if (tc.hasSelection()) {
 		m_findText->setText(tc.selectedText());
@@ -269,7 +280,15 @@ FindDialog::FindDialog(MainWindow* mainWindow, FindMan* findMan)
 
 void FindDialog::updateButtons()
 {
-	CodeEditor* ce = m_mainWindow->getEditor();
+	CodeEditor* ce = m_mainWindow->getCodeEditor();
+	if (!ce) {
+		m_findButton->setEnabled(false);
+		m_findInFilesButton->setEnabled(false);
+		m_replaceButton->setEnabled(false);
+		m_replaceFindButton->setEnabled(false);
+		m_replaceAllButton->setEnabled(false);
+		return;
+	}
 	bool bFind = false;
 	if (!m_findText->text().isEmpty())
 		bFind = true;

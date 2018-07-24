@@ -46,7 +46,7 @@ void CodeEditor::init()
 CodeEditor::CodeEditor(MainWindow* parent, PreferenceData* prefs)
 	: QPlainTextEdit(parent),
 	  m_mainWindow(parent),
-	  m_prefs(prefs),
+//	  m_prefs(prefs),
 	  m_tooltip(NULL),
 	  m_tooltipTimer(this),
 	  m_backgroundPixmap(80,50)

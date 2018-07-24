@@ -78,6 +78,13 @@ enum FindType
 
 enum { MaxRecentFiles = 20 };
 
+enum EditorType
+{
+	EditorTypeUnknown,
+	EditorTypeCode,
+	EditorTypeGraphic
+};
+
 namespace Ui {
 class MainWindow;
 }
@@ -101,7 +108,8 @@ public:
 	void		initWorkspace();
 	int			openEditor(const QString& filePath);
 	QTabWidget*	getEditorTabs();
-	CodeEditor*	getEditor(int which = -1);
+	QWidget*	getEditor(int which = -1);
+	CodeEditor*	getCodeEditor(int which = -1);
 	DockMan*	getDockMan();
 	HelpMan*	getHelpMan();
 	void		deleteAllEditorTabs();	// delete all CodeEditors. Ask before deleting changed editors.
@@ -155,6 +163,7 @@ private:
 	void	setShortcutKeys();
 	void	setTitle(int which);
 	bool	eventFilter(QObject*, QEvent* e);
+	EditorType determineEditorType(const QString &filePath, const QString& fileName);
 
 	QTextEdit*		prefVersionWidget;		// If prefs are open, this points to where the version is displayed
 	QShortcut		m_shortcutConfigure;

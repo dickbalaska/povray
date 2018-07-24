@@ -64,7 +64,8 @@ SOURCES += \
     editor/povcolor.cpp \
     editor/colormapeditor.cpp \
     vfeclient.cpp \
-    helpman.cpp
+    helpman.cpp \
+    editor/imagedisplayer.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -90,7 +91,8 @@ HEADERS += \
     editor/colormapeditor.h \
     vfeclient.h \
     qtpovrayversion.h \
-    helpman.h
+    helpman.h \
+    editor/imagedisplayer.h
 
 FORMS += \
         mainwindow.ui

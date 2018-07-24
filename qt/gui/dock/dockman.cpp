@@ -108,21 +108,22 @@ void DockMan::activateWorkspace(const QString& pws)
 		int positionCount = m_workspace->getEditorPositions().size();
 		int scrollCount = m_workspace->getEditorScrolls().size();
 		for (int i=0; i<m_mainWindow->getEditorTabs()->count(); i++) {
-			CodeEditor* ce = m_mainWindow->getEditor(i);
-			if (ce) {
-				if (i < positionCount) {
-					QVariant v = m_workspace->getEditorPositions().at(i);
-					int p = v.toInt();
-					QTextCursor tc = ce->textCursor();
-					tc.setPosition(p);
-					ce->setTextCursor(tc);
-				}
-				if (i < scrollCount) {
-					QVariant v = m_workspace->getEditorScrolls().at(i);
-					int p = v.toInt();
-					QScrollBar* sb = ce->verticalScrollBar();
-					sb->setValue(p);
-				}
+//			EditorBase* eb = m_mainWindow->getEditor(i);
+//			if (eb && eb->getEditorType() == EditorTypeCode) {
+//				CodeEditor* ce = (CodeEditor*)eb;
+			CodeEditor* ce = m_mainWindow->getCodeEditor(i);
+			if (i < positionCount) {
+				QVariant v = m_workspace->getEditorPositions().at(i);
+				int p = v.toInt();
+				QTextCursor tc = ce->textCursor();
+				tc.setPosition(p);
+				ce->setTextCursor(tc);
+			}
+			if (i < scrollCount) {
+				QVariant v = m_workspace->getEditorScrolls().at(i);
+				int p = v.toInt();
+				QScrollBar* sb = ce->verticalScrollBar();
+				sb->setValue(p);
 			}
 		}
 	}

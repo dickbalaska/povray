@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "editor/codeeditor.h"
+#include "editor/imagedisplayer.h"
 #include "dock/dockman.h"
 #include "dock/maintoolbar.h"
 #include "dock/consoledock.h"
@@ -205,8 +206,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
 	if (m_editorTabs) {
 		for (int i=0; i<m_editorTabs->count(); i++) {
-			CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
-			if (!maybeSaveEditor(ce)) {
+			CodeEditor* ce = getCodeEditor(i);
+			if (ce && !maybeSaveEditor(ce)) {
 				event->ignore();
 				return;
 			}
@@ -236,7 +237,6 @@ void MainWindow::initWorkspace()
 
 int MainWindow::openEditor(const QString& filePath)
 {
-	CodeEditor* ce;
 	int i;
 	if (m_editorTabs == NULL) {
 		m_editorTabs = new QTabWidget(this);
@@ -247,41 +247,66 @@ int MainWindow::openEditor(const QString& filePath)
 		setCentralWidget(m_editorTabs);
 
 	}
+	QWidget* qw;
 	for (i=0; i<m_editorTabs->count(); i++) {
-		ce = (CodeEditor*)m_editorTabs->widget(i);
+		qw = m_editorTabs->widget(i);
+		CodeEditor* ce = qobject_cast<CodeEditor*>(qw);
 		if (ce && ce->getFilePath() == filePath) {
 			m_editorTabs->setCurrentIndex(i);
 			return(i);
 		}
+		ImageDisplayer* id = qobject_cast<ImageDisplayer*>(qw);
+		if (id && id->getFilePath() == filePath) {
+			m_editorTabs->setCurrentIndex(i);
+			return(i);
+		}
 	}
-	ce = new CodeEditor(this, &preferenceData);
 	QString fileName = filePath;
 	i = filePath.lastIndexOf('/');
 	if (i == -1)
 		i = filePath.lastIndexOf('\\');
 	if (i != -1)
 		fileName = filePath.mid(i+1);
-	ce->setFilePath(filePath);
-	ce->setFileName(fileName);
 
-	int index = m_editorTabs->addTab(ce, fileName);
-	m_editorTabs->setCurrentWidget(ce);
-	editorTabsCloseSize = m_editorTabs->tabBar()->tabButton(index, QTabBar::RightSide)->size();
-	QFile file(filePath);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-		return(index);			// XXX report error
-	QTextStream in(&file);
-	QString s = in.readAll();
-	ce->setPlainText(s);
-	connect(ce, SIGNAL(modificationChanged(bool)), this, SLOT(editorModified(bool)));
-	connect(ce, SIGNAL(copyAvailable(bool)), m_mainToolbar, SLOT(onCopyAvailable(bool)));
-	connect(ce, SIGNAL(bookmarkCommand(int, int)), m_bookmarkMan, SLOT(onBookmarkCommand(int,int)));
-	connect(ce, SIGNAL(bookmarkToggle(int)), m_bookmarkMan, SLOT(onBookmarkToggle(int)));
-	connect(ce, SIGNAL(bookmarkNext(int)), m_bookmarkMan, SLOT(onBookmarkNext(int)));
-	connect(ce, SIGNAL(bookmarkPrevious(int)), m_bookmarkMan, SLOT(onBookmarkPrevious(int)));
-	ce->setBookmarks(m_bookmarkMan->gatherBookmarks(ce));
-	m_editorTabs->widget(m_editorTabs->currentIndex())->setFocus();
-	return(index);
+	EditorType et = determineEditorType(filePath, fileName);
+	if (et == EditorTypeCode) {
+		CodeEditor* ce;
+		ce = new CodeEditor(this, &preferenceData);
+		ce->setFilePath(filePath);
+		ce->setFileName(fileName);
+
+		qDebug() << "openEditor ce=" << ce;
+		qDebug() << "openEditor filename=" << ce->getFileName();
+//		qDebug() << "openEditor editorType:" << ce->getEditorType();
+
+		int index = m_editorTabs->addTab(ce, fileName);
+		m_editorTabs->setCurrentWidget(ce);
+		editorTabsCloseSize = m_editorTabs->tabBar()->tabButton(index, QTabBar::RightSide)->size();
+		QFile file(filePath);
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			return(index);			// XXX report error
+		QTextStream in(&file);
+		QString s = in.readAll();
+		ce->setPlainText(s);
+		connect(ce, SIGNAL(modificationChanged(bool)), this, SLOT(editorModified(bool)));
+		connect(ce, SIGNAL(copyAvailable(bool)), m_mainToolbar, SLOT(onCopyAvailable(bool)));
+		connect(ce, SIGNAL(bookmarkCommand(int, int)), m_bookmarkMan, SLOT(onBookmarkCommand(int,int)));
+		connect(ce, SIGNAL(bookmarkToggle(int)), m_bookmarkMan, SLOT(onBookmarkToggle(int)));
+		connect(ce, SIGNAL(bookmarkNext(int)), m_bookmarkMan, SLOT(onBookmarkNext(int)));
+		connect(ce, SIGNAL(bookmarkPrevious(int)), m_bookmarkMan, SLOT(onBookmarkPrevious(int)));
+		ce->setBookmarks(m_bookmarkMan->gatherBookmarks(ce));
+		m_editorTabs->widget(m_editorTabs->currentIndex())->setFocus();
+		return(index);
+	} else if (et == EditorTypeGraphic) {
+		ImageDisplayer* id = new ImageDisplayer(this);
+		id->setFilePath(filePath);
+		id->setFileName(fileName);
+		id->loadImage();
+		int index = m_editorTabs->addTab(id, fileName);
+		m_editorTabs->setCurrentWidget(id);
+		return(index);
+	}
+	return(-1);
 }
 
 void MainWindow::closeCurrentEditor()
@@ -291,17 +316,22 @@ void MainWindow::closeCurrentEditor()
 
 void MainWindow::closeEditorRequested(int which)
 {
-	CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(which);
-	maybeSaveEditor(ce);
+	CodeEditor* ce = getCodeEditor(which);
+	if (ce) {
+		maybeSaveEditor(ce);
+		delete ce;
+	} else {
+		QWidget* qw = getEditor(which);
+		delete qw;
+	}
 	m_editorTabs->removeTab(which);
-	delete ce;
 	qDebug() << "m_editorTabs" << m_editorTabs->count();
 	if (m_editorTabs->count() == 0) {
 		delete m_editorTabs;
 		m_editorTabs = NULL;
-		QLabel* ql = new QLabel(this);	// puts the icon in the middle,
-		ql->setPixmap(*mainPixmap);		// ugly because it resizes the tabs
-		this->setCentralWidget(ql);
+//		QLabel* ql = new QLabel(this);	// puts the icon in the middle,
+//		ql->setPixmap(*mainPixmap);		// ugly because it resizes the tabs
+//		this->setCentralWidget(ql);
 	} else {
 		m_editorTabs->widget(m_editorTabs->currentIndex())->setFocus();
 	}
@@ -319,9 +349,9 @@ void MainWindow::deleteAllEditorTabs()
 		}
 	}
 	m_editorTabs = NULL;
-	QLabel* ql = new QLabel(this);
-	ql->setPixmap(*mainPixmap);
-	this->setCentralWidget(ql);
+//	QLabel* ql = new QLabel(this);
+//	ql->setPixmap(*mainPixmap);
+//	this->setCentralWidget(ql);
 }
 
 bool MainWindow::maybeSaveEditor(CodeEditor* ce)
@@ -374,12 +404,33 @@ void MainWindow::saveAllEditors()
 	}
 }
 
-CodeEditor*	MainWindow::getEditor(int which)
+QWidget *MainWindow::getEditor(int which)
 {
 	if (which == -1)
-		return((CodeEditor*)m_editorTabs->widget(m_editorTabs->currentIndex()));
+		return(m_editorTabs->widget(m_editorTabs->currentIndex()));
 	else
-		return((CodeEditor*)m_editorTabs->widget(which));
+		return(m_editorTabs->widget(which));
+}
+
+CodeEditor* MainWindow::getCodeEditor(int which)
+{
+	QWidget* widget = getEditor(which);
+	CodeEditor* ce = qobject_cast<CodeEditor*>(widget);
+	if (ce)
+		return(ce);
+	return(nullptr);
+}
+EditorType MainWindow::determineEditorType(const QString& filePath, const QString& fileName)
+{
+	QImageReader qir(filePath);
+	if (qir.canRead())
+		return(EditorTypeGraphic);
+//	int i = fileName.indexOf(".");
+//	if (i == -1)
+//		return(EditorTypeUnknown);
+//	QString ext = fileName.mid(i+1);
+//	if (ext.compare("png", Qt::CaseInsensitive) == 0) return(EditorTypeGraphic);
+	return(EditorTypeCode);
 }
 
 void MainWindow::tabChanged(int index)
@@ -411,8 +462,23 @@ void MainWindow::setTitle(int which)
 	if (which == -1)
 		setWindowTitle("qtpovray");
 	else {
-		CodeEditor* ce = getEditor(which);
-		QString s = QString("%1%2 - qtpovray").arg(ce->getFileName()).arg(ce->isModified() ? "*" : "");
+		QString mod = "";
+		QString fname = "";
+		CodeEditor* ce = getCodeEditor(which);
+		if (ce) {
+			fname = ce->getFileName();
+			if (ce->isModified())
+				mod = "*";
+		} else {
+			QWidget* qw = getEditor(which);
+			ImageDisplayer* id = qobject_cast<ImageDisplayer*>(qw);
+			if (id) {
+				fname = id->getFileName();
+			} else {
+				fname = "***broken***";
+			}
+		}
+		QString s = QString("%1%2 - qtpovray").arg(fname).arg(mod);
 		setWindowTitle(s);
 	}
 }
@@ -482,20 +548,23 @@ void MainWindow::moveToEditor(const QString& file, int line, int col)
 void MainWindow::editIndentBlock()
 {
 	qDebug() << "editIndentBlock";
-	if (getEditor())
-		getEditor()->handleEditIndent();
+	CodeEditor* ce = getCodeEditor();
+	if (ce)
+		ce->handleEditIndent();
 }
 void MainWindow::editUnindentBlock()
 {
 	qDebug() << "editUnindentBlock";
-	if (getEditor())
-		getEditor()->handleEditUnindent();
+	CodeEditor* ce = getCodeEditor();
+	if (ce)
+		ce->handleEditUnindent();
 }
 void MainWindow::editToggleComments()
 {
 	qDebug() << "editToggleComments";
-	if (getEditor())
-		getEditor()->handleEditToggleComments();
+	CodeEditor* ce = getCodeEditor();
+	if (ce)
+		ce->handleEditToggleComments();
 }
 
 void MainWindow::onPreferences() {
