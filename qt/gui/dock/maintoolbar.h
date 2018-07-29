@@ -45,9 +45,10 @@ public:
 	void	updateHelpEnabled();
 	void	tabChanged(int index);				// user selected a different tab/editor. Update menu states.
 
-	bool	isRenderButtonStart() { return(renderButtonIsStart); }
+	bool	isRenderButtonStart() { return(m_renderButtonIsStart); }
 	Dropdown*	getRenderCL() { return(renderCl); }
-	QMenu*	getInsertMenu() { return(insertMenu); }
+	QMenu*	getInsertMenu() { return(m_insertMenu); }
+	void	changeIcons(bool useLargeIcons);
 
 public slots:
 	void	onCopyAvailable(bool yes);
@@ -64,11 +65,12 @@ private slots:
 private:
 	void setupMenu();
 
-	QMenu*		insertMenu;
-	QAction*	openAction;
-	QAction*	saveAction;
-	QAction*	saveAllAction;
-	QAction*	renderAction;
+	QMenu*		m_insertMenu;
+	QAction*	m_newAction;
+	QAction*	m_openAction;
+	QAction*	m_saveAction;
+	QAction*	m_saveAllAction;
+	QAction*	m_renderAction;
 	QAction*	m_editUndoAction;
 	QAction*	m_editRedoAction;
 	QAction*	m_editCutAction;
@@ -91,7 +93,7 @@ private:
 	Dropdown*	renderCl;
 
 	MainWindow*	m_mainWindow;
-	bool		renderButtonIsStart;
+	bool		m_renderButtonIsStart;
 
 	QAction*		recentFileActions[MaxRecentFiles];
 	QMetaObject::Connection recentFileConnections[MaxRecentFiles];

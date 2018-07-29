@@ -163,7 +163,7 @@ private:
 	void	setShortcutKeys();
 	void	setTitle(int which);
 	bool	eventFilter(QObject*, QEvent* e);
-	EditorType determineEditorType(const QString &filePath, const QString& fileName);
+	EditorType determineEditorType(const QString &filePath, const QString&);
 
 	QTextEdit*		prefVersionWidget;		// If prefs are open, this points to where the version is displayed
 	QShortcut		m_shortcutConfigure;

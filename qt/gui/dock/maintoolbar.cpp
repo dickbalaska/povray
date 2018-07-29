@@ -39,14 +39,16 @@ QIcon* renderStopIcon;
 QString renderGoText;
 QString renderStopText;
 
+
 MainToolbar::MainToolbar(const QString &title, bool useLargeIcons, MainWindow *parent)
 	: QToolBar(parent),
 	  m_mainWindow(parent),
-	  renderButtonIsStart(true)
+	  m_renderButtonIsStart(true)
 {
 	setWindowTitle(title);
 	setObjectName(title);
 	QString sizeString;
+	#define iString(name) QString(":/resources/icons/").append(name).append(sizeString)
 
 	if (useLargeIcons) {
 		setIconSize(QSize(32, 32));
@@ -55,25 +57,24 @@ MainToolbar::MainToolbar(const QString &title, bool useLargeIcons, MainWindow *p
 		setIconSize(QSize(24, 24));
 		sizeString = "_24x24.png";
 	}
-#define iString(name) QString(":/resources/icons/").append(name).append(sizeString)
 
 	renderGoIcon = new QIcon(iString("Play"));
 	renderStopIcon = new QIcon(iString("Stop"));
 	renderGoText = tr("Start POV-Ray");
 	renderStopText = tr("Stop POV-Ray");
 
-	addAction(QIcon(iString("New")), "New", parent->getDockMan()->getResourceDock(), SLOT(newFile(bool)));
-	openAction = addAction(QIcon(iString("Open")), "Open File",
+	m_newAction = addAction(QIcon(iString("New")), "New", parent->getDockMan()->getResourceDock(), SLOT(newFile(bool)));
+	m_openAction = addAction(QIcon(iString("Open")), "Open File",
 						   m_mainWindow->getDockMan()->getResourceDock(), SLOT(openFile(bool)));
-	openAction->setShortcut(QKeySequence::Open);
-	saveAction = addAction(QIcon(iString("Save")), "Save", m_mainWindow, SLOT(saveCurrentEditor()));
-	saveAction->setShortcut(QKeySequence::Save);
-	saveAction->setDisabled(true);
-	insertMenu = new QMenu("Insert", this);
-	insertMenu->setIcon(QIcon(iString("InsertText")));
-	addAction(insertMenu->menuAction());
+	m_openAction->setShortcut(QKeySequence::Open);
+	m_saveAction = addAction(QIcon(iString("Save")), "Save", m_mainWindow, SLOT(saveCurrentEditor()));
+	m_saveAction->setShortcut(QKeySequence::Save);
+	m_saveAction->setDisabled(true);
+	m_insertMenu = new QMenu("Insert", this);
+	m_insertMenu->setIcon(QIcon(iString("InsertText")));
+	addAction(m_insertMenu->menuAction());
 	addAction(QIcon(iString("Settings")), "Settings", m_mainWindow, SLOT(onPreferences()));
-	renderAction = addAction(*renderGoIcon, renderGoText, m_mainWindow, SLOT(onRenderAction()));
+	m_renderAction = addAction(*renderGoIcon, renderGoText, m_mainWindow, SLOT(onRenderAction()));
 	renderCl = new Dropdown(this);
 	connect(renderCl, SIGNAL(enterPressed()), m_mainWindow, SLOT(onRenderStartIfNotRunning()));
 	addWidget(renderCl);
@@ -88,6 +89,29 @@ MainToolbar::~MainToolbar()
 		delete recentFileActions[i];
 	}
 }
+
+void MainToolbar::changeIcons(bool useLargeIcons)
+{
+	QString sizeString;
+	#define iString(name) QString(":/resources/icons/").append(name).append(sizeString)
+
+	if (useLargeIcons) {
+		setIconSize(QSize(32, 32));
+		sizeString = "_32x32.png";
+	} else {
+		setIconSize(QSize(24, 24));
+		sizeString = "_24x24.png";
+	}
+	renderGoIcon = new QIcon(iString("Play"));
+	renderStopIcon = new QIcon(iString("Stop"));
+
+	m_newAction->setIcon(QIcon(iString("New")));
+	m_openAction->setIcon(QIcon(iString("Open")));
+	m_saveAction->setIcon(QIcon(iString("Save")));
+	m_insertMenu->setIcon(QIcon(iString("InsertText")));
+	m_renderAction->setIcon(m_renderButtonIsStart ? *renderGoIcon : *renderStopIcon);
+}
+
 void MainToolbar::setupMenu()
 {
 	DockMan* dockMan = m_mainWindow->getDockMan();
@@ -98,11 +122,11 @@ void MainToolbar::setupMenu()
 	newM->addAction(QIcon(":resources/icons/New_24x24.png"), tr("&File"), resourceDock, SLOT(newFile(bool)));
 	newM->addAction(QIcon(":resources/icons/folder.png"), tr("Fol&der"), resourceDock, SLOT(newFolder(bool)));
 	menu->addMenu(newM);
-	menu->addAction(openAction);
-	menu->addAction(saveAction);
-	saveAllAction = menu->addAction(tr("Save al&l"), m_mainWindow, SLOT(saveAllEditors()));
-	saveAllAction->setShortcut(m_mainWindow->m_shortcutSaveAllEditors.key());
-	saveAllAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+	menu->addAction(m_openAction);
+	menu->addAction(m_saveAction);
+	m_saveAllAction = menu->addAction(tr("Save al&l"), m_mainWindow, SLOT(saveAllEditors()));
+	m_saveAllAction->setShortcut(m_mainWindow->m_shortcutSaveAllEditors.key());
+	m_saveAllAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	menu->addSeparator();
 	QMenu* recentMenu = new QMenu(tr("Switch &Workspace"), m_mainWindow);
 	for (int i=0; i< MaxRecentFiles; i++) {
@@ -219,15 +243,15 @@ void MainToolbar::updateHelpEnabled()
 
 void  MainToolbar::renderButtonToStop()
 {
-	renderAction->setIcon(*renderStopIcon);
-	renderAction->setToolTip(renderStopText);
-	renderButtonIsStart = false;
+	m_renderAction->setIcon(*renderStopIcon);
+	m_renderAction->setToolTip(renderStopText);
+	m_renderButtonIsStart = false;
 }
 void  MainToolbar::renderButtonToStart()
 {
-	renderAction->setIcon(*renderGoIcon);
-	renderAction->setToolTip(renderGoText);
-	renderButtonIsStart = true;
+	m_renderAction->setIcon(*renderGoIcon);
+	m_renderAction->setToolTip(renderGoText);
+	m_renderButtonIsStart = true;
 }
 
 void MainToolbar::tabChanged(int index)
@@ -254,9 +278,9 @@ void MainToolbar::updateUndoRedo(CodeEditor* ce)
 }
 void MainToolbar::enableSave(bool enable)
 {
-	saveAction->setEnabled(enable);
+	m_saveAction->setEnabled(enable);
 	if (!m_mainWindow->getEditorTabs()) {
-		saveAllAction->setEnabled(false);
+		m_saveAllAction->setEnabled(false);
 		return;
 	}
 	bool en = false;
@@ -268,14 +292,14 @@ void MainToolbar::enableSave(bool enable)
 			en = true;
 
 	}
-	saveAllAction->setEnabled(en);
+	m_saveAllAction->setEnabled(en);
 }
 void MainToolbar::enableInsertMenu(bool enable) {
-	insertMenu->setEnabled(enable);
+	m_insertMenu->setEnabled(enable);
 }
 
 void MainToolbar::enableRender(bool enable) {
-	renderAction->setEnabled(enable);
+	m_renderAction->setEnabled(enable);
 }
 
 void MainToolbar::onCopyAvailable(bool yes)

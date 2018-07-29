@@ -275,8 +275,8 @@ int MainWindow::openEditor(const QString& filePath)
 		ce->setFilePath(filePath);
 		ce->setFileName(fileName);
 
-		qDebug() << "openEditor ce=" << ce;
-		qDebug() << "openEditor filename=" << ce->getFileName();
+//		qDebug() << "openEditor ce=" << ce;
+//		qDebug() << "openEditor filename=" << ce->getFileName();
 //		qDebug() << "openEditor editorType:" << ce->getEditorType();
 
 		int index = m_editorTabs->addTab(ce, fileName);
@@ -316,16 +316,18 @@ void MainWindow::closeCurrentEditor()
 
 void MainWindow::closeEditorRequested(int which)
 {
+	// qDebug() << "Removing tab" << which;
 	CodeEditor* ce = getCodeEditor(which);
 	if (ce) {
 		maybeSaveEditor(ce);
+		m_editorTabs->removeTab(which);
 		delete ce;
 	} else {
 		QWidget* qw = getEditor(which);
+		m_editorTabs->removeTab(which);
 		delete qw;
 	}
-	m_editorTabs->removeTab(which);
-	qDebug() << "m_editorTabs" << m_editorTabs->count();
+	// qDebug() << "m_editorTabs" << m_editorTabs->count();
 	if (m_editorTabs->count() == 0) {
 		delete m_editorTabs;
 		m_editorTabs = NULL;
@@ -420,16 +422,11 @@ CodeEditor* MainWindow::getCodeEditor(int which)
 		return(ce);
 	return(nullptr);
 }
-EditorType MainWindow::determineEditorType(const QString& filePath, const QString& fileName)
+EditorType MainWindow::determineEditorType(const QString& filePath, const QString& )
 {
 	QImageReader qir(filePath);
 	if (qir.canRead())
 		return(EditorTypeGraphic);
-//	int i = fileName.indexOf(".");
-//	if (i == -1)
-//		return(EditorTypeUnknown);
-//	QString ext = fileName.mid(i+1);
-//	if (ext.compare("png", Qt::CaseInsensitive) == 0) return(EditorTypeGraphic);
 	return(EditorTypeCode);
 }
 
@@ -575,6 +572,9 @@ void MainWindow::onPreferences() {
 	int ret = p.exec();
 	prefVersionWidget = NULL;
 	if (ret == QDialog::Accepted) {
+		bool changeIcons = false;
+		if (preferenceData.getUseLargeIcons() != pd.getUseLargeIcons())
+			changeIcons = true;
 		preferenceData = pd;
 		savePreferences();
 		bool b = Preferences::validateIns(preferenceData.getPovrayInsertMenu());
@@ -591,6 +591,8 @@ void MainWindow::onPreferences() {
 			}
 		}
 		setShortcutKeys();
+		if (changeIcons)
+			m_mainToolbar->changeIcons(preferenceData.getUseLargeIcons());
 	}
 }
 
