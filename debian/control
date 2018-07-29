@@ -36,7 +36,8 @@ Description: Qt IDE for POV-Ray (a 3D renderer)
  and displayed from within qtpovray.
  .
  qtpovray-includes is highly recommended in addition to this package.
- qtpovray-extras contains help and samples and is recommended in addition to this package.
+ qtpovray-extras contains help and samples and is recommended in addition
+ to this package.
 
 Package: qtpovray-includes
 Architecture: all

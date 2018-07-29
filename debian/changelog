@@ -1,3 +1,12 @@
+qtpovray (3.80.4~xenial1) xenial; urgency=low
+
+  * Open image files as images, not useless text
+  * Add splash panel with better instructions for newbies
+  * Fix bug with closing an editor closes two editors.
+  * Fix bug where clicking an error didn't go to the source
+
+ -- Dick Balaska <dick@buckosoft.com>  Tue, 24 Jul 2018 10:55:38 -0400
+
 qtpovray (3.80.3~xenial1) xenial; urgency=low
 
   * Add .desktop and icon files
