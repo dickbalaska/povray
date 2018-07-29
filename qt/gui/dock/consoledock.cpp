@@ -221,8 +221,8 @@ ConsoleMessage* PovrayConsole::appendErrorMessage(const QString& msg)
 {
 	bool debug=false;
 	int i;
-	for (i=1; i<msg.length(); i++) {
-		if (msg[i] == '\\')
+	for (i=1; i<msg.length(); i++) {	// first arg is filename wrapped in quotes
+		if (msg[i] == '\\')				// with quotes escaped
 			continue;
 		if (msg[i] == '"')
 			break;

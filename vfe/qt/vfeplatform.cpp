@@ -271,7 +271,7 @@ namespace vfePlatform
 //		string command = "stream fatal ";
 #ifdef _DEBUG
 //		std::cerr << msg << "'" << std::endl;
-		qWarning() << qs;
+		qInfo() << qs;
 #endif
 		//povray::websockets::wsSend(m_hdl, s);
 		m_qtVfe->sendPovrayTextMessage(s_stream, qs);
@@ -279,13 +279,13 @@ namespace vfePlatform
 
 	void vfeQtSession::AppendErrorMessage (const string& Msg, const UCS2String& File, int Line, int Col)
     {
-		QString qs = QString("error %1 %2 %3 %4 %5")
+		QString qs = QString("error \"%1\" %2 %3 %4")
 				.arg(POVMS_UCS2toASCIIString(File).c_str())
 				.arg(Line).arg(Col).arg(Msg.c_str());
 #ifdef _DEBUG
 //    	std::cerr << "================ AppendErrorMessageDecorated: '" << Msg << "' File:'" << POVMS_UCS2toASCIIString(File)
 //    			<< "' Line: " << Line << " - " << Col << std::endl;
-		qWarning() << qs;
+		qInfo() << qs;
 #endif
 //		string command = "stream error";
 //    	std::stringstream ss;
