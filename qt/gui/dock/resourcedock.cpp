@@ -148,6 +148,12 @@ void ResourceDock::newFile(bool)
 	QString path = ((QFileSystemModel*)m_treeView.model())->filePath(m_contextIndex);
 	if (path.isEmpty())
 		path = m_mainWindow->getWorkspace()->getDirRoot();
+	QFileInfo fi(path);
+	if (!fi.isDir()) {
+		QDir dir(path);
+		dir.cdUp();
+		path = dir.absolutePath();
+	}
 	qDebug() << "path" << path;
 	QString fname = getFileName(path);
 	if (!fname.isEmpty()) {
