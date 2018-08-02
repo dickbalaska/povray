@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 	}
 	qInstallMessageHandler(myMessageOutput);
 	QApplication a(argc, argv);
+	setlocale(LC_ALL,"C");
     MainWindow w;
     w.show();
 
