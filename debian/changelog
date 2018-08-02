@@ -1,3 +1,15 @@
+qtpovray (3.80.5~xenial1) xenial; urgency=low
+
+  * Bug #9 - Clicking the "New" button tries to create a file under the current
+    resource, even if that is a file.
+  * Bug 10 - Qt sets the locale, which confuses the povray parser which expects
+    the "C" locale.
+  * Bug 11 - qtpovray doesn't display the progressive passes, like in radiosity
+    renders.
+
+
+ -- Dick Balaska <dick@buckosoft.com>  Thu, 02 Aug 2018 01:14:55 -0400
+
 qtpovray (3.80.4~xenial1) xenial; urgency=low
 
   * Open image files as images, not useless text
