@@ -43,8 +43,18 @@ void QtGraphics::SendInit()
 }
 void QtGraphics::DrawPixel(unsigned int x, unsigned int y, const RGBA8& colour)
 {
-	//std::cerr << "QtGraphics::DrawPixel: x=" << x << " y=" << y << std::endl;
-	qWarning() << "QtGraphics::DrawPixel: x=" << x << " y=" << y;
+	int fullsize = (1+2+1)*4;	// opcode, 2 coords, color
+	uchar buff[fullsize];
+	unsigned int* bi = (unsigned int*)&buff;
+	*bi++ = (quint32)(WSG_DRAW_PIXEL);
+	*bi++ = (quint32)(x);
+	*bi++ = (quint32)(y);
+	unsigned char* bc = (unsigned char*)bi;
+	*bc++ = colour.red;
+	*bc++ = colour.green;
+	*bc++ = colour.blue;
+	*bc++ = colour.alpha;
+	m_qtVfe->sendPovrayGraphicsMessage(buff, fullsize);
 
 }
 void QtGraphics::DrawRectangleFrame(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8& colour)

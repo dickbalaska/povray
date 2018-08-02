@@ -22,7 +22,8 @@ enum
 {
 	WSG_INIT = 0,
 	WSG_DRAW_PIXEL_BLOCK,
-	WSG_DRAW_FILLED_RECT
+	WSG_DRAW_FILLED_RECT,
+	WSG_DRAW_PIXEL
 };
 
 using namespace vfe;

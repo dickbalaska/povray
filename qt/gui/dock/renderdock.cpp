@@ -194,7 +194,7 @@ void RenderDock::binaryMessageReceived(const QByteArray& data)
 		quint32 x1, y1, x2, y2;
 		ds >> x1 >> y1 >> x2 >> y2;
 		if (m_debug)
-			qDebug() << "WSG_DRAW_PIXEL_BLOCK" << x1 << "/" << y1;
+			qDebug() << "WSG_DRAW_FILLED_RECT" << x1 << "/" << y1;
 		QRect rect;
 		rect.setLeft(x1);
 		rect.setTop(y1);
@@ -206,6 +206,20 @@ void RenderDock::binaryMessageReceived(const QByteArray& data)
 		ds >> r >> g >> b >> a;
 		color.setRgb(r,g,b,a);
 		painter.fillRect(rect, color);
+		doDrawThrottle();
+
+	} else if (opcode == WSG_DRAW_PIXEL) {
+		quint32 x, y;
+		ds >> x >> y;
+		if (m_debug)
+			qDebug() << "WSG_DRAW_PIXEL" << x << "/" << y;
+		QPainter	painter(&povrayPixmap);
+		QColor color;
+		quint8 r,g,b,a;
+		ds >> r >> g >> b >> a;
+		color.setRgb(r,g,b,a);
+		painter.setPen(color);
+		painter.drawPoint(x,y);
 		doDrawThrottle();
 
 	} else {
