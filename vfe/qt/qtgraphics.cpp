@@ -55,10 +55,23 @@ void QtGraphics::DrawRectangleFrame(unsigned int x1, unsigned int y1, unsigned i
 }
 void QtGraphics::DrawFilledRectangle(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8& colour)
 {
-	//std::cerr << "QtGraphics::DrawFilledRectangle: x1=" << x1 << " y1=" << y1 << std::endl;
-	qWarning() << "QtGraphics::DrawFilledRectangle: x1=" << x1 << " y1=" << y1;
+	int fullsize = (1+4+1)*4;	// opcode, 4 coords, color
+	uchar buff[fullsize];
+	unsigned int* bi = (unsigned int*)&buff;
+	*bi++ = (quint32)(WSG_DRAW_FILLED_RECT);
+	*bi++ = (quint32)(x1);
+	*bi++ = (quint32)(y1);
+	*bi++ = (quint32)(x2);
+	*bi++ = (quint32)(y2);
+	unsigned char* bc = (unsigned char*)bi;
+	*bc++ = colour.red;
+	*bc++ = colour.green;
+	*bc++ = colour.blue;
+	*bc++ = colour.alpha;
 
+	m_qtVfe->sendPovrayGraphicsMessage(buff, fullsize);
 }
+
 void QtGraphics::DrawPixelBlock(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8 *colour)
 {
 #ifdef _DEBUG

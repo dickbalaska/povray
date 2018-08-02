@@ -35,7 +35,8 @@ class RenderDock;
 enum
 {
 	WSG_INIT = 0,
-	WSG_DRAW_PIXEL_BLOCK
+	WSG_DRAW_PIXEL_BLOCK,
+	WSG_DRAW_FILLED_RECT
 };
 
 class RenderLabel : public QLabel
@@ -77,6 +78,8 @@ public slots:
 	void	timerTicked();
 
 private:
+	void		doDrawThrottle();
+
 	MainWindow* mainWindow;
 	RenderLabel	m_renderLabel;
 	QPixmap		m_labelPixmap;

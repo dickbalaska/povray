@@ -189,25 +189,46 @@ void RenderDock::binaryMessageReceived(const QByteArray& data)
 				painter.drawPoint(x,y);
 			}
 		}
-		//renderLabel.resize(renderLabel.size() + QSize(1,1));
-		//renderLabel.resize(renderLabel.size() - QSize(1,1));
-		if (m_repaintThrottle.isActive()) {
-			m_morePaintEvents = true;
-			if (m_debug)
-				qDebug() << "queue repaint";
-			return;
-		} else {
-			m_renderLabel.repaint();
-			m_repaintThrottle.start(m_refreshDelayThrottle);
-			m_morePaintEvents = false;
-			if (m_debug)
-				qDebug() << "start repaint timer";
-		}
+		doDrawThrottle();
+	} else if (opcode == WSG_DRAW_FILLED_RECT) {
+		quint32 x1, y1, x2, y2;
+		ds >> x1 >> y1 >> x2 >> y2;
+		if (m_debug)
+			qDebug() << "WSG_DRAW_PIXEL_BLOCK" << x1 << "/" << y1;
+		QRect rect;
+		rect.setLeft(x1);
+		rect.setTop(y1);
+		rect.setRight(x2);
+		rect.setBottom(y2);
+		QPainter	painter(&povrayPixmap);
+		QColor color;
+		quint8 r,g,b,a;
+		ds >> r >> g >> b >> a;
+		color.setRgb(r,g,b,a);
+		painter.fillRect(rect, color);
+		doDrawThrottle();
+
 	} else {
 		qWarning() << "RenderDock::binaryMessageReceived: bad opcode" << opcode;
 	}
 }
 
+void RenderDock::doDrawThrottle()
+{
+	if (m_repaintThrottle.isActive()) {
+		m_morePaintEvents = true;
+		if (m_debug)
+			qDebug() << "queue repaint";
+		return;
+	} else {
+		m_renderLabel.repaint();
+		m_repaintThrottle.start(m_refreshDelayThrottle);
+		m_morePaintEvents = false;
+		if (m_debug)
+			qDebug() << "start repaint timer";
+	}
+
+}
 void RenderDock::timerTicked()
 {
 	if (m_morePaintEvents) {

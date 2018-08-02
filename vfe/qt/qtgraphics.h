@@ -21,7 +21,8 @@ namespace qtpov {
 enum
 {
 	WSG_INIT = 0,
-	WSG_DRAW_PIXEL_BLOCK
+	WSG_DRAW_PIXEL_BLOCK,
+	WSG_DRAW_FILLED_RECT
 };
 
 using namespace vfe;
