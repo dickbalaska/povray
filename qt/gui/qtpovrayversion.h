@@ -23,7 +23,7 @@
 #define _version_h_
 
 
-#define VERSION "3.80.5"
+#define VERSION "3.80.6a"
 #define ROOT_VERSION	"3.8"	// used for directory names
 
 #endif // _version_h_
