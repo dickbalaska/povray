@@ -23,6 +23,7 @@
 #define _WORKSPACE_H_
 
 #include <QObject>
+#include <QRect>
 #include <QVariant>
 
 class MainWindow;

@@ -56,7 +56,9 @@ static QString s_MainWindow			("MainWindow");
 static QString s_openEditors		("openEditors");
 static QString s_povrayConsoleFilters("povrayConsoleFilters");
 static QString s_prefsRect			("prefsRect");
+static QString s_renderDockable		("renderDockable");
 static QString s_renderFile			("renderFile");
+static QString s_renderPos			("renderPos");
 static QString s_resourceFilters	("resourceFilters");
 static QString s_resourceFilterType	("resourceFilterType");
 static QString s_state				("state");
@@ -88,9 +90,34 @@ void Workspace::load(const QString& filename)
 	this->m_filename = filename;
 	QSettings settings(filename, QSettings::IniFormat);
 	settings.beginGroup(s_MainWindow);
+	bool renderDockable = settings.value(s_renderDockable).toBool();
+	QPoint p = settings.value(s_renderPos).toPoint();
+
 	m_mainWindow->restoreGeometry(settings.value(s_geometry).toByteArray());
 	m_mainWindow->restoreState(settings.value(s_state).toByteArray());
+
+	RenderWidget* w = m_mainWindow->getDockMan()->getRenderWidget();
+	qDebug() << "loading renderDockable" << renderDockable;
+	if (!renderDockable) {
+		if (!m_mainWindow->getDockMan()->getRenderWidget()->isDockable()) {
+			RenderWindow* rw = w->getRenderWindow();
+			qDebug() << "Already undocked";
+			// already undocked, just set the pos
+			rw->move(p);
+		} else {
+			// currently docked, make it undocked
+			qDebug() << "Make it undocked";
+			w->onDisableDockable();
+			RenderWindow* rw = w->getRenderWindow();
+			rw->move(p);
+		}
+	} else {
+		// we are dockable. Check if we currently aren't
+		bool curDockable = m_mainWindow->getDockMan()->getRenderWidget()->isDockable();
+		qDebug() << "***Unhandled dockable: cur =" << curDockable;
+	}
 	settings.endGroup();
+
 	QStringList slist = settings.value(s_dirRoots).toStringList();
 	if (slist.isEmpty()) {
 		QMessageBox::information(m_mainWindow, "Directory needed",
@@ -179,7 +206,15 @@ void Workspace::save()
 	settings.beginGroup(s_MainWindow);
 	settings.setValue(s_geometry, m_mainWindow->saveGeometry());
 	settings.setValue(s_state, m_mainWindow->saveState());
+	bool renderDockable = m_mainWindow->getDockMan()->getRenderWidget()->isDockable();
+	settings.setValue(s_renderDockable, renderDockable);
+	qDebug() << "saving renderDockable" << renderDockable;
+	QPoint p;
+	if (!renderDockable)
+		p = m_mainWindow->getDockMan()->getRenderWidget()->getRenderWindow()->pos();
+	settings.setValue(s_renderPos, p);
 	settings.endGroup();
+
 	QStringList slist(m_dirRoots);
 	settings.setValue(s_dirRoots, slist);
 	updateEditorPositions();

@@ -148,7 +148,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setShortcutKeys();
 	m_vfeClient = new VfeClient(true, this);
 	connect(m_vfeClient, SIGNAL(messageReceived(QString,QString)), this, SLOT(wsMessageReceived(QString,QString)));
-	connect(m_vfeClient, SIGNAL(binaryMessageReceived(QByteArray)), m_dockMan->getRenderDock(), SLOT(binaryMessageReceived(QByteArray)));
+	connect(m_vfeClient, SIGNAL(binaryMessageReceived(QByteArray)), m_dockMan->getRenderDock()->getRenderWidget(), SLOT(binaryMessageReceived(QByteArray)));
 	qApp->installEventFilter(this);
 }
 

@@ -1,59 +1,67 @@
 /******************************************************************************
  * renderdock.cpp - The dockwidget that displays the graphic output of povray
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * Display the Render output. Contains 4 classes:
+ * RenderWidget - Manage the render output
+ * RenderLabel - Display the render output
+ * RenderDock - Container for RenderWidget when docked
+ * RenderWindow - Container for RenderWidget when undocked
+ *
+ * Qt construction is to create the RenderDock. Then when it restores the
+ * window positions, figure out whether it's really a dock or a window.
+ *
+ * Primary communication is with the RenderWidget. Only window management
+ * cares about the container.
+ *
+ * ____________________________________________________________________________
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  *****************************************************************************/
 
 #include <QtWidgets>
 #include <QDebug>
 
 #include "../mainwindow.h"
+#include "dockman.h"
 #include "workspace.h"
 #include "renderdock.h"
 
 
 
-RenderDock::RenderDock(MainWindow* parent, Qt::WindowFlags flags)
+RenderDock::RenderDock(MainWindow* parent, RenderWidget* renderWidget, Qt::WindowFlags flags)
 	: QDockWidget(QString("Render View"), parent, flags),
-	  mainWindow(parent),
-	  m_renderLabel(this),
-	  m_morePaintEvents(false),
-	  m_refreshDelayThrottle(500)
+	  m_mainWindow(parent)
 {
 	this->setObjectName("RenderDock");
-	m_debug = false;
-	povrayPixmap = *mainPixmap;
-	m_renderLabel.setScaledContents(true);
-	m_renderLabel.setPicture(m_labelPicture);
-	m_renderLabel.picture = &m_labelPicture;
-	m_renderLabel.povrayPixmap = &povrayPixmap;
-	m_renderLabel.m_debug = m_debug;
-	this->setWidget(&m_renderLabel);
-	m_repaintThrottle.setSingleShot(true);
-	connect(&m_repaintThrottle, SIGNAL(timeout()), this, SLOT(timerTicked()));
+	if (renderWidget)
+		m_renderWidget = renderWidget;
+	else
+		m_renderWidget = new RenderWidget(this, m_mainWindow);
+	this->setWidget(m_renderWidget);
 }
 
-RenderLabel::RenderLabel(RenderDock* parent)
+
+
+///////////////////////////////////////////////////////////////////////////////
+RenderLabel::RenderLabel(RenderWidget* parent)
 	: QLabel(parent),
-	  m_renderDock(parent)
+	  m_renderWidget(parent)
 {}
 
-void 	RenderLabel::resizeEvent(QResizeEvent *event)
+void RenderLabel::resizeEvent(QResizeEvent *event)
 {
 	QSize size = event->size();
 	if (m_debug)
@@ -113,11 +121,18 @@ void RenderLabel::contextMenuEvent(QContextMenuEvent* event)
 {
 	qDebug() << "RenderLabel::contextMenuEvent" << event->pos();
 	QMenu menu(this);
-	if (m_renderDock->isFloating()) {
+	if (m_renderWidget->isFloating()) {
 		QString t;
-		QSize pms = m_renderDock->povrayPixmap.size();
+		QSize pms = m_renderWidget->povrayPixmap.size();
 		t = tr("Resize to %1x%2").arg(QString::number(pms.width()), QString::number(pms.height()));
 		menu.addAction(t, this, SLOT(onResizeNatural()));
+		if (m_renderWidget->m_dockable) {
+			QAction* action = menu.addAction(tr("Always on top"), m_renderWidget, SLOT(onDisableDockable()));
+			action->setCheckable(true);
+			action->setChecked(true);
+		} else {
+			menu.addAction(tr("Enable docking"), m_renderWidget, SLOT(onEnableDockable()));
+		}
 	}
 	menu.addAction(tr("Set refresh delay"), this, SLOT(onSetRefreshDelay()));
 	menu.exec(event->globalPos());
@@ -125,12 +140,12 @@ void RenderLabel::contextMenuEvent(QContextMenuEvent* event)
 
 void RenderLabel::onResizeNatural()
 {
-	QSize pms = m_renderDock->povrayPixmap.size();
-	QSize pps = m_renderDock->m_renderLabel.size();
-	QSize parentSize = m_renderDock->size();
+	QSize pms = m_renderWidget->povrayPixmap.size();
+	QSize pps = m_renderWidget->m_renderLabel.size();
+	QSize parentSize = m_renderWidget->size();
 	QSize diff = parentSize - pps;
 	pms += diff;
-	m_renderDock->resize(pms);
+	m_renderWidget->resize(pms);
 }
 
 void RenderLabel::onSetRefreshDelay()
@@ -143,7 +158,7 @@ void RenderLabel::onSetRefreshDelay()
 	hLayout->addWidget(new QLabel(tr("Minimum number of milliseconds before drawing again")));
 	QSpinBox* sb = new QSpinBox(this);
 	sb->setRange(10,9999);
-	sb->setValue(m_renderDock->mainWindow->getWorkspace()->getRenderRefreshDelay());
+	sb->setValue(m_renderWidget->m_mainWindow->getWorkspace()->getRenderRefreshDelay());
 	hLayout->addWidget(sb);
 	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
 										 | QDialogButtonBox::Cancel);
@@ -152,12 +167,53 @@ void RenderLabel::onSetRefreshDelay()
 	mainLayout->addWidget(buttonBox);
 	int ret = d.exec();
 	if (ret == QDialog::Accepted) {
-		m_renderDock->mainWindow->getWorkspace()->setRenderRefreshDelay(sb->value());
-		m_renderDock->m_refreshDelayThrottle = sb->value();
+		m_renderWidget->m_mainWindow->getWorkspace()->setRenderRefreshDelay(sb->value());
+		m_renderWidget->m_refreshDelayThrottle = sb->value();
 	}
 }
 
-void RenderDock::binaryMessageReceived(const QByteArray& data)
+///////////////////////////////////////////////////////////////////////////////
+RenderWidget::RenderWidget(RenderDock* parent, MainWindow* mainWindow)
+	: QWidget(parent),
+	  m_mainWindow(mainWindow),
+	  m_renderWindow(nullptr),
+	  m_renderLabel(this),
+	  m_morePaintEvents(false),
+	  m_refreshDelayThrottle(500),
+	  m_dockable(true)
+
+{
+	m_debug = true;
+	povrayPixmap = *mainPixmap;
+	m_renderLabel.setScaledContents(true);
+	m_renderLabel.setPicture(m_labelPicture);
+	m_renderLabel.picture = &m_labelPicture;
+	m_renderLabel.povrayPixmap = &povrayPixmap;
+	m_renderLabel.m_debug = m_debug;
+	QVBoxLayout* vLayout = new QVBoxLayout();
+	vLayout->addWidget(&m_renderLabel);
+	this->setLayout(vLayout);
+	//this->setWidget(&m_renderLabel);
+	m_repaintThrottle.setSingleShot(true);
+	connect(&m_repaintThrottle, SIGNAL(timeout()), this, SLOT(timerTicked()));
+}
+
+void RenderWidget::resizeEvent(QResizeEvent *event)
+{
+//	QSize size = event->size();
+//	if (m_debug)
+//		qDebug() << "RenderWidget::resizeEvent w:" << size.width() << "h:" << size.height();
+//	m_renderLabel.resizeEvent(event);
+}
+bool RenderWidget::isFloating()
+{
+	if (!m_dockable)
+		return(true);
+	RenderDock* rd = qobject_cast<RenderDock*>(parent());
+	return(rd->isFloating());
+}
+
+void RenderWidget::binaryMessageReceived(const QByteArray& data)
 {
 	QDataStream ds(data);
 	ds.setByteOrder(QDataStream::LittleEndian);
@@ -227,7 +283,7 @@ void RenderDock::binaryMessageReceived(const QByteArray& data)
 	}
 }
 
-void RenderDock::doDrawThrottle()
+void RenderWidget::doDrawThrottle()
 {
 	if (m_repaintThrottle.isActive()) {
 		m_morePaintEvents = true;
@@ -243,7 +299,7 @@ void RenderDock::doDrawThrottle()
 	}
 
 }
-void RenderDock::timerTicked()
+void RenderWidget::timerTicked()
 {
 	if (m_morePaintEvents) {
 		if (m_debug)
@@ -254,4 +310,60 @@ void RenderDock::timerTicked()
 		if (m_debug)
 			qDebug() << "timer expired";
 	}
+}
+
+void RenderWidget::onDisableDockable()
+{
+	qDebug() << "onDisableDockable";
+
+	m_dockable = false;
+	m_renderWindow = new RenderWindow();
+	RenderDock* rd = qobject_cast<RenderDock*>(parent());
+	QSize rdsize = rd->size();
+	QPoint rdpos = rd->pos();
+	m_renderWindow->setRenderWidget(this);
+	QVBoxLayout* layout = new QVBoxLayout();
+	layout->setContentsMargins(0,0,0,0);
+	layout->addWidget(this);
+	m_renderWindow->setLayout(layout);
+	m_renderWindow->move(rdpos);
+	m_renderWindow->resize(rdsize);
+	//this->setParent(m_renderWindow);
+	m_renderWindow->show();
+	rd->close();
+}
+
+void RenderWidget::onEnableDockable()
+{
+	qDebug() << "onEnableDocking";
+	m_dockable = true;
+	RenderDock* rd = m_mainWindow->getDockMan()->openRenderDock(this);
+	rd->setFloating(true);
+//	this->setParent(rd);
+	QPoint rwpos = m_renderWindow->pos();
+	QSize rwsize = m_renderWindow->size();
+	rd->move(rwpos);
+	rd->resize(rwsize);
+	m_renderWindow->close();
+	m_renderWindow = nullptr;
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+RenderWindow::RenderWindow()
+	: QWidget(Q_NULLPTR, Qt::Window)
+{
+	this->setObjectName("Render Window");
+}
+
+void RenderWindow::resizeEvent(QResizeEvent *event)
+{
+	QSize size = event->size();
+	qDebug() << "RenderWindow::resizeEvent w:" << size.width() << "h:" << size.height();
+	QSize rwsize = this->size();
+	qDebug() << "rwsize" << rwsize;
+	qDebug() << "widget" << m_renderWidget->size();
+	QRect r = this->geometry();
+	QSize widgetSize = QSize(r.width(), r.height());
+	m_renderWidget->resize(widgetSize);
 }

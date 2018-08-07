@@ -49,6 +49,7 @@ DockMan::DockMan(MainWindow* mainWindow)
 	m_resourceDock = new ResourceDock(m_mainWindow);
 	m_mainWindow->addDockWidget(Qt::LeftDockWidgetArea, m_resourceDock);
 	connect(this, SIGNAL(emitSwitchWorkspace()), this, SLOT(switchWorkspace()));
+	m_renderWidget = m_renderDock->getRenderWidget();
 }
 
 DockMan::~DockMan() {
@@ -58,9 +59,20 @@ DockMan::~DockMan() {
 }
 
 void DockMan::shutdown() {
+	if (!m_renderWidget->isDockable())
+		m_renderWidget->getRenderWindow()->close();
 	if (m_workspace)
 		delete m_workspace;
 	m_workspace = NULL;
+}
+
+// open a new RenderDock window, not docked.
+RenderDock* DockMan::openRenderDock(RenderWidget* renderWidget)
+{
+	m_renderDock = new RenderDock(m_mainWindow, renderWidget);
+	m_renderWidget = renderWidget;
+	m_mainWindow->addDockWidget(Qt::BottomDockWidgetArea, m_renderDock);
+	return(m_renderDock);
 }
 
 void DockMan::switchWorkspace() {

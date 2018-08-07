@@ -1,9 +1,19 @@
 /******************************************************************************
  * renderdock.h - The dockwidget that displays the graphic output of povray
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
+ * Display the Render output. Contains 4 classes:
+ * RenderWidget - Manage the render output
+ * RenderLabel - Display the render output
+ * RenderDock - Container for RenderWidget when docked
+ * RenderWindow - Container for RenderWidget when undocked
+ *
+ * Qt construction is to create the RenderDock. Then when it restores the
+ * window positions, figure out whether it's really a dock or a window.
+ *
+ * ____________________________________________________________________________
  * qtpov is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -19,8 +29,8 @@
  *
  *****************************************************************************/
 
-#ifndef _RENDERWINDOW_H_
-#define _RENDERWINDOW_H_
+#ifndef RENDERWINDOW_H
+#define RENDERWINDOW_H
 
 #include <QDockWidget>
 #include <QLabel>
@@ -31,6 +41,9 @@
 #include "../mainwindow.h"
 
 class RenderDock;
+class RenderLabel;
+class RenderWindow;
+class RenderWidget;
 
 enum
 {
@@ -42,10 +55,10 @@ enum
 
 class RenderLabel : public QLabel
 {
-	friend class RenderDock;
+	friend class RenderWidget;
 	Q_OBJECT
 public:
-	RenderLabel(RenderDock* parent);
+	RenderLabel(RenderWidget* parent);
 
 protected slots:
 	void	onResizeNatural();
@@ -57,10 +70,66 @@ protected:
 	virtual void	contextMenuEvent(QContextMenuEvent* event);
 
 private:
-	RenderDock*	m_renderDock;
+	RenderWidget*	m_renderWidget;
 	QPixmap*	povrayPixmap;
 	QPicture*	picture;
 	bool		m_debug;
+};
+
+class RenderWidget : public QWidget
+{
+	friend class RenderLabel;
+	Q_OBJECT
+public:
+	explicit RenderWidget(RenderDock* parent, MainWindow* mainWindow);
+	bool	isFloating();
+	bool	isDockable();
+	bool	isDocked();
+	RenderWindow*	getRenderWindow();
+
+signals:
+
+public slots:
+	void	binaryMessageReceived(const QByteArray& data);
+	void	timerTicked();
+	void	onDisableDockable();
+	void	onEnableDockable();
+
+protected:
+	virtual void 	resizeEvent(QResizeEvent *event);
+
+private:
+	void		doDrawThrottle();
+	MainWindow*		m_mainWindow;
+	RenderWindow*	m_renderWindow;
+	RenderLabel		m_renderLabel;
+	QPixmap			m_labelPixmap;
+	QPicture		m_labelPicture;
+	QPixmap			povrayPixmap;
+	QPainter		painter;
+	QTimer			m_repaintThrottle;
+	bool			m_morePaintEvents;
+	int				m_refreshDelayThrottle;
+	bool			m_dockable;
+	bool			m_debug;
+};
+
+inline bool RenderWidget::isDockable() { return(m_dockable); }
+inline RenderWindow* RenderWidget::getRenderWindow() { return(m_renderWindow); }
+
+
+class RenderWindow : public QWidget
+{
+	Q_OBJECT
+public:
+	explicit RenderWindow();
+	void	setRenderWidget(RenderWidget* renderWidget) { m_renderWidget = renderWidget; }
+
+protected:
+	virtual void 	resizeEvent(QResizeEvent *event);
+
+private:
+	RenderWidget*	m_renderWidget;
 };
 
 class RenderDock : public QDockWidget
@@ -70,27 +139,17 @@ class RenderDock : public QDockWidget
 	friend class RenderLabel;
 
 public:
-	explicit RenderDock(MainWindow* parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
+	explicit RenderDock(MainWindow* parent = Q_NULLPTR, RenderWidget* renderWidget = nullptr, Qt::WindowFlags flags = nullptr);
+	RenderWidget*	getRenderWidget() { return(m_renderWidget); }
 
 signals:
 
 public slots:
-	void	binaryMessageReceived(const QByteArray& data);
-	void	timerTicked();
 
 private:
-	void		doDrawThrottle();
 
-	MainWindow* mainWindow;
-	RenderLabel	m_renderLabel;
-	QPixmap		m_labelPixmap;
-	QPicture	m_labelPicture;
-	QPixmap		povrayPixmap;
-	QPainter	painter;
-	QTimer		m_repaintThrottle;
-	bool		m_morePaintEvents;
-	int			m_refreshDelayThrottle;
-	bool		m_debug;
+	RenderWidget*	m_renderWidget;
+	MainWindow*		m_mainWindow;
 };
 
-#endif // _RENDERWINDOW_H_
+#endif // RENDERWINDOW_H

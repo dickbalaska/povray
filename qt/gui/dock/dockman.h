@@ -41,8 +41,11 @@ public:
 	void		activateWorkspace(const QString& pws);
 	Workspace*	getWorkspace();		// return the current workspace
 	ConsoleDock*	getConsoleDock() { return(m_consoleDock); }
-	RenderDock*		getRenderDock() { return(m_renderDock); }
 	ResourceDock*	getResourceDock() { return(m_resourceDock); }
+	RenderDock*		getRenderDock() { return(m_renderDock); }
+	RenderDock*		openRenderDock(RenderWidget* renderWidget = nullptr);	// open a new RenderDock window, not docked.
+	//RenderWindow*	getRenderWindow() { return(m_renderWindow); }
+	RenderWidget*	getRenderWidget() { return(m_renderWidget); }
 
 signals:
 	void	emitSwitchWorkspace();
@@ -56,8 +59,10 @@ private:
 	ConsoleDock*	m_consoleDock;
 	ResourceDock*	m_resourceDock;
 	RenderDock*		m_renderDock;
+	//RenderWindow*	m_renderWindow;
 	MainWindow*		m_mainWindow;
 	Workspace*		m_workspace;
+	RenderWidget*	m_renderWidget;
 
 };
 inline Workspace* DockMan::getWorkspace() { return(m_workspace); }
