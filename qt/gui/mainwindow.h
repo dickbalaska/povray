@@ -109,6 +109,7 @@ public:
 	int			openEditor(const QString& filePath);
 	QTabWidget*	getEditorTabs();
 	QWidget*	getEditor(int which = -1);
+	QString		getCurrentEditorPath();
 	CodeEditor*	getCodeEditor(int which = -1);
 	DockMan*	getDockMan();
 	HelpMan*	getHelpMan();

@@ -19,8 +19,8 @@
  *
  *****************************************************************************/
 
-#ifndef _RESOURCEDOCK_H_
-#define _RESOURCEDOCK_H_
+#ifndef RESOURCEDOCK_H
+#define RESOURCEDOCK_H
 
 #include <QDockWidget>
 #include <QTreeView>
@@ -120,4 +120,4 @@ private:
 	QString		m_filePath;		// full path to render file (for icon matching)
 };
 
-#endif // _RESOURCEDOCK_H_
+#endif // RESOURCEDOCK_H

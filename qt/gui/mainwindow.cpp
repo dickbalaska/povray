@@ -960,6 +960,22 @@ void MainWindow::onRenderAction()
 		rdir = m_dockMan->getResourceDock()->getRenderDirectory();
 	else
 		rdir = getWorkspace()->getDirRoots().first();
+
+	QString f;
+	if (!m_dockMan->getResourceDock()->getRenderFile().isEmpty())
+		f = m_dockMan->getResourceDock()->getRenderFile();
+	else {
+		CodeEditor* ce = getCodeEditor();
+		if (ce)
+			f = ce->getFileName();
+		QDir dir(ce->getFilePath());
+		QFileInfo fi(dir.absolutePath());
+		if (fi.isFile()) {
+			dir.cdUp();
+		}
+		rdir = dir.absolutePath();
+	}
+
 	cl += rdir;
 
 	if (!preferenceData.getPovrayIncludes().isEmpty()) {
@@ -969,12 +985,11 @@ void MainWindow::onRenderAction()
 	cl += " ";
 	QString rcl;
 	rcl = m_mainToolbar->getRenderCL()->getValue();
-	if (!m_dockMan->getResourceDock()->getRenderFile().isEmpty()) {
-		rcl += " ";
-		if (!m_dockMan->getResourceDock()->getRenderFile().endsWith(".ini"))
-			rcl += "+I";
-		rcl += m_dockMan->getResourceDock()->getRenderFile();
-	}
+	rcl += " ";
+	if (!f.endsWith(".ini"))
+		rcl += "+I";
+	rcl += f;
+
 	cl += rcl;
 	qDebug() << "sendMessage: " << cl;
 	m_mainToolbar->renderButtonToStop();
@@ -988,6 +1003,15 @@ void MainWindow::onRenderAction()
 	m_vfeClient->sendMessage(cl);
 
 }
+
+QString MainWindow::getCurrentEditorPath()
+{
+	CodeEditor* ce = getCodeEditor();
+	if (ce)
+		return(ce->getFilePath());
+	return("");
+}
+
 void MainWindow::povrayWsStateChanged(bool connected)
 {
 	statusBar->showMessage(connected ? tr("Ready") : tr("Not Ready"));

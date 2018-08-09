@@ -35,6 +35,7 @@ QPixmap* iniPm;
 QPixmap* ini_selPm;
 QPixmap* povPm;
 QPixmap* pov_selPm;
+QPixmap* pov_sselPm;
 
 QStringList renderExtensions;
 
@@ -58,6 +59,7 @@ ResourceDock::ResourceDock(MainWindow *parent, Qt::WindowFlags flags)
 	ini_selPm	 = new QPixmap(":/resources/icons/page_white_wrench_sel.png");
 	povPm		 = new QPixmap(":/resources/icons/povray_16x16.png");
 	pov_selPm	 = new QPixmap(":/resources/icons/povray_16x16_sel.png");
+	pov_sselPm	 = new QPixmap(":/resources/icons/povray_16x16_ssel.png");
 }
 
 void ResourceDock::selectDirectory() {
@@ -395,10 +397,22 @@ QVariant MyFileSystemModel::data(const QModelIndex &index, int role) const
 {
 	if (role == Qt::DecorationRole) {
 		QString fpath = filePath(index);
+//		QString sselFile;
+		QString sselPath;
+		bool ssel = m_resourceDock->getRenderFile().isEmpty();
+		if (ssel) {
+			sselPath = m_resourceDock->m_mainWindow->getCurrentEditorPath();
+//			QString s(m_resourceDock->m_mainWindow->getCurrentEditorPath());
+//			if (!s.isEmpty()) {
+//				QFileInfo fi(s);
+//				sselFile = fi.fileName();
+//			}
+		}
 		//qDebug() << "msfm fpath:" << fpath;
 		QFileInfo finfo(fpath);
 		if (finfo.isDir()) {
-			if (m_resourceDock->m_renderDir == fpath)
+			//if (m_resourceDock->m_renderDir == fpath)
+			if (m_resourceDock->m_renderDir.contains(fpath))
 				return(*folder_selPm);
 			return(*folderPm);
 		}
@@ -415,6 +429,8 @@ QVariant MyFileSystemModel::data(const QModelIndex &index, int role) const
 		if (fpath.endsWith(".pov")) {
 			if (m_resourceDock->m_filePath == fpath)
 				return(*pov_selPm);
+			if (ssel && sselPath == fpath)
+				return(*pov_sselPm);
 			return(*povPm);
 		}
 	}

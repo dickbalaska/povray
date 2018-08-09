@@ -52,5 +52,6 @@
         <file>resources/icons/text_indent_remove.png</file>
         <file>resources/icons/text_italic.png</file>
         <file>resources/icons/text_comments.png</file>
+        <file>resources/icons/povray_16x16_ssel.png</file>
     </qresource>
 </RCC>
