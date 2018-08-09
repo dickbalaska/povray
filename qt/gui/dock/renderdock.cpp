@@ -198,13 +198,6 @@ RenderWidget::RenderWidget(RenderDock* parent, MainWindow* mainWindow)
 	connect(&m_repaintThrottle, SIGNAL(timeout()), this, SLOT(timerTicked()));
 }
 
-void RenderWidget::resizeEvent(QResizeEvent *event)
-{
-//	QSize size = event->size();
-//	if (m_debug)
-//		qDebug() << "RenderWidget::resizeEvent w:" << size.width() << "h:" << size.height();
-//	m_renderLabel.resizeEvent(event);
-}
 bool RenderWidget::isFloating()
 {
 	if (!m_dockable)

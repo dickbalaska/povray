@@ -96,7 +96,6 @@ public slots:
 	void	onEnableDockable();
 
 protected:
-	virtual void 	resizeEvent(QResizeEvent *event);
 
 private:
 	void		doDrawThrottle();
