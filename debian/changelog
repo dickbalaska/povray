@@ -3,6 +3,8 @@ qtpovray (3.80.6~xenial1) xenial; urgency=low
   * Bug 12 - Mosaic preview doesn't draw the preview
   * Bug 7 - When the render window is undocked, allow it to not always 
     be on top.
+  * Bug 4 - If no file is selected for render, then render the currently
+    displayed tab.
 
  -- Dick Balaska <dick@buckosoft.com>  Thu, 02 Aug 2018 01:14:55 -0400
 
