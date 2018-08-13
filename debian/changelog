@@ -6,7 +6,7 @@ qtpovray (3.80.6~xenial1) xenial; urgency=low
   * Bug 4 - If no file is selected for render, then render the currently
     displayed tab.
 
- -- Dick Balaska <dick@buckosoft.com>  Thu, 02 Aug 2018 01:14:55 -0400
+ -- Dick Balaska <dick@buckosoft.com>  Sun, 12 Aug 2018 20:58:20 -0400
 
 qtpovray (3.80.5~xenial1) xenial; urgency=low
 
