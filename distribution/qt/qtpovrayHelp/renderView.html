@@ -34,11 +34,36 @@ or undock the window.  There are several ways to undock the window.
 </ul>
 The Render View will maintain the original aspect ratio of your image regardless of the shape of the window.
 </p>
-<p>When undocked, there is a context menu available.
-<a href="g/qtpovRenderViewUndocked.png" class="image-link">
-<img id="foo" class="center" src="g/qtpovRenderViewContext_sm.png" /></a>
-Currently, the only option is to resize the image to its natural size.
+<p>There is a context (right-click) menu.  The options available differ
+depending on whether the window is docked or not.</p>
+<table class="center bg"><tr><th colspan="3">Render View Context menus</th></tr>
+<tr><td class="aligntop"><img src="g/qtpovInlineContext.png" /></td>
+<td width="20px">&nbsp;</td>
+<td><img src="g/qtpovrayRenderViewContextUndocked.png"</td></tr>
+<tr><td class="caption">Context menu docked</td><td>&nbsp;</td><td class="caption">Context menu undocked</td></tr></table>
+<p>When docked the only option is to set the refresh delay. This option is also available undocked.
 </p>
+<hr width="50%"/>
+<h3>Refresh Delay</h3>
+<p>This option allows you to throttle how often the render window will redraw 
+upon receiving data from the render engine.  If you are running fast frames, 
+on the order of 1 second or less, a thread will peg a CPU updating, scaling 
+and drawing the window.  <br>
+The default is a 500 millisecond throttle. If a second draw message is received 
+within the 500 millisecond throttle, it will be held until that timer expires.
+
+<hr width="50%"/>
+There are additional options when the Render View is undocked.
+<h3>Resize</h3>
+<p>You can resize the Render View by dragging its edges. You can also select this
+menu option <b>Resize to ...</b> which will resize the image to its natural size. 
+<hr width="50%"/>
+<h3>Always on top / Reenable docking</h3>
+When the Render View is undocked, it is still a child window of the main program 
+and will thusly always be on top of the main program.  Checking this option makes
+the Render View be an independent window that can be placed behind the main program.<br/>
+If you then want to redock the Render View, you must first reenable docking so that it becomes 
+a child of the main window.
 <hr /><center>
 </div>
 

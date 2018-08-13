@@ -78,3 +78,15 @@ img.center {
 	margin: 0 auto;
 }
 .center { text-align: center; }
+
+table.center {
+	margin-left:auto; 
+	margin-right:auto;
+}
+  
+td.aligntop { vertical-align: top; }
+td.caption { font-style: italic; }
+
+table.bg {
+	background-color: #AAAAAA;
+}
