@@ -408,6 +408,8 @@ void MainWindow::saveAllEditors()
 
 QWidget *MainWindow::getEditor(int which)
 {
+	if (!m_editorTabs)
+		return(nullptr);
 	if (which == -1)
 		return(m_editorTabs->widget(m_editorTabs->currentIndex()));
 	else
@@ -956,13 +958,17 @@ void MainWindow::onRenderAction()
 	m_dockMan->getConsoleDock()->getPovrayConsole()->clearMessages();
 	QString cl = "render ";
 	QString rdir;
-	if (!m_dockMan->getResourceDock()->getRenderDirectory().isEmpty())
+//	if (!m_dockMan->getResourceDock()->getRenderDirectory().isEmpty())
+//		rdir = m_dockMan->getResourceDock()->getRenderDirectory();
+//	else
+//		rdir = getWorkspace()->getDirRoots().first();
+	if (!isSoftSelect() && !m_dockMan->getResourceDock()->getRenderDirectory().isEmpty()) {
 		rdir = m_dockMan->getResourceDock()->getRenderDirectory();
-	else
+	} else {
 		rdir = getWorkspace()->getDirRoots().first();
-
+	}
 	QString f;
-	if (!m_dockMan->getResourceDock()->getRenderFile().isEmpty())
+	if (!isSoftSelect())
 		f = m_dockMan->getResourceDock()->getRenderFile();
 	else {
 		CodeEditor* ce = getCodeEditor();
@@ -985,11 +991,13 @@ void MainWindow::onRenderAction()
 	cl += " ";
 	QString rcl;
 	rcl = m_mainToolbar->getRenderCL()->getValue();
-	rcl += " ";
-	if (!f.endsWith(".ini"))
-		rcl += "+I";
-	rcl += f;
+	if (!f.isEmpty()) {
+		rcl += " ";
+		if (!f.endsWith(".ini"))
+			rcl += "+I";
+		rcl += f;
 
+	}
 	cl += rcl;
 	qDebug() << "sendMessage: " << cl;
 	m_mainToolbar->renderButtonToStop();
@@ -1043,3 +1051,16 @@ QString MainWindow::findFile(const QString& file)
 	return("");
 }
 
+bool MainWindow::isSoftSelect()
+{
+	if (!m_dockMan->getResourceDock()->getRenderFile().isEmpty())
+		return(false);
+	QString rcl;
+	rcl = m_mainToolbar->getRenderCL()->getValue();
+	if (rcl.contains("+I"))
+		return(false);
+	if (rcl.contains("-I"))
+		return(false);
+	return(true);
+
+}

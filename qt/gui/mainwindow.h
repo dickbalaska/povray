@@ -114,6 +114,7 @@ public:
 	DockMan*	getDockMan();
 	HelpMan*	getHelpMan();
 	void		deleteAllEditorTabs();	// delete all CodeEditors. Ask before deleting changed editors.
+	bool		isSoftSelect();			// Check if there is a render selected
 
 	//bool		validateExe(const QString& file, QTextEdit* statusArea = NULL);
 	//void		launchPovray(const QString& file);

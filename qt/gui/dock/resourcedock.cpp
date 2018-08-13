@@ -114,7 +114,6 @@ void ResourceDock::doubleClicked(const QModelIndex &index)
 	QFileInfo fi(filePath);
 	if (fi.isDir())
 		return;
-	// XXX someday, figure out configurable editor types (.ini, graphics)
 	m_mainWindow->openEditor(filePath);
 	m_mainWindow->getEditor()->setFocus();
 }
@@ -397,16 +396,11 @@ QVariant MyFileSystemModel::data(const QModelIndex &index, int role) const
 {
 	if (role == Qt::DecorationRole) {
 		QString fpath = filePath(index);
-//		QString sselFile;
 		QString sselPath;
-		bool ssel = m_resourceDock->getRenderFile().isEmpty();
+//		bool ssel = m_resourceDock->getRenderFile().isEmpty();
+		bool ssel = m_resourceDock->m_mainWindow->isSoftSelect();
 		if (ssel) {
 			sselPath = m_resourceDock->m_mainWindow->getCurrentEditorPath();
-//			QString s(m_resourceDock->m_mainWindow->getCurrentEditorPath());
-//			if (!s.isEmpty()) {
-//				QFileInfo fi(s);
-//				sselFile = fi.fileName();
-//			}
 		}
 		//qDebug() << "msfm fpath:" << fpath;
 		QFileInfo finfo(fpath);
