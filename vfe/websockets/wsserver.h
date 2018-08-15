@@ -83,7 +83,7 @@ public:
 	static void stop();
 
 	static bool sendClose(string id);
-	static bool sendData(string id, string data);
+	//static bool sendData(string id, string data);
 	static bool	sendBinary(websocketpp::connection_hdl hdl, const char* data, int size);
 	static void setReceiveHandler(MessageHandlerFunc func);
 	static void send(websocketpp::connection_hdl hdl, const string& msg);

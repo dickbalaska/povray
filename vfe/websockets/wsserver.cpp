@@ -117,6 +117,7 @@ void WebsocketServer::run() {
 		// Websocket exception. Get message via e.what().
 	}
 }
+
 void WebsocketServer::stop() {
 	// Stopping the Websocket listener and closing outstanding connections.
 	websocketpp::lib::error_code ec;
@@ -236,22 +237,22 @@ void WebsocketServer::send(websocketpp::connection_hdl hdl, const string& msg) {
 	}
 }
 
-bool WebsocketServer::sendData(string id, string data) {
-	connection_hdl hdl;
-	if (!getWebsocket(id, hdl)) {
-		// Sending to non-existing websocket failed.
-		return false;
-	}
-
-	websocketpp::lib::error_code ec;
-	server.send(hdl, data, websocketpp::frame::opcode::text, ec); // send text message.
-	if (ec) { // we got an error
-		cerr << "Error sendDataing: " << ec.message() << endl;
-		return false;
-	}
-
-	return true;
-}
+//bool WebsocketServer::sendData(string id, string data) {
+//	connection_hdl hdl;
+//	if (!getWebsocket(id, hdl)) {
+//		// Sending to non-existing websocket failed.
+//		return false;
+//	}
+//
+//	websocketpp::lib::error_code ec;
+//	server.send(hdl, data, websocketpp::frame::opcode::text, ec); // send text message.
+//	if (ec) { // we got an error
+//		cerr << "Error sendDataing: " << ec.message() << endl;
+//		return false;
+//	}
+//
+//	return true;
+//}
 
 bool WebsocketServer::sendBinary(connection_hdl hdl, const char* data, int size) {
 	if (gDeadConnection)
