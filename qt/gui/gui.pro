@@ -177,9 +177,9 @@ man.path = /usr/share/man/man1
 man.files = ../../qt/install/qtpovray.1
 INSTALLS += man
 
-fonts.path = /usr/share/fonts/SourceCodePro
-fonts.files = ../../qt/install/fonts/SourceCodePro/*
-INSTALLS += fonts
+qpfonts.path = /usr/share/fonts/truetype/SourceCodePro
+qpfonts.files = ../../qt/install/fonts/SourceCodePro/*
+INSTALLS += qpfonts
 
 qpicons.path = /usr/share/icons/hicolor/48x48/apps
 qpicons.files = ../../distribution/qt/icons/48x48/*

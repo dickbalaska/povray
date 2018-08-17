@@ -1,7 +1,7 @@
-qtpovray (3.80.7~xenial1) xenial; urgency=low
+qtpovray (3.80.7) UNRELEASED; urgency=low
   * Bug 16 - Install the fonts that qtpovray uses
 
- -- Dick Balaska <dick@buckosoft.com>  Mon, 13 Aug 2018 00:25:06 -0400
+ -- Dick Balaska <dick@buckosoft.com>  Fri, 17 Aug 2018 16:26:04 -0400
 
 qtpovray (3.80.6~xenial2) xenial; urgency=low
 
