@@ -37,7 +37,7 @@ unix:isEmpty(PREFIX) {
 DESTDIR = ../../usr/bin
 #DESTDIR = $$PREFIX
 
-QMAKE_CXXFLAGS -= -Wdate-time
+QMAKE_CXXFLAGS -= -Wdate-time -Wsign-conversion
 
 INCLUDEPATH += "../../vfe"
 
@@ -176,6 +176,10 @@ INSTALLS += etc
 man.path = /usr/share/man/man1
 man.files = ../../qt/install/qtpovray.1
 INSTALLS += man
+
+fonts.path = /usr/share/fonts/SourceCodePro
+fonts.files = ../../qt/install/fonts/SourceCodePro/*
+INSTALLS += fonts
 
 qpicons.path = /usr/share/icons/hicolor/48x48/apps
 qpicons.files = ../../distribution/qt/icons/48x48/*
