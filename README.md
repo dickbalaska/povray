@@ -22,12 +22,12 @@ qtpovray
 This branch replaces autoconf with the qmake build system.
 It also integrates the [qtpov](http://www.buckosoft.com/qtpov) IDE
 and builds a single monolithic application to edit and render your POV-Ray SDL.
-Although this should run on Windows, it is currently only built and tested on Linux (Ubuntu 16).
-Debian derivitives can install [from the PPA](https://launchpad.net/~qtpovray/+archive/ubuntu/qtpovray)
+Although this should run on Windows, it is currently only built and tested on Linux (Ubuntu 16, Ubuntu 18, Kubuntu 18, Mint 18.3).
+Debian derivitives can install [from the PPA](https://launchpad.net/~qtpovray/+archive/ubuntu/qtpovray).
 
     git clone https://github.com/dickbalaska/qtpovray.git
     cd qtpovray
     git checkout qtpovray
-    qmake
+    qmake -r
     make -j4
     qt/gui/qtpovray        # run the executable
