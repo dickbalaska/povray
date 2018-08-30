@@ -20,6 +20,7 @@
  *****************************************************************************/
 
 #include <QtWidgets>
+#include <QFontDialog>
 #include <QDebug>
 
 #include "mainwindow.h"
@@ -499,6 +500,11 @@ EditorTab::EditorTab(Preferences* parent)
 	m_highlightLineButton->setChecked(prefData->getEditorHighlightCurrentLine());
 	m_highlightTokensButton = new QCheckBox(this);
 	m_highlightTokensButton->setChecked(prefData->getEditorHighlightTokens());
+	m_editorFontEdit = new QLineEdit(this);
+	m_editorFontEdit->setReadOnly(true);
+	m_editorFontEdit->setText(getFontText(prefData->getEditorFont()));
+	m_editorFontEdit->setFont(prefData->getEditorFont());
+	m_fontFamilySelectButton = new QPushButton("Select");
 
 	connect(m_largeIconButton, SIGNAL(stateChanged(int)), this, SLOT(largeIconButtonChanged(int)));
 	connect(m_wrapButton, SIGNAL(stateChanged(int)), this, SLOT(wrapButtonChanged(int)));
@@ -507,6 +513,7 @@ EditorTab::EditorTab(Preferences* parent)
 	connect(m_autoBraceButton, SIGNAL(stateChanged(int)), this, SLOT(autoBraceChanged(int)));
 	connect(m_highlightLineButton, SIGNAL(stateChanged(int)), this, SLOT(highlightLineChanged(int)));
 	connect(m_highlightTokensButton, SIGNAL(stateChanged(int)), this, SLOT(highlightTokensChanged(int)));
+	connect(m_fontFamilySelectButton, SIGNAL(pressed()), this, SLOT(selectFontPressed()));
 
 	layout->addWidget(new QLabel(tr("Use large icons"), parent), 0, 0, Qt::AlignLeft);
 	layout->addWidget(m_largeIconButton, 0, 1);
@@ -522,9 +529,13 @@ EditorTab::EditorTab(Preferences* parent)
 	layout->addWidget(m_highlightLineButton, 5, 1);
 	layout->addWidget(new QLabel(tr("Highlight matching tokens"), parent), 6, 0);
 	layout->addWidget(m_highlightTokensButton, 6, 1);
+	QHBoxLayout* hlayout = new QHBoxLayout();
+	layout->addWidget(new QLabel(tr("Editor Font"), parent), 7, 0);
+	hlayout->addWidget(m_editorFontEdit);
+	hlayout->addWidget(m_fontFamilySelectButton);
+	layout->addLayout(hlayout, 7, 1);
 	layout->setVerticalSpacing(5);
-	layout->setRowStretch(7, 1);
-//	mainLayout->addLayout(layout);
+	layout->setRowStretch(8, 1);
 	this->setLayout(layout);
 }
 
@@ -555,6 +566,37 @@ void EditorTab::useViModeChanged(int state) {
 	parent->m_prefData->setUseEditorViMode(state == Qt::Checked);
 }
 
+void EditorTab::selectFontPressed() {
+	QFontDialog fd;
+	QFontDialog::FontDialogOptions fdo = QFontDialog::MonospacedFonts /*| QFontDialog::ScalableFonts | QFontDialog::NonScalableFonts*/;
+
+	fd.setOptions(fdo);
+	fd.setCurrentFont(parent->m_prefData->getEditorFont());
+	int ret = fd.exec();
+	if (ret == QDialog::Accepted) {
+		QFont font = fd.selectedFont();
+		qDebug() << "Font selected:" << font;
+//		int osize = parent->m_prefData->getEditorFont().pointSize();
+		parent->m_prefData->setEditorFont(font);
+//		parent->m_prefData->setEditorFontPointSize(osize);
+		m_editorFontEdit->setFont(parent->m_prefData->getEditorFont());
+		m_editorFontEdit->setText(getFontText(font));
+	}
+}
+
+QString EditorTab::getFontText(const QFont& font) {
+	QString s = font.family();
+	if (!font.bold() && !font.italic())
+		s += " Regular";
+	else {
+		if (font.bold())
+			s += " Bold";
+		if (font.italic())
+			s += " Italic";
+	}
+	s = QString("%1 %2").arg(s).arg(font.pointSize());
+	return(s);
+}
 ///////////////////////////////////////////////////////////////////
 /// \brief KeyTab::KeyTab
 /// \param parent

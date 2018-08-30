@@ -588,8 +588,9 @@ void MainWindow::onPreferences() {
 #endif
 		if (m_editorTabs) {
 			for (int i=0; i<m_editorTabs->count(); i++) {
-				CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
-				ce->configure(&preferenceData);
+				CodeEditor* ce = getCodeEditor(i);
+				if (ce)
+					ce->configure(&preferenceData);
 			}
 		}
 		setShortcutKeys();
@@ -605,6 +606,7 @@ static QString s_EditorHighlightLine	("EditorHighlightLine");
 static QString s_EditorHighlightTokens	("EditorHighlightTokens");
 static QString s_EditorTabWidth			("EditorTabWidth");
 static QString s_EditorWrapText			("EditorWrapText");
+static QString s_EditorFont				("EditorFont");
 static QString s_Keys					("Keys");
 #ifdef USE_WEBSOCKETS
 static QString s_PovrayExecutable		("PovrayExecutable");
@@ -634,6 +636,7 @@ void MainWindow::savePreferences() {
 	settings.setValue(s_EditorAutoBrace,		preferenceData.getAutoBraceCompletion());
 	settings.setValue(s_EditorHighlightLine,	preferenceData.getEditorHighlightCurrentLine());
 	settings.setValue(s_EditorHighlightTokens,	preferenceData.getEditorHighlightTokens());
+	settings.setValue(s_EditorFont,				preferenceData.getEditorFont().toString());
 	settings.setValue(s_UseLargeIcons,			preferenceData.getUseLargeIcons());
 	settings.endGroup();
 
@@ -684,9 +687,15 @@ void MainWindow::loadPreferences() {
 	preferenceData.setEditorTabWidth(settings.value(s_EditorTabWidth, 4).toInt());
 	preferenceData.setAutoIndent(settings.value(s_EditorAutoIndent, true).toBool());
 	preferenceData.setAutoBraceCompletion(settings.value(s_EditorAutoBrace, true).toBool());
+	preferenceData.setUseLargeIcons((settings.value(s_UseLargeIcons, true).toBool()));
 	preferenceData.setEditorHighlightCurrentLine(settings.value(s_EditorHighlightLine, true).toBool());
 	preferenceData.setEditorHighlightTokens(settings.value(s_EditorHighlightTokens, true).toBool());
-	preferenceData.setUseLargeIcons((settings.value(s_UseLargeIcons, true).toBool()));
+	QString s = settings.value(s_EditorFont).toString();
+	if (!s.isEmpty()) {
+		QFont font;
+		if (font.fromString(s))
+			preferenceData.setEditorFont(font);
+	}
 	settings.endGroup();
 
 #ifdef USE_WEBSOCKETS

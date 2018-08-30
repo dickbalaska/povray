@@ -78,11 +78,11 @@ CodeEditor::CodeEditor(MainWindow* parent, PreferenceData* prefs)
 	connect(&m_tooltipTimer, SIGNAL(timeout()), this, SLOT(tooltipTimeout()));
 	m_tooltipTimer.setSingleShot(true);
 
-	QFont font;
+	QFont font = prefs->getEditorFont();
 //	font.setFamily("Courier");
-	font.setFamily("Source Code Pro");
-	font.setFixedPitch(true);
-	font.setPointSize(10);
+//	font.setFamily("Source Code Pro");
+//	font.setFixedPitch(true);
+//	font.setPointSize(10);
 	setFont(font);
 	updateLineNumberAreaWidth(0);
 	updateHighlights();
@@ -104,12 +104,13 @@ CodeEditor::CodeEditor(MainWindow* parent, PreferenceData* prefs)
 }
 
 void CodeEditor::configure(PreferenceData* prefs) {
+	setFont(prefs->getEditorFont());
 	QFont font = this->font();
 	QFontMetrics fm(font);
 	int tabstop = prefs->getEditorTabWidth();
 	QString spaces;
 	for (int i=0; i<tabstop; i++)
-		spaces += " ";
+		spaces += "D";
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
 	this->setTabStopDistance(fm.width(spaces));
 #else

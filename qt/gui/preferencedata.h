@@ -25,6 +25,7 @@
 #include <QString>
 #include <QColor>
 #include <QKeySequence>
+#include <QFont>
 #include <QDebug>
 
 class Highlight {
@@ -177,8 +178,12 @@ public:
 		editorHighlightTokens(true),
 		m_useLargeIcons(true),
 		m_useEditorViMode(true)
+	{
+		m_editorFont.setFamily("Source Code Pro");
+		m_editorFont.setPointSize(10);
+		m_editorFont.setFixedPitch(true);
 
-	{}
+	}
 	void operator= (const PreferenceData& );
 
 	const QString& getPovrayIncludes() { return(povrayIncludes); }
@@ -223,6 +228,13 @@ public:
 	bool getUseEditorViMode() { return(m_useEditorViMode); }
 	void setUseEditorViMode(bool b) { m_useEditorViMode = b; }
 
+	QString getEditorFontFamily() { return(m_editorFont.family()); }
+	void setEditorFontFamily(const QString& font) { m_editorFont.setFamily(font); }
+	void setEditorFontPointSize(int size) { m_editorFont.setPointSize(size); }
+
+	void setEditorFont(const QFont& font) { m_editorFont = font; }
+	const QFont getEditorFont() { return(m_editorFont); }
+
 private:
 	QString	povrayIncludes;
 	QString	povrayInsertMenu;
@@ -238,6 +250,10 @@ private:
 	bool	editorHighlightTokens;
 	bool	m_useLargeIcons;
 	bool	m_useEditorViMode;
+//	QString	m_editorFontFamily;
+//	int		m_editorFontPointSize;
+	QFont	m_editorFont;
+
 	EditorColors	editorColors;
 	GlobalKeys		keys;
 };
@@ -256,6 +272,7 @@ inline void PreferenceData::operator=(const PreferenceData& other) {
 	this->editorAutoBraceCompletion = other.editorAutoBraceCompletion;
 	this->editorHighlightCurrentLine = other.editorHighlightCurrentLine;
 	this->editorHighlightTokens = other.editorHighlightTokens;
+	this->m_editorFont = other.m_editorFont;
 	this->editorColors = other.editorColors;
 	this->keys = other.keys;
 }
