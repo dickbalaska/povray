@@ -1,9 +1,10 @@
-qtpovray (3.80.7) UNRELEASED; urgency=low
+qtpovray (3.80.7~xenial1) xenial; urgency=low
+
   * Bug 18 - Add a Font chooser to select the editor font
   * Bug 16 - Install the fonts that qtpovray uses
   * Bug 17 - Update to POV-Ray 3.8.0-alpha.9811560
 
- -- Dick Balaska <dick@buckosoft.com>  Fri, 17 Aug 2018 16:26:04 -0400
+ -- Dick Balaska <dick@buckosoft.com>  Thu, 30 Aug 2018 04:01:37 -0400
 
 qtpovray (3.80.6~xenial2) xenial; urgency=low
 
