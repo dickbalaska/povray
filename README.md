@@ -7,17 +7,6 @@ so github thinks not much is happening here.  The branches are:
 - [qtpovray](#qtpovray)
 - [povrayws](#povrayws)
 
-povrayws
---------------------------------------
-
-This branch replaces the POV-Ray frontend with websockets.
-povrayws and povrayws.exe then becomes a service to the POV-Ray IDE
-[qtpov](http://www.buckosoft.com/qtpov).
-Instructions [to build](http://www.buckosoft.com/qtpov/developer/) are on the [BuckoSoft](http://www.buckosoft.com/) web site.
-Builds, tested, and runs on Linux and Windows.
-I have abandoned qtpov in favor of qtpovray below, but I still use povrayws in my renderfarm 
-[bsac](http://www.buckosoft.com/)
-
 qtpovray
 --------------------------------------
 
@@ -33,3 +22,16 @@ Debian derivitives can install [from the PPA](https://launchpad.net/~qtpovray/+a
     qmake -r
     make -j4
     qt/gui/qtpovray        # run the executable
+
+povrayws
+--------------------------------------
+
+This branch replaces the POV-Ray frontend with websockets.
+povrayws and povrayws.exe then becomes a service to the POV-Ray IDE
+[qtpov](http://www.buckosoft.com/qtpov) and my renderfarm [bsac](http://www.buckosoft.com/bsac/).
+Instructions [to build qtpov](http://www.buckosoft.com/qtpov/developer/) are on the [BuckoSoft](http://www.buckosoft.com/) web site.
+Builds, tested, and runs on Linux and Windows.
+
+I have abandoned qtpov in favor of qtpovray above, but I still use povrayws in my 
+[renderfarm](http://www.buckosoft.com/bsac/).
+
