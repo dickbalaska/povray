@@ -4,10 +4,10 @@ Dick Balaska's POV-Ray repo clone
 There are two active branches in this repo, neither of which is master,
 so github thinks not much is happening here.  The branches are:
 
-- [network](#network)
 - [qtpovray](#qtpovray)
+- [povrayws](#povrayws)
 
-network
+povrayws
 --------------------------------------
 
 This branch replaces the POV-Ray frontend with websockets.
@@ -15,6 +15,8 @@ povrayws and povrayws.exe then becomes a service to the POV-Ray IDE
 [qtpov](http://www.buckosoft.com/qtpov).
 Instructions [to build](http://www.buckosoft.com/qtpov/developer/) are on the [BuckoSoft](http://www.buckosoft.com/) web site.
 Builds, tested, and runs on Linux and Windows.
+I have abandoned qtpov in favor of qtpovray below, but I still use povrayws in my renderfarm 
+[bsac](http://www.buckosoft.com/)
 
 qtpovray
 --------------------------------------
