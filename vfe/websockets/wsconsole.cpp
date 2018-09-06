@@ -172,76 +172,54 @@ void ProcessSignal (void)
     gSignalNumber = 0;
 }
 
-static void PrintStatus (vfeSession *session)
-{
-    string str;
-    vfeSession::MessageType type;
-    static vfeSession::MessageType lastType = vfeSession::mUnclassified;
-
-    while (session->GetNextCombinedMessage (type, str))
-    {
-        if (type != vfeSession::mGenericStatus)
-        {
-            if (lastType == vfeSession::mGenericStatus)
-                fprintf (stderr, "\n") ;
-            fprintf (stderr, "%s\n", str.c_str());
-        }
-        else
-            fprintf (stderr, "%s\r", str.c_str());
-        lastType = type;
-    }
-}
-
-static void PrintStatusChanged (vfeSession *session, State force = kUnknown)
-{
-    if (force == kUnknown)
-        force = session->GetBackendState();
-    switch (force)
-    {
-        case kParsing:
-            fprintf (stderr, "==== [Parsing...] ==========================================================\n");
-            break;
-        case kRendering:
-#ifdef HAVE_LIBSDL
-            if ((gDisplay != NULL) && (gDisplayMode == DISP_MODE_SDL))
-            {
-                fprintf (stderr, "==== [Rendering... Press p to pause, q to quit] ============================\n");
-            }
-            else
-            {
-                fprintf (stderr, "==== [Rendering...] ========================================================\n");
-            }
-#else
-            fprintf (stderr, "==== [Rendering...] ========================================================\n");
-#endif
-            break;
-        case kPausedRendering:
-#ifdef HAVE_LIBSDL
-            if ((gDisplay != NULL) && (gDisplayMode == DISP_MODE_SDL))
-            {
-                fprintf (stderr, "==== [Paused... Press p to resume] =========================================\n");
-            }
-            else
-            {
-                fprintf (stderr, "==== [Paused...] ===========================================================\n");
-            }
-#else
-            fprintf (stderr, "==== [Paused...] ===========================================================\n");
-#endif
-            break;
-    }
-}
-
-
-static void ErrorExit(vfeSession *session)
-{
-    fprintf(stderr, "%s\n", session->GetErrorString());
-    session->Shutdown();
-    delete session;
-    exit(RETURN_ERROR);
-}
-
-
+//static void PrintStatus (vfeSession *session)
+//{
+//    string str;
+//    vfeSession::MessageType type;
+//    static vfeSession::MessageType lastType = vfeSession::mUnclassified;
+//
+//    while (session->GetNextCombinedMessage (type, str))
+//    {
+//        if (type != vfeSession::mGenericStatus)
+//        {
+//            if (lastType == vfeSession::mGenericStatus)
+//                fprintf (stderr, "\n") ;
+//            fprintf (stderr, "%s\n", str.c_str());
+//        }
+//        else
+//            fprintf (stderr, "%s\r", str.c_str());
+//        lastType = type;
+//    }
+//}
+//
+//static void PrintStatusChanged (vfeSession *session, State force = kUnknown)
+//{
+//    if (force == kUnknown)
+//        force = session->GetBackendState();
+//    switch (force)
+//    {
+//        case kParsing:
+//            fprintf (stderr, "==== [Parsing...] ==========================================================\n");
+//            break;
+//        case kRendering:
+//            fprintf (stderr, "==== [Rendering...] ========================================================\n");
+//            break;
+//        case kPausedRendering:
+//            fprintf (stderr, "==== [Paused...] ===========================================================\n");
+//            break;
+//    }
+//}
+//
+//
+//static void ErrorExit(vfeSession *session)
+//{
+//    fprintf(stderr, "%s\n", session->GetErrorString());
+//    session->Shutdown();
+//    delete session;
+//    exit(RETURN_ERROR);
+//}
+//
+//
 //static void PauseWhenDone(vfeSession *session)
 //{
 //    GetRenderWindow()->UpdateScreen(true);
@@ -391,7 +369,7 @@ int main (int argc, char **argv)
     // create the signal handling thread
     sigthread = new boost::thread(SignalHandler);
     ::povray::websockets::WebsocketServer::init();
-    int port = 4401;
+    int port = 4402;
     while (!::povray::websockets::WebsocketServer::listen(port)) {
     	cerr << "failed to init socket port " << port << endl;
         ProcessSignal();

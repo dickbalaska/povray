@@ -10,7 +10,7 @@
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
-/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 1991-2018 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -41,8 +41,10 @@
 // this must be the last file included
 #include "base/povdebug.h"
 
-namespace pov
+namespace pov_parser
 {
+
+using namespace pov;
 
 /*
  * Here are the reserved words.  If you need to add new words,
@@ -510,7 +512,6 @@ const RESERVED_WORD Reserved_Words[] = {
     { SRGBFT_TOKEN,                 "srgbft" },
     { SRGBT_TOKEN,                  "srgbt" },
     { STATISTICS_TOKEN,             "statistics" },
-    { STEPS_TOKEN,                  "steps" },
     { STR_TOKEN,                    "str" },
     { STRCMP_TOKEN,                 "strcmp" },
     { STRENGTH_TOKEN,               "strength" },

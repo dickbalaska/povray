@@ -8,7 +8,7 @@
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
-/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 1991-2018 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -39,6 +39,8 @@
 // C++ variants of C standard header files
 #include <cctype>
 #include <cmath>
+#include <cstdarg>
+#include <cstdio>
 #include <cstdlib>
 
 // C++ standard header files
@@ -111,8 +113,10 @@
 // this must be the last file included
 #include "base/povdebug.h"
 
-namespace pov
+namespace pov_parser
 {
+
+using namespace pov;
 
 /*****************************************************************************
 * Local preprocessor defines
@@ -179,8 +183,8 @@ void Parser::Run()
 {
     int         error_line = -1;
     int         error_col = -1;
-    UCS2String  error_filename(MAX_PATH, 0); // Pre-claim some memory, so we can handle an out-of-memory error.
-    POV_LONG    error_pos = -1;
+    UCS2String  error_filename(POV_FILENAME_BUFFER_CHARS, 0); // Pre-claim some memory, so we can handle an out-of-memory error.
+    POV_OFF_T   error_pos = -1;
 
     try
     {
@@ -253,7 +257,7 @@ void Parser::Run()
             if (Token.FileHandle != NULL)
             {
                 // take a (local) copy of error location prior to freeing token data
-                // NB error_filename has been pre-allocated for strings up to _MAX_PATH
+                // NB error_filename has been pre-allocated for strings up to POV_FILENAME_BUFFER_CHARS
                 error_filename = Token.FileHandle->name();
                 error_line = Token.Token_File_Pos.lineno;
                 error_col = Token.Token_Col_No;
@@ -6473,7 +6477,7 @@ ObjectPtr Parser::Parse_TrueType ()
 
     /* Process all this good info */
     Object = new CSGUnion();
-    TrueType::ProcessNewTTF(reinterpret_cast<CSG *>(Object), font, text_string, depth, offset, this);
+    TrueType::ProcessNewTTF(reinterpret_cast<CSG *>(Object), font, text_string, depth, offset);
     if (filename)
     {
         /* Free up the filename  */
@@ -6536,7 +6540,7 @@ TrueTypeFont *Parser::OpenFontFile(const char *asciifn, const int font_id)
         /* First look to see if we have already opened this font */
 
         for(vector<TrueTypeFont*>::iterator iFont = sceneData->TTFonts.begin(); iFont != sceneData->TTFonts.end(); ++iFont)
-            if(UCS2_strcmp(formalFilename.c_str(), (*iFont)->filename) == 0)
+            if(formalFilename == (*iFont)->filename)
             {
                 font = *iFont;
                 break;
@@ -6557,7 +6561,7 @@ TrueTypeFont *Parser::OpenFontFile(const char *asciifn, const int font_id)
         else
         {
             #ifdef TTF_DEBUG
-            Debug_Info("Using cached font info for %s\n", font->filename);
+            Debug_Info("Using cached font info for %s\n", font->filename.c_str());
             #endif
         }
     }
@@ -6582,7 +6586,7 @@ TrueTypeFont *Parser::OpenFontFile(const char *asciifn, const int font_id)
             fp = Internal_Font_File(font_id);
         }
 
-        font = new TrueTypeFont(UCS2_strdup(formalFilename.c_str()), fp, sceneData->stringEncoding);
+        font = new TrueTypeFont(formalFilename, fp, sceneData->stringEncoding);
 
         sceneData->TTFonts.push_back(font);
     }
@@ -7023,8 +7027,8 @@ void Parser::Parse_Frame ()
                 {
                     case VERSION_TOKEN:
                         UNGET
+                        VersionWarning(295,"Should have '#' before 'version'.");
                         Parse_Directive (false);
-                        UNGET
                         break;
 
                     default:
@@ -7224,7 +7228,7 @@ void Parser::Parse_Global_Settings()
             sceneData->photonSettings.expandTolerance = 0.2;
             sceneData->photonSettings.minExpandCount = 35;
 
-            sceneData->photonSettings.fileName = NULL;
+            sceneData->photonSettings.fileName.clear();
             sceneData->photonSettings.loadFile = false;
 
             sceneData->photonSettings.surfaceSeparation = 1.0;
@@ -7305,28 +7309,26 @@ void Parser::Parse_Global_Settings()
                 END_CASE
 
                 CASE(LOAD_FILE_TOKEN)
-                    if(sceneData->photonSettings.fileName)
+                    if (!sceneData->photonSettings.fileName.empty())
                     {
                         if(sceneData->photonSettings.loadFile)
                             VersionWarning(100,"Filename already given, using new name");
                         else
                             VersionWarning(100,"Cannot both load and save photon map. Now switching to load mode.");
-                        POV_FREE(sceneData->photonSettings.fileName);
                     }
-                    sceneData->photonSettings.fileName = Parse_C_String(true);
+                    sceneData->photonSettings.fileName = Parse_ASCIIString(true);
                     sceneData->photonSettings.loadFile = true;
                 END_CASE
 
                 CASE(SAVE_FILE_TOKEN)
-                    if(sceneData->photonSettings.fileName)
+                    if (!sceneData->photonSettings.fileName.empty())
                     {
                         if(!sceneData->photonSettings.loadFile)
                             VersionWarning(100,"Filename already given, using new name");
                         else
                             VersionWarning(100,"Cannot both load and save photon map. Now switching to save mode.");
-                        POV_FREE(sceneData->photonSettings.fileName);
                     }
-                    sceneData->photonSettings.fileName = Parse_C_String(true);
+                    sceneData->photonSettings.fileName = Parse_ASCIIString(true);
                     sceneData->photonSettings.loadFile = false;
                 END_CASE
 
@@ -8067,7 +8069,7 @@ ObjectPtr Parser::Parse_Object_Mods (ObjectPtr Object)
     }
 
     if((Object->Texture ==NULL)&&(Object->Interior_Texture != NULL))
-            Error("Interior texture requires an exterior texture.");
+        Error("Interior texture requires an exterior texture.");
 
     Parse_End ();
 
@@ -10772,7 +10774,7 @@ void Parser::Warning(const char *format,...)
     char localvsbuffer[1024];
 
     va_start(marker, format);
-    vsnprintf(localvsbuffer, 1023, format, marker);
+    std::vsnprintf(localvsbuffer, sizeof(localvsbuffer), format, marker);
     va_end(marker);
 
     Warning(kWarningGeneral, localvsbuffer);
@@ -10786,7 +10788,7 @@ void Parser::Warning(WarningLevel level, const char *format,...)
     char localvsbuffer[1024];
 
     va_start(marker, format);
-    vsnprintf(localvsbuffer, 1023, format, marker);
+    std::vsnprintf(localvsbuffer, sizeof(localvsbuffer), format, marker);
     va_end(marker);
 
     if(Token.FileHandle != NULL)
@@ -10803,7 +10805,7 @@ void Parser::VersionWarning(unsigned int sinceVersion, const char *format,...)
         char localvsbuffer[1024];
 
         va_start(marker, format);
-        vsnprintf(localvsbuffer, 1023, format, marker);
+        std::vsnprintf(localvsbuffer, sizeof(localvsbuffer), format, marker);
         va_end(marker);
 
         Warning(kWarningLanguage, localvsbuffer);
@@ -10816,7 +10818,7 @@ void Parser::PossibleError(const char *format,...)
     char localvsbuffer[1024];
 
     va_start(marker, format);
-    vsnprintf(localvsbuffer, 1023, format, marker);
+    std::vsnprintf(localvsbuffer, sizeof(localvsbuffer), format, marker);
     va_end(marker);
 
     if(Token.FileHandle != NULL)
@@ -10835,7 +10837,7 @@ void Parser::Error(const char *format,...)
     char localvsbuffer[1024];
 
     va_start(marker, format);
-    vsnprintf(localvsbuffer, 1023, format, marker);
+    std::vsnprintf(localvsbuffer, sizeof(localvsbuffer), format, marker);
     va_end(marker);
 
     if(Token.FileHandle != NULL)
@@ -10850,7 +10852,7 @@ void Parser::ErrorInfo(const SourceInfo& loc, const char *format,...)
     char localvsbuffer[1024];
 
     va_start(marker, format);
-    vsnprintf(localvsbuffer, 1023, format, marker);
+    std::vsnprintf(localvsbuffer, sizeof(localvsbuffer), format, marker);
     va_end(marker);
 
     messageFactory.PossibleErrorAt(loc.filename, loc.filepos.lineno, loc.col, loc.filepos.offset, "%s", localvsbuffer);
@@ -10862,7 +10864,7 @@ int Parser::Debug_Info(const char *format,...)
     char localvsbuffer[1024];
 
     va_start(marker, format);
-    vsnprintf(localvsbuffer, 1023, format, marker);
+    std::vsnprintf(localvsbuffer, sizeof(localvsbuffer), format, marker);
     va_end(marker);
 
     Debug_Message_Buffer.printf("%s", localvsbuffer);

@@ -161,8 +161,8 @@ namespace vfePlatform
     // name to one that it can use.
     UCS2String vfeWebsocketSession::CreateTemporaryFile(void) const
     {
-        char str [FILE_NAME_LENGTH] = "";
-        snprintf(str, FILE_NAME_LENGTH, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), getpid ());
+        char str [POV_FILENAME_BUFFER_CHARS+1] = "";
+        snprintf(str, POV_FILENAME_BUFFER_CHARS, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), getpid ());
         POV_DELETE_FILE (str);
 
         return ASCIItoUCS2String (str);

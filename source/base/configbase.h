@@ -10,7 +10,7 @@
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
-/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 1991-2018 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -39,6 +39,8 @@
 #define POVRAY_BASE_CONFIGBASE_H
 
 #include "syspovconfigbase.h"
+
+#include <cstdint>
 
 #include <limits>
 
@@ -80,10 +82,6 @@
 ///       - `int close(int)`
 ///       - `ssize_t write(int, const void*, size_t)`
 ///       - `ssize_t read(int, void*, size_t)`
-///
-/// @todo
-///     The following GNU/Linux features also need to be present or emulated:
-///       - `off64_t lseek64(int, off64_t, int)`
 ///
 /// @todo
 ///     The following somewhat obscure macros also need to be defined:
@@ -680,6 +678,17 @@
     #undef POV_SYS_IMAGE_EXTENSION
 #endif
 
+/// @def POV_FILENAME_BUFFER_CHARS
+/// The number of characters to reserve for file name buffers.
+///
+/// This setting is used in allocating temporary buffers to construct file names, and should be set
+/// to the maximum number of ASCII characters in a file name the system can handle safely.
+/// The value is understood to exclude any terminating NUL character.
+///
+#ifndef POV_FILENAME_BUFFER_CHARS
+    #define POV_FILENAME_BUFFER_CHARS 199
+#endif
+
 /// @def POV_PATH_SEPARATOR
 /// The system's canonical path separator character.
 ///
@@ -851,6 +860,55 @@
         #error "No default implementation for POV_DELETE_FILE."
     #endif
 #endif
+
+/// @def POV_LSEEK(handle,offset,whence)
+/// Seek a particular absolute or relative location in a (large) file.
+///
+/// Define this to `lseek64()` (GNU/Linux), `_lseeki64()` (Windows), or an equivalent function
+/// supporting large files (i.e. files significantly larger than 2 GiB).
+///
+/// @note
+///     If large file support is unavailable, it is technically safe to substitute equivalent
+///     functions taking 32 bit file offsets instead. However, this will limit output file size to
+///     approx. 100 Megapixels.
+///
+#ifndef POV_LSEEK
+    #ifdef DOXYGEN
+        // just leave undefined when running doxygen
+        // The following two lines work around doxygen being unable to document undefined macros.
+        #define POV_LSEEK(name) (undefined)
+        #undef POV_LSEEK
+    #else
+        #error "No default implementation for POV_LSEEK."
+    #endif
+#endif
+
+/// @def POV_OFF_T
+/// Type representing a particular absolute or relative location in a (large) file.
+///
+/// Define this to the return type of `lseek64()` (GNU/Linux), `_lseeki64()` (Windows), or
+/// equivalent function used in the definition of @ref POV_LSEEK().
+///
+#ifndef POV_OFF_T
+    #ifdef DOXYGEN
+        // just leave undefined when running doxygen
+        // The following two lines work around doxygen being unable to document undefined macros.
+        #define POV_OFF_T (undefined)
+        #undef POV_OFF_T
+    #else
+        #error "No default implementation for POV_OFF_T."
+    #endif
+#endif
+
+static_assert(
+    std::is_same<POV_OFF_T, decltype(POV_LSEEK(0,0,0))>::value,
+    "POV_OFF_T does not match return type of POV_LSEEK()."
+);
+
+static_assert(
+    std::numeric_limits<POV_OFF_T>::max() >= std::numeric_limits<int_least64_t>::max(),
+    "Large files (> 2 GiB) not supported, limiting image size to approx. 100 Megapixels. Proceed at your own risk."
+);
 
 /// @}
 ///

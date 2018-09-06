@@ -14,7 +14,7 @@
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
-/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 1991-2018 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -55,10 +55,11 @@
 // this must be the last file included
 #include "base/povdebug.h"
 
-namespace pov
+namespace pov_parser
 {
 
 using namespace pov_base;
+using namespace pov;
 
 /*****************************************************************************
 * Local preprocessor defines
@@ -329,7 +330,12 @@ void Parser::Get_Token ()
 
     while (Token.Token_Id == END_OF_FILE_TOKEN)
     {
-        Skip_Spaces();
+        if (Skipping && !Parsing_Directive)
+            // If we're skipping, we're only interested in directives, such as `#else` or `#end`,
+            // so we just pretend any other characters in between are blanks.
+            SkipToDirective();
+        else
+            Skip_Spaces();
 
         Token.Token_Col_No = col = Echo_Indx;
         c = Echo_getc();
@@ -729,6 +735,85 @@ bool Parser::Skip_Spaces()
     Echo_ungetc(c);
 
     return true;
+}
+
+
+
+//*****************************************************************************
+
+bool Parser::SkipToDirective()
+{
+    int c;
+
+    while(true)
+    {
+        c = Echo_getc();
+
+        switch (c)
+        {
+            case EOF:
+                return false;
+
+            case '#' :
+                // Genuine Directive.
+                // We need to actually parse this.
+                Echo_ungetc(c);
+                return true;
+
+            case '/' :
+                // Possibly a comment.
+                // We need to examine the next character.
+                c = Echo_getc();
+                switch (c)
+                {
+                    case '*':
+                        // C style comment.
+                        // Ignore all characters until the terminating `*/`.
+                        Parse_C_Comments();
+                        break;
+
+                    case '/':
+                        // C++ style comment.
+                        // Ignore all characters until the end of line.
+                        do
+                        {
+                            c = Echo_getc();
+                            if (c == EOF)
+                                return false;
+                        }
+                        while (c != '\n');
+                        break;
+
+                    default:
+                        // The first slash was just an ordinary slash.
+                        // Look at the second character in more detail.
+                        Echo_ungetc(c);
+                        break;
+                }
+                break;
+
+            case '"' :
+                // String literal.
+                // Ignore all characters until the end of the string.
+                do
+                {
+                    c = Echo_getc();
+                    if (c == EOF)
+                        Error("No end quote for string.");
+                    if (c == '\\')
+                        // Escaped character.
+                        // Completely ignore the next character.
+                        (void)Echo_getc();
+                }
+                while (c != '"');
+                break;
+
+            default:
+                // Just any odd character.
+                // Ignore it.
+                break;
+        }
+    }
 }
 
 
@@ -1394,6 +1479,11 @@ void Parser::Read_Symbol()
                             a = reinterpret_cast<POV_ARRAY *>(*(Token.DataPtr));
                             j = 0;
 
+                            if (a == nullptr)
+                                // This happens in e.g. `#declare Foo[A][B]=...` when `Foo` is an
+                                // array of arrays and `Foo[A]` is uninitialized.
+                                Error("Attempt to access uninitialized nested array.");
+
                             for (i=0; i <= a->Dims; i++)
                             {
                                 Parse_Square_Begin();
@@ -1422,6 +1512,11 @@ void Parser::Read_Symbol()
 
                             if (!LValue_Ok && !Inside_Ifdef)
                             {
+                                // Note that this does not (and must not) trigger in e.g.
+                                // `#declare Foo[A][B]=...` when `Foo` is an array of arrays and
+                                // `Foo[A]` is uninitialized, because until now we've only seen
+                                // `#declare Foo[A]`, which is no reason for concern as it may
+                                // just as well be part of `#declare Foo[A]=...` which is fine.
                                 if (a->DataPtrs[j] == NULL)
                                     Error("Attempt to access uninitialized array element.");
                             }
@@ -1831,7 +1926,7 @@ void Parser::Parse_Directive(int After_Hash)
     char *ts;
     Macro *PMac=NULL;
     COND_TYPE Curr_Type = Cond_Stack[CS_Index].Cond_Type;
-    POV_LONG Hash_Loc = Input_File->In_File->tellg().offset;
+    POV_OFF_T Hash_Loc = Input_File->In_File->tellg().offset;
 
     if (Curr_Type == INVOKING_MACRO_COND)
     {
@@ -2223,7 +2318,7 @@ void Parser::Parse_Directive(int After_Hash)
                         {
                             PMac->Macro_End=Hash_Loc;
                             ITextStream::FilePos pos = Input_File->In_File->tellg();
-                            POV_LONG macroLength = pos.offset - PMac->Macro_File_Pos.offset;
+                            POV_OFF_T macroLength = pos.offset - PMac->Macro_File_Pos.offset;
                             if (macroLength <= MaxCachedMacroSize)
                             {
                                 PMac->CacheSize = macroLength;
