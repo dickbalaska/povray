@@ -143,7 +143,7 @@ echo "make maintainer-clean" 1>&2  &&  make maintainer-clean 1>&2 ; \
   # backward-compatible cleanup
   for file in \
     acinclude.m4 acx_pthread.m4 AUTHORS ChangeLog config/ configure.ac \
-    COPYING INSTALL NEWS README icons/ include/ ini/ povray.1 povray.conf \
+    COPYING INSTALL NEWS README icons/ include/ ini/ $bin_PROGRAMS.1 povray.conf \
     povray.ini.in scenes/ scripts/ VERSION
   do
     rm -r ../$file 2> /dev/null  &&  echo "Cleanup ../$file"
@@ -369,7 +369,7 @@ echo "make maintainer-clean" 1>&2  &&  make maintainer-clean 1>&2 ; \
   # (e.g. ../distribution/in*/).
   for file in \
     AUTHORS ChangeLog configure.ac COPYING NEWS README \
-    povray.1 povray.conf \
+    $bin_PROGRAMS.1 povray.conf \
     scripts \
     ../distribution/ini ../distribution/include ../distribution/scenes
   do
@@ -434,6 +434,7 @@ case "$1" in
     povray_SOURCES=""
 
     bin_PROGRAMS="povrayws"
+	make_check=""
   else
     # Source files.
     povray_SOURCES="disp.h \\
@@ -441,6 +442,8 @@ case "$1" in
       disp_text.cpp disp_text.h"
       
     bin_PROGRAMS="povray"	
+	make_check=" check: all
+	\$(top_builddir)/unix/povray +i\$(top_srcdir)/scenes/advanced/biscuit.pov -f +d +p +v +w320 +h240 +a0.3 +L\$(top_srcdir)/include"
   fi
   prog_SOURCES="${bin_PROGRAMS}_SOURCES"
 
@@ -612,67 +615,8 @@ case "$1" in
 #  else
 #   DOUNIX=
 #  fi
-  echo "Create $makefile.am"
-  cat Makefile.header > $makefile.am
-  cat << pbEOF >> $makefile.am
 
-# Makefile.am for the source distribution of POV-Ray $pov_version_base for UNIX
-# Please report bugs to $pov_config_bugreport
-
-# Directories.
-povlibdir = @datadir@/@PACKAGE@-@VERSION_BASE@
-povdocdir = @datadir@/doc/@PACKAGE@-@VERSION_BASE@
-povconfdir = @sysconfdir@/@PACKAGE@/@VERSION_BASE@
-povuser = \$(HOME)/.@PACKAGE@
-povconfuser = \$(povuser)/@VERSION_BASE@
-povinstall = \$(top_builddir)/install.log
-povowner = @povowner@
-povgroup = @povgroup@
-
-# Directories to build.
-SUBDIRS = source vfe platform unix
-
-# Additional files to distribute.
-EXTRA_DIST = \\
-  bootstrap kde_install.sh \\
-  doc icons include ini scenes scripts \\
-  povray.ini.in changes.txt revision.txt
-
-# Additional files to clean with 'make distclean'.
-DISTCLEANFILES = \$(top_builddir)/povray.ini
-CONFIG_CLEAN_FILES = 
-
-# Render a test scene for 'make check'.
-# This is meant to run before 'make install'.
-check: all
-	\$(top_builddir)/unix/povray +i\$(top_srcdir)/scenes/advanced/biscuit.pov -f +d +p +v +w320 +h240 +a0.3 +L\$(top_srcdir)/include
-
-# Install scripts in povlibdir.
-nobase_povlib_SCRIPTS = `echo $scriptfiles`
-
-# Install documentation in povdocdir.
-povdoc_DATA = AUTHORS ChangeLog NEWS
-
-# Install configuration and INI files in povconfdir.
-dist_povconf_DATA = povray.conf
-povray.conf:
-
-povconf_DATA = povray.ini
-povray.ini:
-	cat \$(top_srcdir)/povray.ini.in | sed "s,__POVLIBDIR__,\$(povlibdir),g" > \$(top_builddir)/povray.ini
-
-# Install man page.
-dist_man_MANS = povray.1
-
-# Remove all unwanted files for 'make dist(check)'.
-# Make all files user read-writeable.
-dist-hook:
-	chmod -R u+rw \$(distdir)
-	chmod 755 \$(distdir)/scripts/*
-	rm -f    \`find \$(distdir) -name "*.h.in~"\`
-	rm -f -r \`find \$(distdir) -name autom4te.cache\`
-	rm -f -r \`find \$(distdir) -name .libs\`
-
+  install_data=$(cat <<"INSEND"
 # Manage various data files for 'make install'.
 # Creates an install.log file to record created folders and files.
 # Folder paths are prepended (using POSIX printf) to ease later removal in 'make uninstall'.
@@ -713,6 +657,74 @@ install-data-local:
 	done; \\
 	\$(INSTALL_DATA) \$(top_srcdir)/povray.conf \$(povconfuser)/povray.conf && chown \$(povowner) \$(povconfuser)/povray.conf && chgrp \$(povgroup) \$(povconfuser)/povray.conf  && echo "\$(povconfuser)/povray.conf" >> \$(povinstall); \\
 	\$(INSTALL_DATA) \$(top_builddir)/povray.ini \$(povconfuser)/povray.ini && chown \$(povowner) \$(povconfuser)/povray.ini && chgrp \$(povgroup) \$(povconfuser)/povray.ini  && echo "\$(povconfuser)/povray.ini" >> \$(povinstall)
+INSEND
+)
+  if test $UNIXORWS != unix ; then
+    install_data=""
+  fi
+  echo "Create $makefile.am"
+  cat Makefile.header > $makefile.am
+  cat << pbEOF >> $makefile.am
+
+# Makefile.am for the source distribution of POV-Ray $pov_version_base for UNIX
+# Please report bugs to $pov_config_bugreport
+
+# Directories.
+povlibdir = @datadir@/@PACKAGE@-@VERSION_BASE@
+povdocdir = @datadir@/doc/@PACKAGE@-@VERSION_BASE@
+povconfdir = @sysconfdir@/@PACKAGE@/@VERSION_BASE@
+povuser = \$(HOME)/.@PACKAGE@
+povconfuser = \$(povuser)/@VERSION_BASE@
+povinstall = \$(top_builddir)/install.log
+povowner = @povowner@
+povgroup = @povgroup@
+
+# Directories to build.
+SUBDIRS = source vfe platform unix
+
+# Additional files to distribute.
+EXTRA_DIST = \\
+  bootstrap kde_install.sh \\
+  doc icons include ini scenes scripts \\
+  povray.ini.in changes.txt revision.txt
+
+# Additional files to clean with 'make distclean'.
+DISTCLEANFILES = \$(top_builddir)/povray.ini
+CONFIG_CLEAN_FILES = 
+
+# Render a test scene for 'make check'.
+# This is meant to run before 'make install'.
+$make_check
+#check: all
+#	\$(top_builddir)/unix/povray +i\$(top_srcdir)/scenes/advanced/biscuit.pov -f +d +p +v +w320 +h240 +a0.3 +L\$(top_srcdir)/include
+
+# Install scripts in povlibdir.
+nobase_povlib_SCRIPTS = `echo $scriptfiles`
+
+# Install documentation in povdocdir.
+povdoc_DATA = AUTHORS ChangeLog NEWS
+
+# Install configuration and INI files in povconfdir.
+dist_povconf_DATA = povray.conf
+povray.conf:
+
+povconf_DATA = povray.ini
+povray.ini:
+	cat \$(top_srcdir)/povray.ini.in | sed "s,__POVLIBDIR__,\$(povlibdir),g" > \$(top_builddir)/povray.ini
+
+# Install man page.
+dist_man_MANS = $bin_PROGRAMS.1
+
+# Remove all unwanted files for 'make dist(check)'.
+# Make all files user read-writeable.
+dist-hook:
+	chmod -R u+rw \$(distdir)
+	chmod 755 \$(distdir)/scripts/*
+	rm -f    \`find \$(distdir) -name "*.h.in~"\`
+	rm -f -r \`find \$(distdir) -name autom4te.cache\`
+	rm -f -r \`find \$(distdir) -name .libs\`
+
+$install_data
 
 # Remove data, config, and empty folders for 'make uninstall'.
 # Use 'hook' instead of 'local' so as to properly remove *empty* folders (e.g. scripts).
