@@ -191,6 +191,7 @@ libraries/tiff/libtiff/tiffconf.h
 /configure.ac
 /kde_install.sh
 /povray.1
+/povrayws.1
 /povray.conf
 /povray.ini.in
 # Files created by unix/prebuild.sh script in specific subdirectories
@@ -240,6 +241,9 @@ libraries/tiff/libtiff/tiffconf.h
 
 # Files created by make in various subdirectories
 .dirstamp
+
+# debian build foo
+/libraries.donotuse
 
 # =====================
 # POV-Ray Miscellaneous
