@@ -124,6 +124,10 @@ case "$1" in
   	;;
 esac
     
+bin_PROGRAMS="povray"
+if [ $UNIXORWS = websockets ]; then
+    bin_PROGRAMS="povrayws"
+fi
 ###############################################################################
 # Copying and generating standard/additional files
 ###############################################################################
@@ -433,7 +437,6 @@ case "$1" in
   if test $UNIXORWS != unix ; then
     povray_SOURCES=""
 
-    bin_PROGRAMS="povrayws"
 	make_check=""
   else
     # Source files.
@@ -441,7 +444,6 @@ case "$1" in
       disp_sdl.cpp disp_sdl.h \\
       disp_text.cpp disp_text.h"
       
-    bin_PROGRAMS="povray"	
 	make_check=" check: all
 	\$(top_builddir)/unix/povray +i\$(top_srcdir)/scenes/advanced/biscuit.pov -f +d +p +v +w320 +h240 +a0.3 +L\$(top_srcdir)/include"
   fi
@@ -659,9 +661,20 @@ install-data-local:
 	\$(INSTALL_DATA) \$(top_builddir)/povray.ini \$(povconfuser)/povray.ini && chown \$(povowner) \$(povconfuser)/povray.ini && chgrp \$(povgroup) \$(povconfuser)/povray.ini  && echo "\$(povconfuser)/povray.ini" >> \$(povinstall)
 INSEND
 )
+
+
+install_scripts=$(cat << "EOFS"
+# Install scripts in povlibdir.
+nobase_povlib_SCRIPTS = `echo $scriptfiles`
+EOFS
+)
+
   if test $UNIXORWS != unix ; then
     install_data=""
+	install_scripts=""
   fi
+
+
   echo "Create $makefile.am"
   cat Makefile.header > $makefile.am
   cat << pbEOF >> $makefile.am
@@ -698,8 +711,7 @@ $make_check
 #check: all
 #	\$(top_builddir)/unix/povray +i\$(top_srcdir)/scenes/advanced/biscuit.pov -f +d +p +v +w320 +h240 +a0.3 +L\$(top_srcdir)/include
 
-# Install scripts in povlibdir.
-nobase_povlib_SCRIPTS = `echo $scriptfiles`
+$install_scripts
 
 # Install documentation in povdocdir.
 povdoc_DATA = AUTHORS ChangeLog NEWS
