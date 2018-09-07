@@ -1518,8 +1518,9 @@ copy_files()
 	fi
 
 	echo "  copying POV-Ray man page..." 2>&1 | tee -a "$TMP_LOG"
-	cp -f ./povray.1 "$BASEDIR/man/man1/" 2>&1 | tee -a "$TMP_LOG"
-	chmod 644 "$BASEDIR/man/man1/povray.1" 2>&1 | tee -a "$TMP_LOG"
+	cp -f ./povray.1 ./povrayws.1 "$BASEDIR/man/man1/" 2>&1 | tee -a "$TMP_LOG"
+	chmod 644 "$BASEDIR/man/man1/povray.1"   2>&1 | tee -a "$TMP_LOG"
+	chmod 644 "$BASEDIR/man/man1/povrayws.1" 2>&1 | tee -a "$TMP_LOG"
 
 	log_install "F" "$BASEDIR/man/man1/povray.1"
 
