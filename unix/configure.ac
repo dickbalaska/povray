@@ -38,12 +38,12 @@
 # Based on configure.ac from POV-Ray v3.6
 
 # Required autoconf version.
-AC_PREREQ(2.68)
+AC_PREREQ([2.69])
 
 # Inits.
 
 # The file VERSION must contain only the version string MAJOR.MINOR.REVISION(.PATCHLEVEL)(-PRERELEASE)
-AC_INIT([POV-Ray], m4_normalize(m4_include([VERSION])), [unix-bugreports-2011@povray.org], [povray])
+AC_INIT([POV-Ray],[m4_normalize(m4_include(VERSION))],[unix-bugreports-2011@povray.org],[povray])
 
 # VERSION_BASE is then defined as MAJOR.MINOR
 VERSION_BASE=`echo $PACKAGE_VERSION | sed 's,\([[0-9]]*.[[0-9]]*\).*,\1,g'`
