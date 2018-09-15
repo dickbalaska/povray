@@ -53,13 +53,13 @@ class Highlighter : public QSyntaxHighlighter
 	Q_OBJECT
 
 public:
-	Highlighter(PreferenceData* prefs, QTextDocument *parent = 0);
+	Highlighter(const PreferenceData* prefs, QTextDocument *parent = 0);
 
 protected:
 	void highlightBlock(const QString &text) override;
 
 private:
-	void setupType(QTextCharFormat& format, PCSTR* list, Highlight& highlight);
+	void setupType(QTextCharFormat& format, PCSTR* list, const Highlight& highlight);
 
 	struct HighlightingRule
 	{

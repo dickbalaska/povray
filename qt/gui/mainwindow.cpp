@@ -83,8 +83,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_mainToolbar = new MainToolbar("Main", preferenceData.getUseLargeIcons(), this);
 	addToolBar(m_mainToolbar);
 	m_mainToolbar->updateHelpEnabled();
-	statusBar = new StatusBar(this);
-	this->setStatusBar(statusBar);
+	m_statusBar = new StatusBar(this);
+	this->setStatusBar(m_statusBar);
 	m_insertMenuMan = new InsertMenuMan(this);
 
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, s_companyName, s_productName);
@@ -593,6 +593,7 @@ void MainWindow::onPreferences() {
 					ce->configure(&preferenceData);
 			}
 		}
+		m_dockMan->getConsoleDock()->configure(&preferenceData);
 		setShortcutKeys();
 		if (changeIcons)
 			m_mainToolbar->changeIcons(preferenceData.getUseLargeIcons());
@@ -607,6 +608,7 @@ static QString s_EditorHighlightTokens	("EditorHighlightTokens");
 static QString s_EditorTabWidth			("EditorTabWidth");
 static QString s_EditorWrapText			("EditorWrapText");
 static QString s_EditorFont				("EditorFont");
+static QString s_ConsoleFont			("ConsoleFont");
 static QString s_Keys					("Keys");
 #ifdef USE_WEBSOCKETS
 static QString s_PovrayExecutable		("PovrayExecutable");
@@ -637,12 +639,13 @@ void MainWindow::savePreferences() {
 	settings.setValue(s_EditorHighlightLine,	preferenceData.getEditorHighlightCurrentLine());
 	settings.setValue(s_EditorHighlightTokens,	preferenceData.getEditorHighlightTokens());
 	settings.setValue(s_EditorFont,				preferenceData.getEditorFont().toString());
+	settings.setValue(s_ConsoleFont,			preferenceData.getConsoleFont().toString());
 	settings.setValue(s_UseLargeIcons,			preferenceData.getUseLargeIcons());
 	settings.endGroup();
 
 #define writeColor(_highlight) \
-	settings.setValue(#_highlight "Color", preferenceData.getEditorColors()->_highlight.getColor()); \
-	settings.setValue(#_highlight "Bold", preferenceData.getEditorColors()->_highlight.isBold());
+	settings.setValue(#_highlight "Color", preferenceData.getEditorColorsNC()->_highlight.getColor()); \
+	settings.setValue(#_highlight "Bold", preferenceData.getEditorColorsNC()->_highlight.isBold());
 
 	settings.beginGroup(s_EditorColors);
 	writeColor(common);
@@ -696,6 +699,12 @@ void MainWindow::loadPreferences() {
 		if (font.fromString(s))
 			preferenceData.setEditorFont(font);
 	}
+	s = settings.value(s_ConsoleFont).toString();
+	if (!s.isEmpty()) {
+		QFont font;
+		if (font.fromString(s))
+			preferenceData.setConsoleFont(font);
+	}
 	settings.endGroup();
 
 #ifdef USE_WEBSOCKETS
@@ -732,9 +741,9 @@ void MainWindow::loadPreferences() {
 	}
 
 #define readColor(_highlight, _defaultColor, _defaultBold) \
-	preferenceData.getEditorColors()->_highlight.setColor( \
+	preferenceData.getEditorColorsNC()->_highlight.setColor( \
 	settings.value(#_highlight "Color", _defaultColor).value<QColor>()); \
-	preferenceData.getEditorColors()->_highlight.setBold( \
+	preferenceData.getEditorColorsNC()->_highlight.setBold( \
 	settings.value(#_highlight "Bold", _defaultBold).toBool()); \
 
 	settings.beginGroup(s_EditorColors);
@@ -828,8 +837,8 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 		return;
 	} else if (command == "done") {
 		m_mainToolbar->renderButtonToStart();
-		this->statusBar->showMessage("Done");
-		this->statusBar->renderDone();
+		this->m_statusBar->showMessage("Done");
+		this->m_statusBar->renderDone();
 		m_dockMan->getRenderDock()->repaint();
 		return;
 	} else if (command == "fatal") {
@@ -862,11 +871,11 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 				// render progress
 				if (msg.contains("(100%)"))		// Hacky McHackface. Force a picture redraw when we see 100%
 					m_dockMan->getRenderDock()->repaint();	// (This should be handled by the render window itself)
-				this->statusBar->showRenderMessage(msg);
+				this->m_statusBar->showRenderMessage(msg);
 				return;
 			} else if (streamT == "6") {
 				// animation status
-				this->statusBar->showAnimationMessage(msg);
+				this->m_statusBar->showAnimationMessage(msg);
 				return;
 			}
 			if (stream == -1) {
@@ -958,12 +967,12 @@ void MainWindow::onRenderAction()
 {
 	qDebug() << "onRenderAction";
 	if (!m_mainToolbar->isRenderButtonStart()) {
-		this->statusBar->showMessage(tr("Canceling render"));
+		this->m_statusBar->showMessage(tr("Canceling render"));
 		sendPovrayMessage("cancel");
 		return;
 	}
 	saveAllEditors();
-	this->statusBar->showMessage(tr("Start render"));
+	this->m_statusBar->showMessage(tr("Start render"));
 	m_dockMan->getConsoleDock()->getPovrayConsole()->clearMessages();
 	QString cl = "render ";
 	QString rdir;
@@ -1010,7 +1019,7 @@ void MainWindow::onRenderAction()
 	cl += rcl;
 	qDebug() << "sendMessage: " << cl;
 	m_mainToolbar->renderButtonToStop();
-	statusBar->renderStart();
+	m_statusBar->renderStart();
 	QString d("chdir:  ");
 	d += rdir;
 	emit(emitStatusMessage(QTINFO_STREAM, d));
@@ -1031,7 +1040,7 @@ QString MainWindow::getCurrentEditorPath()
 
 void MainWindow::povrayWsStateChanged(bool connected)
 {
-	statusBar->showMessage(connected ? tr("Ready") : tr("Not Ready"));
+	m_statusBar->showMessage(connected ? tr("Ready") : tr("Not Ready"));
 	m_mainToolbar->enableRender(connected);
 	m_mainToolbar->renderButtonToStart();
 }

@@ -66,7 +66,7 @@ public:
 
 	void	lineNumberAreaPaintEvent(QPaintEvent* event);
 	int		lineNumberAreaWidth();
-	void	configure(PreferenceData* prefs);
+	void	configure(const PreferenceData *prefs);
 
 	void	setModified(bool mod);
 	bool	isModified();

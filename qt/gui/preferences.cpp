@@ -76,7 +76,7 @@ ColorTab::ColorTab(Preferences* parent)
 	: QWidget(parent),
 	  parent(parent) {
 	//PreferenceData* data = parent->data;
-	EditorColors* editorColors = parent->m_prefData->getEditorColors();
+	EditorColors* editorColors = parent->m_prefData->getEditorColorsNC();
 	QHBoxLayout* mainLayout = new QHBoxLayout;
 	QVBoxLayout* leftLayout = new QVBoxLayout;
 	QGroupBox* gridGroupBox = new QGroupBox(tr("Common"));
@@ -504,7 +504,13 @@ EditorTab::EditorTab(Preferences* parent)
 	m_editorFontEdit->setReadOnly(true);
 	m_editorFontEdit->setText(getFontText(prefData->getEditorFont()));
 	m_editorFontEdit->setFont(prefData->getEditorFont());
-	m_fontFamilySelectButton = new QPushButton("Select");
+	m_editorFontSelectButton = new QPushButton("Select");
+
+	m_consoleFontEdit = new QLineEdit(this);
+	m_consoleFontEdit->setReadOnly(true);
+	m_consoleFontEdit->setText(getFontText(prefData->getConsoleFont()));
+	m_consoleFontEdit->setFont(prefData->getConsoleFont());
+	m_consoleFontSelectButton = new QPushButton("Select");
 
 	connect(m_largeIconButton, SIGNAL(stateChanged(int)), this, SLOT(largeIconButtonChanged(int)));
 	connect(m_wrapButton, SIGNAL(stateChanged(int)), this, SLOT(wrapButtonChanged(int)));
@@ -513,7 +519,8 @@ EditorTab::EditorTab(Preferences* parent)
 	connect(m_autoBraceButton, SIGNAL(stateChanged(int)), this, SLOT(autoBraceChanged(int)));
 	connect(m_highlightLineButton, SIGNAL(stateChanged(int)), this, SLOT(highlightLineChanged(int)));
 	connect(m_highlightTokensButton, SIGNAL(stateChanged(int)), this, SLOT(highlightTokensChanged(int)));
-	connect(m_fontFamilySelectButton, SIGNAL(pressed()), this, SLOT(selectFontPressed()));
+	connect(m_editorFontSelectButton, SIGNAL(pressed()), this, SLOT(selectEditorFontPressed()));
+	connect(m_consoleFontSelectButton, SIGNAL(pressed()), this, SLOT(selectConsoleFontPressed()));
 
 	layout->addWidget(new QLabel(tr("Use large icons"), parent), 0, 0, Qt::AlignLeft);
 	layout->addWidget(m_largeIconButton, 0, 1);
@@ -532,10 +539,17 @@ EditorTab::EditorTab(Preferences* parent)
 	QHBoxLayout* hlayout = new QHBoxLayout();
 	layout->addWidget(new QLabel(tr("Editor Font"), parent), 7, 0);
 	hlayout->addWidget(m_editorFontEdit);
-	hlayout->addWidget(m_fontFamilySelectButton);
+	hlayout->addWidget(m_editorFontSelectButton);
 	layout->addLayout(hlayout, 7, 1);
+
+	hlayout = new QHBoxLayout();
+	layout->addWidget(new QLabel(tr("Console Font"), parent), 8, 0);
+	hlayout->addWidget(m_consoleFontEdit);
+	hlayout->addWidget(m_consoleFontSelectButton);
+	layout->addLayout(hlayout, 8, 1);
+
 	layout->setVerticalSpacing(5);
-	layout->setRowStretch(8, 1);
+	layout->setRowStretch(9, 1);
 	this->setLayout(layout);
 }
 
@@ -566,7 +580,7 @@ void EditorTab::useViModeChanged(int state) {
 	parent->m_prefData->setUseEditorViMode(state == Qt::Checked);
 }
 
-void EditorTab::selectFontPressed() {
+void EditorTab::selectEditorFontPressed() {
 	QFontDialog fd;
 	QFontDialog::FontDialogOptions fdo = QFontDialog::MonospacedFonts /*| QFontDialog::ScalableFonts | QFontDialog::NonScalableFonts*/;
 
@@ -581,6 +595,24 @@ void EditorTab::selectFontPressed() {
 //		parent->m_prefData->setEditorFontPointSize(osize);
 		m_editorFontEdit->setFont(parent->m_prefData->getEditorFont());
 		m_editorFontEdit->setText(getFontText(font));
+	}
+}
+
+void EditorTab::selectConsoleFontPressed() {
+	QFontDialog fd;
+	QFontDialog::FontDialogOptions fdo = QFontDialog::MonospacedFonts /*| QFontDialog::ScalableFonts | QFontDialog::NonScalableFonts*/;
+
+	fd.setOptions(fdo);
+	fd.setCurrentFont(parent->m_prefData->getConsoleFont());
+	int ret = fd.exec();
+	if (ret == QDialog::Accepted) {
+		QFont font = fd.selectedFont();
+		qDebug() << "Font selected:" << font;
+//		int osize = parent->m_prefData->getEditorFont().pointSize();
+		parent->m_prefData->setConsoleFont(font);
+//		parent->m_prefData->setEditorFontPointSize(osize);
+		m_consoleFontEdit->setFont(font);
+		m_consoleFontEdit->setText(getFontText(font));
 	}
 }
 

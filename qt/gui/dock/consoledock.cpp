@@ -64,6 +64,11 @@ ConsoleDock::ConsoleDock(MainWindow* parent, Qt::WindowFlags flags)
 	connect(m_consoleTabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 }
 
+void ConsoleDock::configure(const PreferenceData* prefs)
+{
+	m_povrayConsole->configure(prefs);
+}
+
 void ConsoleDock::tabChanged(int which)
 {
 	qDebug() << "tabChanged";
@@ -143,7 +148,7 @@ PovrayConsole::PovrayConsole(QTabWidget* parent, QStackedWidget *consoleBar, Mai
 	font.setFixedPitch(true);
 	font.setPointSize(10);
 	setFont(font);
-
+	configure(&m_mainWindow->getPreferenceData());
 	m_povrayConsoleButtons = new PovrayConsoleButtonBar(consoleBar, this);
 	consoleBar->addWidget(m_povrayConsoleButtons);
 	// indexed by ConsoleMsgType
@@ -158,6 +163,11 @@ PovrayConsole::~PovrayConsole()
 {
 	clearMessages();
 }
+void PovrayConsole::configure(const PreferenceData* prefs)
+{
+	setFont(prefs->getConsoleFont());
+}
+
 void PovrayConsole::addPovrayMessage(int stream, const QString& msg)
 {
 	//qDebug() << "msg:" << msg;

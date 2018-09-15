@@ -200,7 +200,7 @@ private:
 	InsertMenuMan*	m_insertMenuMan;
 	HelpMan*		m_helpMan;
 	MainToolbar*	m_mainToolbar;
-	StatusBar*		statusBar;
+	StatusBar*		m_statusBar;
 	PreferenceData	preferenceData;
 	QString			povProcessErrorMsg;
 };

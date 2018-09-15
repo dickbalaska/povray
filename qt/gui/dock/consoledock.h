@@ -90,6 +90,8 @@ public:
 	PovrayConsole(QTabWidget* parent, QStackedWidget* consoleBar, MainWindow* mainWindow);
 	virtual ~PovrayConsole();
 
+	void configure(const PreferenceData* prefs);
+
 Q_SIGNALS:
 	void emitMoveToEditor(const QString& file, int line, int col);
 
@@ -149,6 +151,8 @@ public:
 
 	PovrayConsole* getPovrayConsole() { return(m_povrayConsole); }
 	SearchConsole*	getSearchConsole() { return(m_searchConsole); }
+
+	void	configure(const PreferenceData* prefs);
 
 public slots:
 	void	showConsole(int which);

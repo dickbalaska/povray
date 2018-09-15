@@ -40,9 +40,9 @@ public:
 		this->color = other.color; this->bold = other.bold;
 	}
 	void	setColor(QColor color) { this->color = color; }
-	QColor	getColor() { return(color); }
+	const QColor	getColor() const { return(color); }
 	void	setBold(bool bold) { this->bold = bold; }
-	bool	isBold() { return(bold); }
+	bool	isBold() const { return(bold); }
 private:
 	QColor color;
 	bool	bold;
@@ -168,6 +168,8 @@ inline void GlobalKeys::operator= (const GlobalKeys& other) {
 }
 
 class PreferenceData {
+	friend class MainWindow;
+
 public:
 	PreferenceData() :
 		editorWrapText(false),
@@ -186,7 +188,7 @@ public:
 	}
 	void operator= (const PreferenceData& );
 
-	const QString& getPovrayIncludes() { return(povrayIncludes); }
+	const QString& getPovrayIncludes() const { return(povrayIncludes); }
 	void setPovrayIncludes(const QString& inc) { povrayIncludes = inc; }
 
 	const QString& getPovrayInsertMenu() const { return(povrayInsertMenu); }
@@ -201,39 +203,43 @@ public:
 	const QString& getQtpovrayHelpDirectory() const { return(qtpovrayHelpDirectory); }
 	void setQtpovrayHelpDirectory(const QString& inh) { qtpovrayHelpDirectory = inh; }
 
-	bool getEditorWrapText() { return(editorWrapText); }
+	bool getEditorWrapText() const { return(editorWrapText); }
 	void setEditorWrapText(bool wrap) { editorWrapText = wrap; }
 
 	int  getEditorTabWidth() const { return(editorTabWidth); }
 	void setEditorTabWidth(int w) { editorTabWidth = w; }
 
-	bool getAutoIndent() { return(editorAutoIndent); }
+	bool getAutoIndent() const { return(editorAutoIndent); }
 	void setAutoIndent(bool b) { editorAutoIndent = b; }
 
-	bool getAutoBraceCompletion() { return(editorAutoBraceCompletion); }
+	bool getAutoBraceCompletion() const { return(editorAutoBraceCompletion); }
 	void setAutoBraceCompletion(bool b) { editorAutoBraceCompletion = b; }
 
-	bool getEditorHighlightCurrentLine() { return(editorHighlightCurrentLine); }
+	bool getEditorHighlightCurrentLine() const { return(editorHighlightCurrentLine); }
 	void setEditorHighlightCurrentLine(bool b) { editorHighlightCurrentLine = b; }
 
-	bool getEditorHighlightTokens() { return(editorHighlightTokens); }
+	bool getEditorHighlightTokens() const { return(editorHighlightTokens); }
 	void setEditorHighlightTokens(bool b) { editorHighlightTokens = b; }
 
-	EditorColors* getEditorColors() {return(&editorColors); }
+	const EditorColors* getEditorColors() const {return(&editorColors); }
+	EditorColors* getEditorColorsNC() {return(&editorColors); }
 	GlobalKeys*		getGlobalKeys() { return(&keys); }
 
-	bool getUseLargeIcons() { return(m_useLargeIcons); }
+	bool getUseLargeIcons() const { return(m_useLargeIcons); }
 	void setUseLargeIcons(bool b) { m_useLargeIcons = b; }
 
-	bool getUseEditorViMode() { return(m_useEditorViMode); }
+	bool getUseEditorViMode() const { return(m_useEditorViMode); }
 	void setUseEditorViMode(bool b) { m_useEditorViMode = b; }
 
-	QString getEditorFontFamily() { return(m_editorFont.family()); }
+	QString getEditorFontFamily() const { return(m_editorFont.family()); }
 	void setEditorFontFamily(const QString& font) { m_editorFont.setFamily(font); }
 	void setEditorFontPointSize(int size) { m_editorFont.setPointSize(size); }
 
+	const QFont getEditorFont() const { return(m_editorFont); }
 	void setEditorFont(const QFont& font) { m_editorFont = font; }
-	const QFont getEditorFont() { return(m_editorFont); }
+
+	const QFont getConsoleFont() const { return(m_consoleFont); }
+	void setConsoleFont(const QFont& font) { m_consoleFont = font; }
 
 private:
 	QString	povrayIncludes;
@@ -253,6 +259,7 @@ private:
 //	QString	m_editorFontFamily;
 //	int		m_editorFontPointSize;
 	QFont	m_editorFont;
+	QFont	m_consoleFont;
 
 	EditorColors	editorColors;
 	GlobalKeys		keys;
@@ -273,6 +280,7 @@ inline void PreferenceData::operator=(const PreferenceData& other) {
 	this->editorHighlightCurrentLine = other.editorHighlightCurrentLine;
 	this->editorHighlightTokens = other.editorHighlightTokens;
 	this->m_editorFont = other.m_editorFont;
+	this->m_consoleFont = other.m_consoleFont;
 	this->editorColors = other.editorColors;
 	this->keys = other.keys;
 }

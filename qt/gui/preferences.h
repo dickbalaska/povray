@@ -129,7 +129,8 @@ public slots:
 	void	useViModeChanged(int state);
 
 private slots:
-	void	selectFontPressed();
+	void	selectEditorFontPressed();
+	void	selectConsoleFontPressed();
 //	void	fontPointSizeChanged(int value);
 
 private:
@@ -144,8 +145,10 @@ private:
 	QCheckBox*	m_highlightTokensButton;
 	QCheckBox*	m_useViModeButton;
 	QLineEdit*	m_editorFontEdit;
-	QPushButton* m_fontFamilySelectButton;
-	QSpinBox*	m_fontPointSizeSpinner;
+	QPushButton* m_editorFontSelectButton;
+//	QSpinBox*	m_fontPointSizeSpinner;
+	QLineEdit*	m_consoleFontEdit;
+	QPushButton* m_consoleFontSelectButton;
 
 	Preferences* parent;
 

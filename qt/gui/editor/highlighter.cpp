@@ -210,7 +210,7 @@ enum {
 	inString
 };
 
-Highlighter::Highlighter(PreferenceData* prefs, QTextDocument* parent)
+Highlighter::Highlighter(const PreferenceData* prefs, QTextDocument* parent)
 	: QSyntaxHighlighter(parent)
 {
 	//HighlightingRule rule;
@@ -337,7 +337,7 @@ void Highlighter::highlightBlock(const QString &text) {
 	setCurrentBlockUserData(blockData);
 }
 
-void Highlighter::setupType(QTextCharFormat& format, PCSTR* list, Highlight& highlight) {
+void Highlighter::setupType(QTextCharFormat& format, PCSTR* list, const Highlight &highlight) {
 	HighlightingRule rule;
 	QString qs;
 	PCSTR* p = list;

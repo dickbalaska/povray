@@ -103,7 +103,7 @@ CodeEditor::CodeEditor(MainWindow* parent, PreferenceData* prefs)
 	}
 }
 
-void CodeEditor::configure(PreferenceData* prefs) {
+void CodeEditor::configure(const PreferenceData* prefs) {
 	setFont(prefs->getEditorFont());
 	QFont font = this->font();
 	QFontMetrics fm(font);
