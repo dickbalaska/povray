@@ -68,6 +68,8 @@ public slots:
 	void textIncEdited(const QString& text);
 	void browseInsClicked(bool b);
 	void textInsEdited(const QString& text);
+	void browseInuClicked(bool b);
+	void textInuEdited(const QString& text);
 	void browseIndClicked(bool b);
 	void textIndEdited(const QString& text);
 	void browseInhClicked(bool b);
@@ -83,6 +85,7 @@ private:
 #endif
 	void validateInc();
 	void validateIns();
+	void validateInu();
 	void validateInd();
 	void validateInh();
 	void validateInq();
@@ -99,6 +102,8 @@ private:
 	QLabel*		povrayIncludesStatus;
 	QLineEdit*	povrayInsertMenu;
 	QLabel*		povrayInsertMenuStatus;
+	QLineEdit*	userInsertMenu;
+	QLabel*		userInsertMenuStatus;
 	QLineEdit*	povraySceneDirectory;
 	QLabel*		povraySceneDirectoryStatus;
 	QLineEdit*	povrayHelpDirectory;
@@ -273,10 +278,12 @@ public:
 
 	static bool validateInc(const QString& file);
 	static bool validateIns(const QString& file);
+	static bool validateInu(const QString& file);
 	static bool validateInd(const QString& file);
 	static bool validateInh(const QString& file);
 	static bool validateInq(const QString& file);
 	static bool validateInsertMenu(const PreferenceData& prefs);
+	static bool validateUserMenu(const PreferenceData& prefs);
 	static bool validatePovraySceneDirectory(const PreferenceData& prefs);
 	static bool validatePovrayHelpDirectory(const PreferenceData& prefs);
 	static bool validateQtpovrayHelpDirectory(const PreferenceData& prefs);

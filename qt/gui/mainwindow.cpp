@@ -615,6 +615,7 @@ static QString s_PovrayExecutable		("PovrayExecutable");
 #endif
 static QString s_PovrayIncludes			("PovrayIncludes");
 static QString s_PovrayInsertMenu		("PovrayInsertMenu");
+static QString s_UserInsertMenu			("UserInsertMenu");
 static QString s_PovrayHelpDirectory	("PovrayHelpDirectory");
 static QString s_PovraySceneDirectory	("PovraySceneDirectory");
 static QString s_Preferences			("Preferences");
@@ -629,6 +630,7 @@ void MainWindow::savePreferences() {
 #endif
 	settings.setValue(s_PovrayIncludes,			preferenceData.getPovrayIncludes());
 	settings.setValue(s_PovrayInsertMenu,		preferenceData.getPovrayInsertMenu());
+	settings.setValue(s_UserInsertMenu,			preferenceData.getUserInsertMenu());
 	settings.setValue(s_PovraySceneDirectory,	preferenceData.getPovraySceneDirectory());
 	settings.setValue(s_PovrayHelpDirectory,	preferenceData.getPovrayHelpDirectory());
 	settings.setValue(s_QtpovrayHelpDirectory,	preferenceData.getQtpovrayHelpDirectory());
@@ -683,6 +685,7 @@ void MainWindow::loadPreferences() {
 #endif
 	preferenceData.setPovrayIncludes(settings.value(s_PovrayIncludes).toString());
 	preferenceData.setPovrayInsertMenu(settings.value(s_PovrayInsertMenu).toString());
+	preferenceData.setUserInsertMenu(settings.value(s_UserInsertMenu).toString());
 	preferenceData.setPovraySceneDirectory(settings.value(s_PovraySceneDirectory).toString());
 	preferenceData.setPovrayHelpDirectory(settings.value(s_PovrayHelpDirectory).toString());
 	preferenceData.setQtpovrayHelpDirectory(settings.value(s_QtpovrayHelpDirectory).toString());

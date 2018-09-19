@@ -48,7 +48,7 @@ depending on whether the window is docked or not.</p>
 <p>This option allows you to throttle how often the render window will redraw 
 upon receiving data from the render engine.  If you are running fast frames, 
 on the order of 1 second or less, a thread will peg a CPU updating, scaling 
-and drawing the window.  <br>
+and drawing the window, as chunks of data are rapidly received.  <br>
 The default is a 500 millisecond throttle. If a second draw message is received 
 within the 500 millisecond throttle, it will be held until that timer expires.
 
@@ -63,7 +63,7 @@ When the Render View is undocked, it is still a child window of the main program
 and will thusly always be on top of the main program.  Checking this option makes
 the Render View be an independent window that can be placed behind the main program.<br/>
 If you then want to redock the Render View, you must first reenable docking so that it becomes 
-a child of the main window.
+a child of the main window again.
 <hr /><center>
 </div>
 

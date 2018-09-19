@@ -191,8 +191,11 @@ public:
 	const QString& getPovrayIncludes() const { return(povrayIncludes); }
 	void setPovrayIncludes(const QString& inc) { povrayIncludes = inc; }
 
-	const QString& getPovrayInsertMenu() const { return(povrayInsertMenu); }
-	void setPovrayInsertMenu(const QString& ins) { povrayInsertMenu = ins; }
+	const QString& getPovrayInsertMenu() const { return(m_povrayInsertMenu); }
+	void setPovrayInsertMenu(const QString& ins) { m_povrayInsertMenu = ins; }
+
+	const QString& getUserInsertMenu() const { return(m_userInsertMenu); }
+	void setUserInsertMenu(const QString& ins) { m_userInsertMenu = ins; }
 
 	const QString& getPovraySceneDirectory() const { return(povraySceneDirectory); }
 	void setPovraySceneDirectory(const QString& ins) { povraySceneDirectory = ins; }
@@ -243,7 +246,8 @@ public:
 
 private:
 	QString	povrayIncludes;
-	QString	povrayInsertMenu;
+	QString	m_povrayInsertMenu;
+	QString	m_userInsertMenu;
 	QString	povraySceneDirectory;
 	QString	povrayHelpDirectory;
 	QString	qtpovrayHelpDirectory;
@@ -268,7 +272,8 @@ private:
 
 inline void PreferenceData::operator=(const PreferenceData& other) {
 	this->povrayIncludes = other.povrayIncludes;
-	this->povrayInsertMenu = other.povrayInsertMenu;
+	this->m_povrayInsertMenu = other.m_povrayInsertMenu;
+	this->m_userInsertMenu = other.m_userInsertMenu;
 	this->povraySceneDirectory = other.povraySceneDirectory;
 	this->povrayHelpDirectory = other.povrayHelpDirectory;
 	this->qtpovrayHelpDirectory = other.qtpovrayHelpDirectory;

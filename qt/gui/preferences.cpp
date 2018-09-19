@@ -193,37 +193,48 @@ SystemTab::SystemTab(Preferences* parent)
 	layout->addWidget(browseInsButton, 2, 3, 1, 1, Qt::AlignRight);
 	//gridGroupBox->setLayout(layout);
 
+	userInsertMenuStatus = new QLabel(this);
+	userInsertMenuStatus->setPixmap(parent->m_iconBad->pixmap(16));
+	layout->addWidget(userInsertMenuStatus, 3, 0, 1, 1, Qt::AlignLeft);
+	layout->addWidget(new QLabel(tr("User Ins Menu"), this), 3, 1, 1, 1, Qt::AlignLeft);
+	userInsertMenu = new QLineEdit(this);
+	userInsertMenu->setText(prefData->getUserInsertMenu());
+	layout->addWidget(userInsertMenu, 3, 2, 1, 1);
+	QPushButton* browseInuButton = new QPushButton(tr("Browse"), this);
+	layout->addWidget(browseInuButton, 3, 3, 1, 1, Qt::AlignRight);
+	//gridGroupBox->setLayout(layout);
+
 	povraySceneDirectoryStatus = new QLabel(this);
 	povraySceneDirectoryStatus->setPixmap(parent->m_iconBad->pixmap(16));
-	layout->addWidget(povraySceneDirectoryStatus, 3, 0, 1, 1, Qt::AlignLeft);
-	layout->addWidget(new QLabel(tr("Sample Scenes"), this), 3, 1, 1, 1, Qt::AlignLeft);
+	layout->addWidget(povraySceneDirectoryStatus, 4, 0, 1, 1, Qt::AlignLeft);
+	layout->addWidget(new QLabel(tr("Sample Scenes"), this), 4, 1, 1, 1, Qt::AlignLeft);
 	povraySceneDirectory = new QLineEdit(this);
 	povraySceneDirectory->setText(prefData->getPovraySceneDirectory());
-	layout->addWidget(povraySceneDirectory, 3, 2, 1, 1);
+	layout->addWidget(povraySceneDirectory, 4, 2, 1, 1);
 	QPushButton* browseIndButton = new QPushButton(tr("Browse"), this);
-	layout->addWidget(browseIndButton, 3, 3, 1, 1, Qt::AlignRight);
+	layout->addWidget(browseIndButton, 4, 3, 1, 1, Qt::AlignRight);
 	//gridGroupBox->setLayout(layout);
 
 	povrayHelpDirectoryStatus = new QLabel(this);
 	povrayHelpDirectoryStatus->setPixmap(parent->m_iconBad->pixmap(16));
-	layout->addWidget(povrayHelpDirectoryStatus, 4, 0, 1, 1, Qt::AlignLeft);
-	layout->addWidget(new QLabel(tr("POV-Ray Help"), this), 4, 1, 1, 1, Qt::AlignLeft);
+	layout->addWidget(povrayHelpDirectoryStatus, 5, 0, 1, 1, Qt::AlignLeft);
+	layout->addWidget(new QLabel(tr("POV-Ray Help"), this), 5, 1, 1, 1, Qt::AlignLeft);
 	povrayHelpDirectory = new QLineEdit(this);
 	povrayHelpDirectory->setText(prefData->getPovrayHelpDirectory());
-	layout->addWidget(povrayHelpDirectory, 4, 2, 1, 1);
+	layout->addWidget(povrayHelpDirectory, 5, 2, 1, 1);
 	QPushButton* browseInhButton = new QPushButton(tr("Browse"), this);
-	layout->addWidget(browseInhButton, 4, 3, 1, 1, Qt::AlignRight);
+	layout->addWidget(browseInhButton, 5, 3, 1, 1, Qt::AlignRight);
 	//gridGroupBox->setLayout(layout);
 
 	qtpovrayHelpDirectoryStatus = new QLabel(this);
 	qtpovrayHelpDirectoryStatus->setPixmap(parent->m_iconBad->pixmap(16));
-	layout->addWidget(qtpovrayHelpDirectoryStatus, 5, 0, 1, 1, Qt::AlignLeft);
-	layout->addWidget(new QLabel(tr("Qtpovray Help"), this), 5, 1, 1, 1, Qt::AlignLeft);
+	layout->addWidget(qtpovrayHelpDirectoryStatus, 6, 0, 1, 1, Qt::AlignLeft);
+	layout->addWidget(new QLabel(tr("Qtpovray Help"), this), 6, 1, 1, 1, Qt::AlignLeft);
 	qtpovrayHelpDirectory = new QLineEdit(this);
 	qtpovrayHelpDirectory->setText(prefData->getQtpovrayHelpDirectory());
-	layout->addWidget(qtpovrayHelpDirectory, 5, 2, 1, 1);
+	layout->addWidget(qtpovrayHelpDirectory, 6, 2, 1, 1);
 	QPushButton* browseInqButton = new QPushButton(tr("Browse"), this);
-	layout->addWidget(browseInqButton, 5, 3, 1, 1, Qt::AlignRight);
+	layout->addWidget(browseInqButton, 6, 3, 1, 1, Qt::AlignRight);
 
 	gridGroupBox->setLayout(layout);
 	mainLayout->addWidget(gridGroupBox);
@@ -251,11 +262,13 @@ SystemTab::SystemTab(Preferences* parent)
 #endif
 	connect(browseIncButton, SIGNAL(clicked(bool)), this, SLOT(browseIncClicked(bool)));
 	connect(browseInsButton, SIGNAL(clicked(bool)), this, SLOT(browseInsClicked(bool)));
+	connect(browseInuButton, SIGNAL(clicked(bool)), this, SLOT(browseInuClicked(bool)));
 	connect(browseIndButton, SIGNAL(clicked(bool)), this, SLOT(browseIndClicked(bool)));
 	connect(browseInhButton, SIGNAL(clicked(bool)), this, SLOT(browseInhClicked(bool)));
 	connect(browseInqButton, SIGNAL(clicked(bool)), this, SLOT(browseInqClicked(bool)));
 	connect(povrayIncludes, SIGNAL(textEdited(QString)), this, SLOT(textIncEdited(QString)));
 	connect(povrayInsertMenu, SIGNAL(textEdited(QString)), this, SLOT(textInsEdited(QString)));
+	connect(userInsertMenu, SIGNAL(textEdited(QString)), this, SLOT(textInuEdited(QString)));
 	connect(povraySceneDirectory, SIGNAL(textEdited(QString)), this, SLOT(textIndEdited(QString)));
 	connect(povrayHelpDirectory, SIGNAL(textEdited(QString)), this, SLOT(textInhEdited(QString)));
 	connect(qtpovrayHelpDirectory, SIGNAL(textEdited(QString)), this, SLOT(textInqEdited(QString)));
@@ -268,6 +281,7 @@ SystemTab::SystemTab(Preferences* parent)
 void SystemTab::validateData() {
 	validateInc();
 	validateIns();
+	validateInu();
 	validateInd();
 	validateInh();
 	validateInq();
@@ -304,13 +318,21 @@ void SystemTab::browseInsClicked(bool) {
 	}
 	validateIns();
 }
+void SystemTab::browseInuClicked(bool) {
+	QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"));
+	if (!dir.isEmpty()) {
+		userInsertMenu->setText(dir);
+		parent->m_prefData->setUserInsertMenu(dir);
+	}
+	validateInu();
+}
 void SystemTab::browseIndClicked(bool) {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"));
 	if (!dir.isEmpty()) {
 		povraySceneDirectory->setText(dir);
 		parent->m_prefData->setPovraySceneDirectory(dir);
 	}
-	validateIns();
+	validateInd();
 }
 void SystemTab::browseInhClicked(bool) {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"));
@@ -343,6 +365,10 @@ void SystemTab::textIncEdited(const QString& text) {
 void SystemTab::textInsEdited(const QString& text) {
 	parent->m_prefData->setPovrayInsertMenu(text);
 	validateIns();
+}
+void SystemTab::textInuEdited(const QString& text) {
+	parent->m_prefData->setUserInsertMenu(text);
+	validateInu();
 }
 void SystemTab::textIndEdited(const QString& text) {
 	parent->m_prefData->setPovraySceneDirectory(text);
@@ -394,6 +420,28 @@ bool Preferences::validateIns(const QString &file) {
 bool Preferences::validateInsertMenu(const PreferenceData& prefs)
 {
 	return(validateIns(prefs.getPovrayInsertMenu()));
+}
+
+void SystemTab::validateInu() {
+	if (Preferences::validateInu(parent->m_prefData->getUserInsertMenu()))
+		userInsertMenuStatus->setPixmap(parent->m_iconOk->pixmap(16));
+	else
+		userInsertMenuStatus->setPixmap(parent->m_iconBad->pixmap(16));
+}
+
+bool Preferences::validateInu(const QString &file) {
+	bool inuStat = false;
+	if (!file.isEmpty()) {
+		QDir dir(file);
+		if (dir.exists())
+			inuStat = true;
+	}
+	return(inuStat);
+}
+
+bool Preferences::validateUserMenu(const PreferenceData& prefs)
+{
+	return(validateInu(prefs.getUserInsertMenu()));
 }
 
 void SystemTab::validateInd() {

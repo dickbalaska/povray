@@ -23,9 +23,10 @@
 #include "dock/maintoolbar.h"
 #include "editor/codeeditor.h"
 #include "mainwindow.h"
+#include "preferences.h"
 #include "insertmenuman.h"
 
-#define	_INSDEBUG	false
+#define	_INSDEBUG	true
 InsertMenuMan::InsertMenuMan(MainWindow* parent)
 	: QObject(parent),
 	  m_mainWindow(parent)
@@ -41,9 +42,21 @@ void InsertMenuMan::populateMenu(bool enable)
 	rootMenu->clear();
 	if (!enable)
 		return;
+	QMap<QString, QFileInfo> rootMap;
 	QDir rootDir(m_mainWindow->getPreferenceData().getPovrayInsertMenu());
 	QFileInfoList rootFiles = rootDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
 	foreach (QFileInfo fi, rootFiles) {
+		rootMap.insert(fi.fileName(), fi);
+	}
+	if (Preferences::validateUserMenu(m_mainWindow->getPreferenceData())) {
+		QDir userDir(m_mainWindow->getPreferenceData().getUserInsertMenu());
+		QFileInfoList userFiles = userDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+		foreach (QFileInfo fi, userFiles) {
+			rootMap.insert(fi.fileName(), fi);
+		}
+
+	}
+	foreach (QFileInfo fi, rootMap) {
 		if (_INSDEBUG) qDebug() << "File:" << fi.fileName();
 		QString s = fixFileName(fi.fileName());
 		QMenu* submenu = new QMenu(s, m_mainWindow);
