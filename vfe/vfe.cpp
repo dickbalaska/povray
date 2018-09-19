@@ -201,7 +201,7 @@ void vfeConsole::BufferOutput(const char *str, unsigned int chars, vfeSession::M
   if (sLen > sizeof (rawBuffer) - bLen - 1)
     sLen = sizeof (rawBuffer) - bLen - 1 ;
   strncat (rawBuffer, str, sLen) ;
-  if ((s = strrchr (rawBuffer, '\n')) != NULL)
+  if ((s = strrchr (rawBuffer, '\n')) != nullptr)
   {
     *s++ = '\0' ;
     m_Session->AppendStreamMessage (mType, rawBuffer) ;
@@ -604,8 +604,8 @@ VirtualFrontEnd::VirtualFrontEnd(vfeSession& session, POVMSContext ctx, POVMSAdd
   backendAddress = addr ;
   state = kReady ;
   m_PostPauseState = kReady;
-  consoleResult = NULL ;
-  displayResult = NULL ;
+  consoleResult = nullptr;
+  displayResult = nullptr;
   m_PauseRequested = m_PausedAfterFrame = false;
   renderFrontend.ConnectToBackend(backendAddress, msg, result, console);
 }
@@ -804,6 +804,10 @@ bool VirtualFrontEnd::Stop()
         }
         result = true;
         break;
+
+      default:
+        // Do nothing special.
+        break;
     }
   }
   catch (pov_base::Exception& e)
@@ -932,7 +936,7 @@ State VirtualFrontEnd::Process()
       try
       {
         m_Session->SetSucceeded (false);
-        if (animationProcessing != NULL)
+        if (animationProcessing != nullptr)
         {
           shelloutProcessing->SetFrameClock(animationProcessing->GetNominalFrameNumber(), animationProcessing->GetClockValue());
           if (shelloutProcessing->SkipNextFrame() == false)
@@ -1019,7 +1023,7 @@ State VirtualFrontEnd::Process()
         string str(shelloutProcessing->GetSkipMessage());
         m_Session->AppendStatusMessage (str) ;
         m_Session->AppendStreamMessage (vfeSession::mInformation, str.c_str()) ;
-        if ((animationProcessing != NULL) && (animationProcessing->MoreFrames() == true))
+        if ((animationProcessing != nullptr) && (animationProcessing->MoreFrames() == true))
         {
           animationProcessing->ComputeNextFrame();
           m_Session->SetPixelsRendered(0, m_Session->GetTotalPixels());
@@ -1121,7 +1125,7 @@ State VirtualFrontEnd::Process()
               try { renderFrontend.CloseScene(sceneId); }
               catch (pov_base::Exception&) { /* Ignore any error here! */ }
 
-              if ((animationProcessing != NULL) && (animationProcessing->MoreFrames() == true))
+              if ((animationProcessing != nullptr) && (animationProcessing->MoreFrames() == true))
               {
                 animationProcessing->ComputeNextFrame();
                 m_Session->SetPixelsRendered(0, m_Session->GetTotalPixels());
@@ -1142,16 +1146,22 @@ State VirtualFrontEnd::Process()
           }
 
           // now we display the render window, if enabled
-          shared_ptr<Display> display(GetDisplay());
-          if (display != NULL)
           {
-            vfeDisplay *disp = dynamic_cast<vfeDisplay *>(display.get());
-            if (disp != NULL)
-              disp->Show () ;
+            shared_ptr<Display> display(GetDisplay());
+            if (display != nullptr)
+            {
+              vfeDisplay *disp = dynamic_cast<vfeDisplay *>(display.get());
+              if (disp != nullptr)
+                disp->Show () ;
+            }
           }
           return state = kRendering;
+
+        default:
+          // Do nothing special.
+          return state;
       }
-      return kParsing;
+      POV_ASSERT(false); // All cases of the preceding switch should return.
 
     case kRendering:
     case kPausedRendering:
@@ -1175,7 +1185,7 @@ State VirtualFrontEnd::Process()
           }
           try
           {
-            if (animationProcessing != NULL)
+            if (animationProcessing != nullptr)
             {
               if (m_Session->OutputToFileSet())
                 m_Session->AdviseOutputFilename (imageProcessing->WriteImage(options, animationProcessing->GetNominalFrameNumber(), animationProcessing->GetFrameNumberDigits()));
@@ -1224,7 +1234,7 @@ State VirtualFrontEnd::Process()
     case kPostFrameShellout:
       if (shelloutProcessing->ShelloutRunning() || HandleShelloutCancel())
         return state;
-      if ((animationProcessing == NULL) || animationProcessing->MoreFrames() == false)
+      if ((animationProcessing == nullptr) || animationProcessing->MoreFrames() == false)
       {
         m_Session->SetSucceeded (true);
         if (m_PauseRequested)
@@ -1327,7 +1337,11 @@ State VirtualFrontEnd::Process()
 
     case kDone:
       return state = kReady;
+
+    default:
+      return state;
   }
+  POV_ASSERT(false); // All cases of the preceding switch should return.
 
   return state;
 }
