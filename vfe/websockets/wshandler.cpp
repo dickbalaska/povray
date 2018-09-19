@@ -326,7 +326,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 
 	char** pp = oldargv;
 	while (*pp) {
-		delete *pp;
+		delete[] *pp;
 		pp++;
 	}
 	delete oldargv;

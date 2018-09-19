@@ -81,7 +81,7 @@ void WsGraphics::DrawPixelBlock(unsigned int x1, unsigned int y1, unsigned int x
         }
 	}
 	WebsocketServer::sendBinary(m_hdl, buff, fullsize);
-	delete buff;
+	delete[] buff;
 }
 
 void WsGraphics::Clear()
