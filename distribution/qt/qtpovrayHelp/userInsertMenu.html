@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 	var compassTextUp = "Up: qtpovray";
-	var compassTextPrev = "Prev: qtpovray - Find / Search text";
+	var compassTextPrev = "Prev: qtpovray - Insert scriptlets";
 	var compassTextNext = "Next: qtpovray - Bookmarks";
 </script>
 </head><body onload="compassInit(); return false;" onunload="compassUnload(); return false;" >
@@ -20,6 +20,7 @@
 <h2>User Insert Menu</h2>
 </center></td><td width="20%" align="right" valign="top">September 22, 2017</td></tr></table>
 <hr />
+<img class="center" src="g/qtpovrayUserInsertMenu.png" />
 There are two root directories that are searched for your insert menus.
 <ul>
 <li><b>System Menu</b> - These are the menus distributed with qtpovray. They typically are installed in a read-only directory.</li>
@@ -34,6 +35,15 @@ Three types of entries are supported:
 	<li><b>.txt</b> - The contents of the .txt file are inserted as your text.</li>
 	<li><b>.png</b> - An optional graphic that will be displayed as a tooltip.</li> 
 </ul>
+So for example, I have the User Ins Menu <a href="configDirs.html">configured</a> to <code>/home/dick/povray/myInsertMenu</code>.<br>
+In that directory, I have a directory <code>00 - Bucko Menu</code>.
+In that directory, I have two files <code>10 - New Object.txt</code> and <code>20 - New Director.txt</code>.<pre>
++ myInsertMenu
+   + 00 - Bucko Menu
+      +- 30 - New Object.txt
+      +- 40 - New Director.txt</pre>
+This results in the <code>Bucko Menu</code> being inserted at the top of the menu
+(because it starts with <code>00</code>).
 
 <hr />
 </div>
