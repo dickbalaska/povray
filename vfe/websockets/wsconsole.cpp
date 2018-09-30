@@ -44,6 +44,7 @@
 #include <unistd.h>
 #include <sys/select.h>
 
+
 // from directory "vfe"
 //#include "vfeplatform.h"
 #include "vfe.h"
@@ -370,6 +371,11 @@ int main (int argc, char **argv)
     sigthread = new boost::thread(SignalHandler);
     ::povray::websockets::WebsocketServer::init();
     int port = 4402;
+    if (argc > 1) {
+    	int a = atoi(argv[1]);
+    	if (a > 0)
+    		port = a;
+    }
     while (!::povray::websockets::WebsocketServer::listen(port)) {
     	cerr << "failed to init socket port " << port << endl;
         ProcessSignal();
