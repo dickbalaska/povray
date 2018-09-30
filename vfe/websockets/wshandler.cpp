@@ -265,7 +265,7 @@ void WsHandler::DeleteArgv(char**& argv)
 	//delete argv;
 }
 
-static vfeDisplay *WsDisplayCreator (unsigned int width, unsigned int height, GammaCurvePtr gamma, vfeSession *session, bool visible)
+static vfeDisplay* WsDisplayCreator (unsigned int width, unsigned int height, GammaCurvePtr gamma, vfeSession *session, bool visible)
 {
 #ifdef _DEBUG
 	cerr << "WsDisplayCreator: w=" << width << " h=" << height << endl;
