@@ -69,6 +69,8 @@ WsHandler::WsHandler()
 
 WsHandler::~WsHandler() {
 	// TODO Auto-generated destructor stub
+	if (renderMonThread)
+		delete renderMonThread;
 }
 
 void wsSend(websocketpp::connection_hdl hdl, const char* msg) {
@@ -329,7 +331,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 		delete[] *pp;
 		pp++;
 	}
-	delete oldargv;
+	delete[] oldargv;
 
     if (session->SetOptions(*session->renderOptions) != vfeNoError)
     {
@@ -353,6 +355,8 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
         return;
     }
     DeleteArgv(argv);
+	if (renderMonThread)
+		delete renderMonThread;
     renderMonThread = new boost::thread(RenderMonitor, hdl, session);
     //RenderMonitor(hdl, session);
 }
