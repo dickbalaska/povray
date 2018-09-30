@@ -333,63 +333,64 @@ static void CleanupBenchmark(vfeWebsocketSession *session, string& ini, string& 
 int main (int argc, char **argv)
 {
 	vfeWebsocketSession* session;
-    vfeStatusFlags    flags;
-    vfeRenderOptions  opts;
-    ReturnValue       retval = RETURN_OK;
-    bool              running_benchmark = false;
-    string            bench_ini_name;
-    string            bench_pov_name;
-    sigset_t          sigset;
-    boost::thread*    sigthread;
-    char **           argv_copy=argv; /* because argv is updated later */
-    int               argc_copy=argc; /* because it might also be updated */
+	vfeStatusFlags    flags;
+	vfeRenderOptions  opts;
+	ReturnValue       retval = RETURN_OK;
+	bool              running_benchmark = false;
+	string            bench_ini_name;
+	string            bench_pov_name;
+	sigset_t          sigset;
+	//boost::thread     sigthread;
+	char **           argv_copy=argv; /* because argv is updated later */
+	int               argc_copy=argc; /* because it might also be updated */
 
-    /*fprintf(stderr, "%s: This is a RELEASE CANDIDATE version of POV-Ray. General distribution is discouraged.\n", PACKAGE);*/
+	/*fprintf(stderr, "%s: This is a RELEASE CANDIDATE version of POV-Ray. General distribution is discouraged.\n", PACKAGE);*/
 
-    // block some signals for this thread as well as those created afterwards
-    sigemptyset(&sigset);
+	// block some signals for this thread as well as those created afterwards
+	sigemptyset(&sigset);
 
 #ifdef SIGQUIT
-    sigaddset(&sigset, SIGQUIT);
+	sigaddset(&sigset, SIGQUIT);
 #endif
 #ifdef SIGTERM
-    sigaddset(&sigset, SIGTERM);
+	sigaddset(&sigset, SIGTERM);
 #endif
 #ifdef SIGINT
-    sigaddset(&sigset, SIGINT);
+	sigaddset(&sigset, SIGINT);
 #endif
 #ifdef SIGPIPE
-    sigaddset(&sigset, SIGPIPE);
+	sigaddset(&sigset, SIGPIPE);
 #endif
 #ifdef SIGCHLD
-    sigaddset(&sigset, SIGCHLD);
+	sigaddset(&sigset, SIGCHLD);
 #endif
 
-    pthread_sigmask(SIG_BLOCK, &sigset, NULL);
+	pthread_sigmask(SIG_BLOCK, &sigset, NULL);
 
-    // create the signal handling thread
-    sigthread = new boost::thread(SignalHandler);
-    ::povray::websockets::WebsocketServer::init();
-    int port = 4402;
-    if (argc > 1) {
-    	int a = atoi(argv[1]);
-    	if (a > 0)
-    		port = a;
-    }
-    while (!::povray::websockets::WebsocketServer::listen(port)) {
-    	cerr << "failed to init socket port " << port << endl;
-        ProcessSignal();
-        if (gCancelRender)
-        	return(RETURN_USER_ABORT);
-    	Delay(1000);
-    }
-    cerr << "listening on port " << port << endl;
-    ::povray::websockets::WebsocketServer::setReceiveHandler(&::povray::websockets::WsHandler::staticReceiveHandler);
-    boost::thread wsthread(::povray::websockets::WebsocketServer::run);
+	// create the signal handling thread
+	//sigthread = new boost::thread(SignalHandler);
+	boost::thread sigthread(SignalHandler);
+	::povray::websockets::WebsocketServer::init();
+	int port = 4402;
+	if (argc > 1) {
+		int a = atoi(argv[1]);
+		if (a > 0)
+			port = a;
+	}
+	while (!::povray::websockets::WebsocketServer::listen(port)) {
+		cerr << "failed to init socket port " << port << endl;
+		ProcessSignal();
+		if (gCancelRender)
+			return(RETURN_USER_ABORT);
+		Delay(1000);
+	}
+	cerr << "listening on port " << port << endl;
+	::povray::websockets::WebsocketServer::setReceiveHandler(&::povray::websockets::WsHandler::staticReceiveHandler);
+	boost::thread wsthread(::povray::websockets::WebsocketServer::run);
 
-    ::povray::websockets::waitForShutdown();
-    ::povray::websockets::WebsocketServer::stop();
-    wsthread.join();
+	::povray::websockets::waitForShutdown();
+	::povray::websockets::WebsocketServer::stop();
+	wsthread.join();
 
-    return retval;
+	return retval;
 }
