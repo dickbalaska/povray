@@ -243,6 +243,7 @@ libraries/tiff/libtiff/tiffconf.h
 .dirstamp
 
 # debian build foo
+/debian/
 /libraries.donotuse
 
 # =====================
