@@ -95,6 +95,7 @@ namespace vfePlatform
     		vfeWebsocketSession(websocketpp::connection_hdl hdl, int id = 0);
             virtual ~vfeWebsocketSession() {
             	if (renderOptions) delete renderOptions;
+           		DeleteArgv();
             }
 
             virtual UCS2String GetTemporaryPath(void) const;
@@ -144,6 +145,12 @@ namespace vfePlatform
 
             websocketpp::connection_hdl m_hdl;
 
+        private:
+
+            int		argc;
+            char**	argv;
+
+            void	DeleteArgv();
     } ;
 
     ///////////////////////////////////////////////////////////////////////

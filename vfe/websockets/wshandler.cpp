@@ -257,6 +257,7 @@ void WsHandler::ParseCommandLine(const string& s, int& argc, char**& argv)
 	}
 	*nargv = NULL;
 }
+
 void WsHandler::DeleteArgv(char**& argv)
 {
 	char** pp = argv;
@@ -282,7 +283,7 @@ static vfeDisplay* WsDisplayCreator (unsigned int width, unsigned int height, Ga
 void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 {
 	int argc;
-	char** argv;		// XXX These leak
+	char** argv;
 	gCancelRender = false;
 	ParseCommandLine(data, argc, argv);
 	char** oldargv = argv;
@@ -300,6 +301,12 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 	session->renderOptions = new vfeRenderOptions();
     if (session->Initialize(NULL, NULL) != vfeNoError) {
         ErrorExit(hdl);
+    	char** pp = oldargv;
+    	while (*pp) {
+    		delete[] *pp;
+    		pp++;
+    	}
+    	delete[] oldargv;
         return;
     }
 
@@ -321,7 +328,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
     if (nthreads < 2)
         nthreads = 4;
     session->renderOptions->SetThreadCount(nthreads);
-    session->GetUnixOptions()->ProcessOptions(&argc, &argv);
+    session->GetUnixOptions()->ProcessOptions(argc, argv);
     session->GetUnixOptions()->Process_povray_ini(*session->renderOptions);
     while (*++argv)
     	session->renderOptions->AddCommand (*argv);

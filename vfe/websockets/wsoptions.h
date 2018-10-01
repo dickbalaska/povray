@@ -290,7 +290,7 @@ namespace vfePlatform
              The argument list is replaced with a version
              with the custom options removed.
         */
-        void ProcessOptions(int *argc, char **argv[]);
+        void ProcessOptions(int argc, char *argv[]);
 
         /**
              Search for povray.ini at standard locations
@@ -341,7 +341,7 @@ namespace vfePlatform
         void remove_arg(int *argc, char *argv[], int index);
         bool file_exist(const string &name);
 
-        vfeSession *m_Session;
+        vfeSession* m_Session;
         string  m_home;
         string  m_user_dir;
         string  m_sysconf;                // system conf filename

@@ -297,94 +297,111 @@ namespace vfePlatform
         return false;
     }
 
-    void WsOptionsProcessor::ProcessOptions(int *argc, char **argv[])
+    void WsOptionsProcessor::ProcessOptions(int argc_, char* argv_[])
     {
-        // add custom configuration options found in povray.conf files
-        for (list<Conf_Option>::iterator iter_c = m_custom_conf_options.begin(); iter_c != m_custom_conf_options.end(); iter_c++)
-        {
-            Option_Info new_opt((*iter_c).Section, (*iter_c).Name, (*iter_c).Value, ((*iter_c).Value != ""), "", "");
+    	char **argv = (char **)malloc((argc_ + 1) * sizeof(char *));
+    	int argc = argc_;
+    	for (int i = 0; i < argc; i++) {
+    		argv[i] = (char *)malloc(strlen(argv_[i]) + 1);
+    		strcpy(argv[i], argv_[i]);
+    	}
+    	//int argc;
+    	// add custom configuration options found in povray.conf files
+    	for (list<Conf_Option>::iterator iter_c = m_custom_conf_options.begin(); iter_c != m_custom_conf_options.end(); iter_c++)
+    	{
+    		Option_Info new_opt((*iter_c).Section, (*iter_c).Name, (*iter_c).Value, ((*iter_c).Value != ""), "", "");
 
-            list<Option_Info>::iterator iter = find(m_user_options.begin(), m_user_options.end(), new_opt);
-            if (iter == m_user_options.end())
-                m_user_options.push_back(new_opt);
-            else
-                (*iter).Value = (*iter_c).Value;
-        }
+    		list<Option_Info>::iterator iter = find(m_user_options.begin(), m_user_options.end(), new_opt);
+    		if (iter == m_user_options.end())
+    			m_user_options.push_back(new_opt);
+    		else
+    			(*iter).Value = (*iter_c).Value;
+    	}
 
-        m_user_options.sort();
-
-#ifdef UNIX_DEBUG
-        cerr << "OPTIONS (" << m_user_options.size() << ")" << endl;
-#endif
-
-        // check command line options and environment variables of all registered options
-        // this overrides povray.conf settings
-        for (list<Option_Info>::iterator iter = m_user_options.begin(); iter != m_user_options.end(); iter++)
-        {
-            // in ascending order of priority:
-            // environment variables:
-            if ((*iter).EnvVariable != "")
-            {
-                char *tmp = getenv((*iter).EnvVariable.c_str());
-                if (tmp) // variable defined?
-                    (*iter).Value = tmp;
-            }
-
-            // command line options:
-            // based on 3.6 XWIN_init_povray()
-            if ((*iter).CmdOption != "")
-            {
-                int oargc = *argc;
-                char **oargv = *argv;
-
-                // TODO: free those when no more needed
-                char **nargv = (char **)malloc((oargc + 1) * sizeof(char *));
-                int nargc = oargc;
-                for (int i = 0; i < nargc; i++)
-                {
-                    nargv[i] = (char *)malloc(strlen(oargv[i]) + 1);
-                    strcpy(nargv[i], oargv[i]);
-                }
-
-                nargv[nargc] = NULL;
-
-                vector<string> CmdVariations;
-                boost::split(CmdVariations, (*iter).CmdOption, boost::is_any_of("|"));
-
-                for (vector<string>::iterator iter_c = CmdVariations.begin(); iter_c != CmdVariations.end(); iter_c++)
-                {
-                    for (int i = 1; i < nargc;)
-                    {
-                        if (string(nargv[i]) == (*iter_c))
-                        {
-                            if ((*iter).has_param)
-                            {
-                                int j = i + 1;
-                                if (j < nargc && nargv[j] != NULL)
-                                {
-                                    (*iter).Value = nargv[j];
-                                    remove_arg(&nargc, nargv, j);
-                                }
-                            }
-                            else
-                                (*iter).Value = "on";  // FIXME [nc]
-                            remove_arg(&nargc, nargv, i);
-                        }
-                        else
-                            i++;
-                        if (nargv[i] == NULL)
-                            break;
-                    }
-                }
-
-                *argv = nargv;
-                *argc = nargc;
-            }
+    	m_user_options.sort();
 
 #ifdef UNIX_DEBUG
-            cerr << "  " << (*iter).Name << " = " << (*iter).Value << "(" << (*iter).CmdOption << ", " << (*iter).EnvVariable << ")" << endl;
+    	cerr << "OPTIONS (" << m_user_options.size() << ")" << endl;
 #endif
-        }
+
+    	// check command line options and environment variables of all registered options
+    	// this overrides povray.conf settings
+    	for (list<Option_Info>::iterator iter = m_user_options.begin(); iter != m_user_options.end(); iter++) {
+    		// in ascending order of priority:
+    		// environment variables:
+    		if ((*iter).EnvVariable != "") {
+    			char *tmp = getenv((*iter).EnvVariable.c_str());
+    			if (tmp) // variable defined?
+    				(*iter).Value = tmp;
+    		}
+
+    		// command line options:
+    		// based on 3.6 XWIN_init_povray()
+    		if ((*iter).CmdOption != "") {
+    			int oargc = argc;
+    			char **oargv = argv;
+
+    			// TODO: free those when no more needed
+    			char **nargv = (char **)malloc((oargc + 1) * sizeof(char *));
+    			int nargc = oargc;
+    			for (int i = 0; i < nargc; i++) {
+    				nargv[i] = (char *)malloc(strlen(oargv[i]) + 1);
+    				strcpy(nargv[i], oargv[i]);
+    			}
+
+    			nargv[nargc] = NULL;
+
+    			vector<string> CmdVariations;
+    			boost::split(CmdVariations, (*iter).CmdOption, boost::is_any_of("|"));
+
+    			for (vector<string>::iterator iter_c = CmdVariations.begin(); iter_c != CmdVariations.end(); iter_c++) {
+    				for (int i = 1; i < nargc;)
+    				{
+    					if (string(nargv[i]) == (*iter_c))
+    					{
+    						if ((*iter).has_param)
+    						{
+    							int j = i + 1;
+    							if (j < nargc && nargv[j] != NULL)
+    							{
+    								(*iter).Value = nargv[j];
+    								remove_arg(&nargc, nargv, j);
+    							}
+    						}
+    						else
+    							(*iter).Value = "on";  // FIXME [nc]
+    						remove_arg(&nargc, nargv, i);
+    					}
+    					else
+    						i++;
+    					if (nargv[i] == NULL)
+    						break;
+    				}
+    			}
+    			if (argv) {
+    				char** pp = argv;
+    				while (*pp) {
+    					delete *pp;
+    					pp++;
+    				}
+    				delete argv;
+    			}
+    			argv = nargv;
+    			//argc = nargc;
+    		}
+
+#ifdef UNIX_DEBUG
+    		cerr << "  " << (*iter).Name << " = " << (*iter).Value << "(" << (*iter).CmdOption << ", " << (*iter).EnvVariable << ")" << endl;
+#endif
+    	}
+		if (argv) {
+			char** pp = argv;
+			while (*pp) {
+				delete *pp;
+				pp++;
+			}
+			delete argv;
+		}
     }
 
     // based on 3.x RemoveArgs() by Andreas Dilger

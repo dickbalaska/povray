@@ -45,10 +45,11 @@
 #include <sys/select.h>
 
 
+#include "config.h"
+
 // from directory "vfe"
 //#include "vfeplatform.h"
 #include "vfe.h"
-
 // from directory "unix"
 //#include "disp.h"
 #include "backend/povray.h"
@@ -236,6 +237,7 @@ void ProcessSignal (void)
 //    GetRenderWindow()->PauseWhenDoneNotifyEnd();
 //}
 
+#if 0
 static ReturnValue PrepareBenchmark(vfeSession *session, vfeRenderOptions& opts, string& ini, string& pov, int argc, char **argv)
 {
     // parse command-line options
@@ -329,6 +331,7 @@ static void CleanupBenchmark(vfeWebsocketSession *session, string& ini, string& 
     fprintf(stderr, "%s: removing %s\n", PACKAGE, pov.c_str());
     session->DeleteTemporaryFile(ASCIItoUCS2String(pov.c_str()));
 }
+#endif
 
 int main (int argc, char **argv)
 {
@@ -341,8 +344,8 @@ int main (int argc, char **argv)
 	string            bench_pov_name;
 	sigset_t          sigset;
 	//boost::thread     sigthread;
-	char **           argv_copy=argv; /* because argv is updated later */
-	int               argc_copy=argc; /* because it might also be updated */
+	//char **           argv_copy=argv; /* because argv is updated later */
+	//int               argc_copy=argc; /* because it might also be updated */
 
 	/*fprintf(stderr, "%s: This is a RELEASE CANDIDATE version of POV-Ray. General distribution is discouraged.\n", PACKAGE);*/
 

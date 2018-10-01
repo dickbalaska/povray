@@ -92,7 +92,9 @@ namespace vfePlatform
         m_LastTimestamp(0),
 		m_TimestampOffset(0),
 		renderOptions(NULL),
-		m_hdl(hdl)
+		m_hdl(hdl),
+		argc(0),
+		argv(nullptr)
     {
         m_OptionsProc = shared_ptr<WsOptionsProcessor>(new WsOptionsProcessor(this, hdl));
 		m_OptimizeForConsoleOutput = false;
@@ -363,6 +365,19 @@ namespace vfePlatform
         m_OptionsProc->IORestrictionsError(UCS2toASCIIString(file()), isWrite, true);
         return (false);
     }
+
+    void vfeWebsocketSession::DeleteArgv()
+    {
+    	if (argv) {
+			char** pp = argv;
+			while (*pp) {
+				delete *pp;
+				pp++;
+			}
+			delete[] argv;
+    	}
+    }
+
 
     /////////////////////////////////////////////////////////////////////////////
     // Shellout support class (UnixShelloutProcessing)
