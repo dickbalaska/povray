@@ -361,7 +361,7 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
         DeleteArgv(argv);
         return;
     }
-    DeleteArgv(argv);
+    //DeleteArgv(argv);
 	if (renderMonThread)
 		delete renderMonThread;
     renderMonThread = new boost::thread(RenderMonitor, hdl, session);

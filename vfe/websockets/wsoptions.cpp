@@ -305,6 +305,7 @@ namespace vfePlatform
     		argv[i] = (char *)malloc(strlen(argv_[i]) + 1);
     		strcpy(argv[i], argv_[i]);
     	}
+    	argv[argc] = nullptr;
     	//int argc;
     	// add custom configuration options found in povray.conf files
     	for (list<Conf_Option>::iterator iter_c = m_custom_conf_options.begin(); iter_c != m_custom_conf_options.end(); iter_c++)
@@ -380,9 +381,11 @@ namespace vfePlatform
     			}
     			if (argv) {
     				char** pp = argv;
+    				int	z = 0;
     				while (*pp) {
     					delete *pp;
     					pp++;
+    					z++;
     				}
     				delete argv;
     			}
