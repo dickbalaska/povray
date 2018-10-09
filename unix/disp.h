@@ -11,7 +11,7 @@
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
-/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 1991-2018 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -41,8 +41,6 @@
 
 #include "vfe.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace pov_frontend
 {
     using namespace vfe;
@@ -52,8 +50,8 @@ namespace pov_frontend
     class UnixDisplay : public vfeDisplay
     {
         public:
-            UnixDisplay(unsigned int w, unsigned int h, GammaCurvePtr gamma, vfeSession *session, bool visible) :
-                vfeDisplay(w, h, gamma, session, visible) {};
+            UnixDisplay(unsigned int w, unsigned int h, vfeSession *session, bool visible) :
+                vfeDisplay(w, h, session, visible) {};
             virtual ~UnixDisplay() {} ;
             virtual void Initialise() = 0;
             virtual void Close() = 0;
@@ -95,8 +93,8 @@ namespace pov_frontend
     inline UnixDisplay *GetRenderWindow (void)
     {
         Display *p = gDisplay.get();
-        if (p == NULL)
-            return NULL;
+        if (p == nullptr)
+            return nullptr;
         return dynamic_cast<UnixDisplay *>(p) ;
     }
 }

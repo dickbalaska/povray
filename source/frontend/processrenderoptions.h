@@ -8,7 +8,7 @@
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
-/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 1991-2018 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -79,14 +79,18 @@ class ProcessRenderOptions : public ProcessOptions
         {
             const char* code;               // code used in INI and command line options
             int         internalId;         // e.g. kPOVList_GammaType_*
+            const char* text;               // human-readable text
         };
 
-        int ParseFileType(char, POVMSType, int*, bool* pHas16BitGreyscale = NULL);
-        char UnparseFileType(int);
+        int ParseFileType(char, POVMSType, int*, bool* pHas16BitGreyscale = nullptr);
+        static char UnparseFileType(int);
         int ParseGammaType(char*, int*);
-        const char* UnparseGammaType(int);
-        int ParseParameterCode(const ProcessRenderOptions::Parameter_Code_Table* codeTable, char* code, int* pInternalId);
-        const char* UnparseParameterCode(const ProcessRenderOptions::Parameter_Code_Table* codeTable, int internalId);
+        static const char* UnparseGammaType(int);
+        static const char* GetGammaTypeText(int);
+        static const char* GetDitherMethodText(int);
+        static int ParseParameterCode(const ProcessRenderOptions::Parameter_Code_Table* codeTable, char* code, int* pInternalId);
+        static const char* UnparseParameterCode(const ProcessRenderOptions::Parameter_Code_Table* codeTable, int internalId);
+        static const char* GetParameterCodeText(const ProcessRenderOptions::Parameter_Code_Table* codeTable, int internalId);
 };
 
 }

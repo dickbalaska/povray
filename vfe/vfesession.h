@@ -11,7 +11,7 @@
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
-/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 1991-2018 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -43,8 +43,6 @@
 
 #include <boost/thread.hpp>
 #include <boost/thread/condition.hpp>
-
-#include "base/image/colourspace.h"
 
 #include "frontend/simplefrontend.h"
 
@@ -358,7 +356,7 @@ namespace vfe
 
     public:
       // Our DisplayCreator functor - see vfeSession::SetDisplayCreator().
-      typedef boost::function<vfeDisplay *(unsigned int, unsigned int, GammaCurvePtr, vfeSession *session, bool)> DisplayCreator;
+      typedef boost::function<vfeDisplay *(unsigned int, unsigned int, vfeSession *session, bool)> DisplayCreator;
       typedef enum
       {
         mUnclassified = 0,
@@ -463,7 +461,7 @@ namespace vfe
       // concept representing the connection between VFE and the POV-Ray
       // internal code) was created successfully. It will throw an exception
       // of type pov_base::Exception if the connection does not exist.
-      void CheckFrontend() const { if (m_Frontend == NULL) throw POV_EXCEPTION_STRING("Frontend not connected"); }
+      void CheckFrontend() const { if (m_Frontend == nullptr) throw POV_EXCEPTION_STRING("Frontend not connected"); }
 
       // Clears many of the internal state information held by VFE regarding
       // a render. Typically called before starting a new render. Included in
@@ -504,7 +502,7 @@ namespace vfe
 
       // Used to set up a session with a POV backend. Accepts two
       // parameters - a destination (vfeDestInfo) and authorization
-      // (vfeAuthInfo), both pointers. Currently these must be NULL.
+      // (vfeAuthInfo), both pointers. Currently these must be `nullptr`.
       //
       // Intialize() will call the Reset() method, and then create
       // the session's worker thread, at which time it will wait on
@@ -529,7 +527,7 @@ namespace vfe
 
       // Returns a copy of the shared pointer containing the current instance
       // of a pov_frontend::Display-derived render preview instance, which may
-      // be NULL.
+      // be `nullptr`.
       virtual shared_ptr<Display> GetDisplay() const;
 
       // If a VFE implementation has provided a display creator functor via
@@ -542,7 +540,7 @@ namespace vfe
       // window be created. The display instance returned is expected to conform
       // to the definition of the pov_frontend::Display class (but it typically
       // a platform-specific derivative of that.)
-      virtual vfeDisplay *CreateDisplay(unsigned int width, unsigned int height, GammaCurvePtr gamma, bool visible = false);
+      virtual vfeDisplay *CreateDisplay(unsigned int width, unsigned int height, bool visible = false);
 
       // Used by VFE implementations to allow their own custom pov_frontend::Display
       // derived render preview window class to be created when the main POV-Ray code
@@ -1258,7 +1256,7 @@ namespace vfe
       static vfeSession *m_CurrentSessionTemporaryHack;
       shared_ptr<Console> m_Console;
 
-      virtual vfeDisplay *DefaultDisplayCreator (unsigned int width, unsigned int height, GammaCurvePtr gamma, vfeSession *session, bool visible);
+      virtual vfeDisplay *DefaultDisplayCreator (unsigned int width, unsigned int height, vfeSession *session, bool visible);
       DisplayCreator m_DisplayCreator;
 
       int m_MaxStatusMessages;

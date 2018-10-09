@@ -14,7 +14,7 @@
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
-/// Copyright 1991-2017 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 1991-2018 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -44,7 +44,8 @@
 
 #ifndef LIBJPEG_MISSING
 
-#include <setjmp.h>
+// C++ variants of standard C header files
+#include <csetjmp>
 
 // Standard C++ header files
 #include <string>
@@ -58,7 +59,8 @@ extern "C"
 #include <jpeglib.h>
 }
 
-// POV-Ray base header files
+// POV-Ray header files (base module)
+#include "base/image/dither.h"
 #include "base/image/metadata.h"
 
 // this must be the last file included
@@ -89,7 +91,7 @@ public:
     struct jpeg_error_mgr jerr;
     jpeg_source_mgr jsrc;
     jpeg_destination_mgr jdest;
-    jmp_buf setjmp_buffer;  // for return to caller
+    std::jmp_buf setjmp_buffer;  // for return to caller
     char buffer[POV_JPEG_BUFFER_SIZE];
     JSAMPROW row_pointer[1];
     int row_stride;
@@ -104,8 +106,8 @@ POV_JPEG_Write_Buffer::POV_JPEG_Write_Buffer()
     memset(&jsrc, 0, sizeof(jsrc));
     memset(&jdest, 0, sizeof(jdest));
     memset(&cinfo, 0, sizeof(cinfo));
-    row_pointer[0] = NULL;
-    file = NULL;
+    row_pointer[0] = nullptr;
+    file = nullptr;
     row_stride = 0;
 }
 
@@ -117,7 +119,7 @@ public:
     struct jpeg_error_mgr jerr;
     jpeg_source_mgr jsrc;
     jpeg_destination_mgr jdest;
-    jmp_buf setjmp_buffer;  // for return to caller
+    std::jmp_buf setjmp_buffer;  // for return to caller
     char buffer[POV_JPEG_BUFFER_SIZE];
     JSAMPROW row_pointer[1];
     int row_stride;
@@ -133,8 +135,8 @@ POV_JPEG_Read_Buffer::POV_JPEG_Read_Buffer()
     memset(&jsrc, 0, sizeof(jsrc));
     memset(&jdest, 0, sizeof(jdest));
     memset(&cinfo, 0, sizeof(cinfo));
-    row_pointer[0] = NULL;
-    file = NULL;
+    row_pointer[0] = nullptr;
+    file = nullptr;
     row_stride = 0;
 }
 
@@ -159,7 +161,7 @@ extern "C"
         (*cinfo->err->output_message)(cinfo);
 
         // Return control to the setjmp point
-        longjmp(myerr->setjmp_buffer, 1);
+        std::longjmp(myerr->setjmp_buffer, 1);
     }
 
     METHODDEF(void) write_error_exit (j_common_ptr cinfo)
@@ -169,7 +171,7 @@ extern "C"
         (*cinfo->err->output_message)(cinfo);
 
         // Return control to the setjmp point
-        longjmp(myerr->setjmp_buffer, 1);
+        std::longjmp(myerr->setjmp_buffer, 1);
     }
 
     METHODDEF(void) read_output_message(j_common_ptr cinfo)
@@ -530,6 +532,6 @@ void Write (OStream *file, const Image *image, const Image::WriteOptions& option
 
 } // end of namespace Jpeg
 
-}
+} // end of namespace pov_base
 
 #endif  // LIBJPEG_MISSING
