@@ -1,3 +1,9 @@
+qtpovray (3.80.9~xenial1) xenial; urgency=low
+
+  * Update to POV-Ray Development build v3.8.0-alpha.9861167+av620
+
+ -- Dick Balaska <dick@buckosoft.com>  Tue, 09 Oct 2018 23:31:27 -0400
+
 qtpovray (3.80.8~xenial1) xenial; urgency=low
 
   * Bug 20 - Add a Font chooser to select the console font
