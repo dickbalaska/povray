@@ -30,7 +30,7 @@ using namespace vfe;
 
 class QtGraphics : public vfeDisplay {
 public:
-	QtGraphics(unsigned int w, unsigned int h, GammaCurvePtr gamma, vfeSession *session, bool visible);
+	QtGraphics(unsigned int w, unsigned int h, vfeSession *session, bool visible);
 	virtual ~QtGraphics();
 
     virtual void DrawPixel(unsigned int x, unsigned int y, const RGBA8& colour);

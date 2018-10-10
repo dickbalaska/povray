@@ -17,8 +17,8 @@ static bool wsDebug = false;
 namespace povray {
 namespace qtpov {
 
-QtGraphics::QtGraphics(unsigned int w, unsigned int h, GammaCurvePtr gamma, vfeSession *session, bool visible)
-	: vfeDisplay(w, h, gamma, session, visible)
+QtGraphics::QtGraphics(unsigned int w, unsigned int h, vfeSession *session, bool visible)
+	: vfeDisplay(w, h, session, visible)
 {
 #ifdef _DEBUG
 	std::cerr << "WsGraphics::WsGraphics: w=" << w << " h=" << h << std::endl;

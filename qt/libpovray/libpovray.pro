@@ -65,6 +65,7 @@ SOURCES += \
 	$$sDIR/base/animation/animation.cpp \
 	$$sDIR/base/animation/moov.cpp \
 	$$sDIR/base/colour.cpp \
+	$$sDIR/base/data/bluenoise64a.cpp \
 	$$sDIR/base/fileinputoutput.cpp \
 	$$sDIR/base/fileutil.cpp \
 	$$sDIR/base/font/crystal.cpp \
@@ -73,6 +74,7 @@ SOURCES += \
 	$$sDIR/base/font/timrom.cpp \
 	$$sDIR/base/image/bmp.cpp \
 	$$sDIR/base/image/colourspace.cpp \
+	$$sDIR/base/image/dither.cpp \
 	$$sDIR/base/image/encoding.cpp \
 	$$sDIR/base/image/gif.cpp \
 	$$sDIR/base/image/gifdecod.cpp \
@@ -221,6 +223,7 @@ HEADERS += \
 	$$sDIR/base/build.h \
 	$$sDIR/base/colour.h \
 	$$sDIR/base/configbase.h \
+	$$sDIR/base/data/bluenoise64a.h \
 	$$sDIR/base/fileinputoutput.h \
 	$$sDIR/base/fileutil.h \
 	$$sDIR/base/font/crystal.h \
@@ -229,6 +232,7 @@ HEADERS += \
 	$$sDIR/base/font/timrom.h \
 	$$sDIR/base/image/bmp.h \
 	$$sDIR/base/image/colourspace.h \
+	$$sDIR/base/image/dither.h \
 	$$sDIR/base/image/encoding.h \
 	$$sDIR/base/image/gif.h \
 	$$sDIR/base/image/hdr.h \

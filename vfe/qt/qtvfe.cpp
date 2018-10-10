@@ -159,12 +159,12 @@ void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp)
 
 QtVfe*	gQtVfe;
 
-static vfeDisplay* QtDisplayCreator (unsigned int width, unsigned int height, GammaCurvePtr gamma, vfeSession *session, bool visible)
+static vfeDisplay* QtDisplayCreator (unsigned int width, unsigned int height, vfeSession *session, bool visible)
 {
 #ifdef _DEBUG
 	cerr << "WsDisplayCreator: w=" << width << " h=" << height << endl;
 #endif
-	QtGraphics* qtg = new QtGraphics(width, height, gamma, session, visible);
+	QtGraphics* qtg = new QtGraphics(width, height, session, visible);
 	qtg->setQtVfe(gQtVfe);
 	//qtg->m_hdl = gHdl;
 	qtg->SendInit();
@@ -379,33 +379,33 @@ void  QtVfe::commandVersion()
 			.arg(DISTRIBUTION_MESSAGE_1).arg(DISTRIBUTION_MESSAGE_2).arg(DISTRIBUTION_MESSAGE_3)
 			.arg(POV_RAY_COPYRIGHT).arg(DISCLAIMER_MESSAGE_1).arg(DISCLAIMER_MESSAGE_2);
 
-	s = QString("%1"
-				"Compilation settings:\n"
-				"  Build architecture:  %2\n"
-//				"  Built/Optimized for: %3\n"
-				"  Compiler vendor:     %4\n"
-//				"  Compiler version:    %5\n"
-				"  Compiler flags:      %6\n\n")
-			.arg(s)
-			.arg(BUILD_ARCH)
-			//.arg(BUILT_FOR)
-			.arg(COMPILER_VENDOR)
-			//.arg(COMPILER_VERSION)
-			.arg(COMPILER_CXXFLAGS);
+//	s = QString("%1"
+//				"Compilation settings:\n"
+//				"  Build architecture:  %2\n"
+////				"  Built/Optimized for: %3\n"
+//				"  Compiler vendor:     %4\n"
+////				"  Compiler version:    %5\n"
+//				"  Compiler flags:      %6\n\n")
+//			.arg(s)
+//			.arg(BUILD_ARCH)
+//			//.arg(BUILT_FOR)
+//			.arg(COMPILER_VENDOR)
+//			//.arg(COMPILER_VERSION)
+//			.arg(COMPILER_CXXFLAGS);
 
-	s = QString("%1"
-				"Host info:\n"
-				"  Name:\t\t%2\n"
-				"  OS:\t\t%3\n"
-				"  Architecture:\t%4\n"
-				"  Version:\t\t%5\n"
-				"  CPU count:\t%6\n\n")
-			.arg(s)
-			.arg(HOST_NAME)
-			.arg(HOST_OS)
-			.arg(HOST_ARCH)
-			.arg(HOST_VERSION)
-			.arg(HOST_CPUNUM);
+//	s = QString("%1"
+//				"Host info:\n"
+//				"  Name:\t\t%2\n"
+//				"  OS:\t\t%3\n"
+//				"  Architecture:\t%4\n"
+//				"  Version:\t\t%5\n"
+//				"  CPU count:\t%6\n\n")
+//			.arg(s)
+//			.arg(HOST_NAME)
+//			.arg(HOST_OS)
+//			.arg(HOST_ARCH)
+//			.arg(HOST_VERSION)
+//			.arg(HOST_CPUNUM);
 
 	vfeQtSession* tSession = new vfeQtSession(this);
 	QString t = tSession->GetUnixOptions()->GetPathsString();
