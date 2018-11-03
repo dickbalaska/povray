@@ -27,7 +27,8 @@ bool gCancelRender = false;
 
 QtVfe::QtVfe(QObject *parent) : QObject(parent)
 {
-	m_session = NULL;
+	m_renderMonThread = nullptr;
+	m_session = nullptr;
 }
 
 void QtVfe::sendMessageToPovray(const QString& message) {
@@ -186,9 +187,12 @@ void  QtVfe::commandRender(const QString& data)
 	if (ret) {
 		QString s = QString("Failed to chdir to '%1'").arg(argv[0]);
 		emitPovrayTextMessage(s_stream_fatal, s);
-//		stringstream ss;
-//		ss << "Failed to chdir to '" << argv[0] << "'" << endl;
-//		wsSend(hdl, ss.str());
+		char** pp = oldargv;
+		while (*pp) {
+			delete[] *pp;
+			pp++;
+		}
+		delete[] oldargv;
 		return;
 	}
 	m_session = new vfeQtSession(this);
@@ -196,6 +200,12 @@ void  QtVfe::commandRender(const QString& data)
 	if (m_session->Initialize(NULL, NULL) != vfe::vfeNoError) {
 
 		sessionErrorExit();
+		char** pp = oldargv;
+		while (*pp) {
+			delete[] *pp;
+			pp++;
+		}
+		delete[] oldargv;
 		return;
 	}
 
@@ -205,17 +215,17 @@ void  QtVfe::commandRender(const QString& data)
 	if (nthreads < 2)
 		nthreads = 4;
 	m_session->m_renderOptions->SetThreadCount(nthreads);
-	m_session->GetUnixOptions()->ProcessOptions(&argc, &argv);
+	m_session->GetUnixOptions()->ProcessOptions(argc, argv);
 	m_session->GetUnixOptions()->Process_povray_ini(*m_session->m_renderOptions);
 	while (*++argv)
 		m_session->m_renderOptions->AddCommand (*argv);
 
 	char** pp = oldargv;
 	while (*pp) {
-		delete *pp;
+		delete[] *pp;
 		pp++;
 	}
-	delete oldargv;
+	delete[] oldargv;
 
 	if (m_session->SetOptions(*m_session->m_renderOptions) != vfeNoError) {
 		string s = s_stream_fatal;
@@ -239,7 +249,9 @@ void  QtVfe::commandRender(const QString& data)
 		return;
 	}
 	deleteArgv(argv);
-	renderMonThread = new boost::thread(RenderMonitor, this, m_session);
+	if (m_renderMonThread)
+		delete m_renderMonThread;
+	m_renderMonThread = new boost::thread(RenderMonitor, this, m_session);
 }
 
 void  QtVfe::commandCancel()

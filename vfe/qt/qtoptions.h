@@ -294,7 +294,7 @@ namespace vfePlatform
              The argument list is replaced with a version
              with the custom options removed.
         */
-        void ProcessOptions(int *argc, char **argv[]);
+		void ProcessOptions(int argc, char *argv[]);
 
         /**
              Search for povray.ini at standard locations

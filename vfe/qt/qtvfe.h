@@ -57,7 +57,7 @@ private:
 	void	cancelRender(vfeQtSession* session);
 
 	vfeQtSession*	m_session;
-	boost::thread*			renderMonThread;
+	boost::thread*			m_renderMonThread;
 
 	friend void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp);
 };
