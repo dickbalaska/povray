@@ -245,6 +245,11 @@ moc_*
 /qt/libpovray/Makefile
 /qt/platform/Makefile
 /vfe/qt/config.h
+Makefile
+Makefile.Debug
+Makefile.Release
+*.db
+*.opendb
 
 # =====================
 # qtpovray debian build foo
