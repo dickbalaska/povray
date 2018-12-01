@@ -454,7 +454,7 @@ void OTextStream::putchar(int chr)
 #ifdef POV_NEW_LINE_STRING
     if (chr == '\n')
     {
-        for (char* c = POV_NEW_LINE_STRING; c != '\0'; ++c)
+        for (const char* c = POV_NEW_LINE_STRING; c != '\0'; ++c)
             stream->Write_Byte(*c);
     }
 #endif
