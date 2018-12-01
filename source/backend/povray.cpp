@@ -98,8 +98,8 @@
         }
     #endif
     #ifndef OPENEXR_MISSING
-		#include <OpenEXR/IlmBaseConfig.h>
-		#include <OpenEXR/OpenEXRConfig.h>
+		#include <IlmBaseConfig.h>
+		#include <OpenEXRConfig.h>
         // NOTE:
         //  Versions of OpenEXR and IlmImf prior to 1.7.1 do not seem to have a way to get the version number,
         //  nor do the official hard-coded Windows config headers.

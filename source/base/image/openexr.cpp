@@ -46,10 +46,10 @@
 #include <boost/scoped_array.hpp>
 
 // Other 3rd party header files
-#include <OpenEXR/ImfRgbaFile.h>
-#include <OpenEXR/ImfStringAttribute.h>
-#include <OpenEXR/ImfMatrixAttribute.h>
-#include <OpenEXR/ImfArray.h>
+#include <ImfRgbaFile.h>
+#include <ImfStringAttribute.h>
+#include <ImfMatrixAttribute.h>
+#include <ImfArray.h>
 
 // POV-Ray base header files
 #include "base/fileinputoutput.h"
