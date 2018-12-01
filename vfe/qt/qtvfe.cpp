@@ -13,8 +13,6 @@
 #include "backend/povray.h"
 #include "config.h"
 
-using namespace std;
-using namespace boost;
 using povray::qtpov::QtGraphics;
 
 namespace vfe {
@@ -133,7 +131,7 @@ void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp)
 
 	}
 #ifdef _DEBUG
-	cerr << "RenderMonitor break" << endl;
+    std::cerr << "RenderMonitor break" << endl;
 #endif
 	// pause when done for single or last frame of an animation
 //    if (session->Failed() == false && GetRenderWindow() != NULL && session->GetBoolOption("Pause_When_Done", false))
@@ -163,7 +161,7 @@ QtVfe*	gQtVfe;
 static vfeDisplay* QtDisplayCreator (unsigned int width, unsigned int height, vfeSession *session, bool visible)
 {
 #ifdef _DEBUG
-	cerr << "WsDisplayCreator: w=" << width << " h=" << height << endl;
+    std::cerr << "WsDisplayCreator: w=" << width << " h=" << height << endl;
 #endif
 	QtGraphics* qtg = new QtGraphics(width, height, session, visible);
 	qtg->setQtVfe(gQtVfe);
@@ -181,7 +179,7 @@ void  QtVfe::commandRender(const QString& data)
 	parseCommandLine(data, argc, argv);
 	char** oldargv = argv;
 #ifdef _DEBUG
-	cerr << "chdir: " << argv[0] << endl;
+    std::cerr << "chdir: " << argv[0] << endl;
 #endif
 	int ret = chdir(argv[0]);
 	if (ret) {
@@ -197,7 +195,7 @@ void  QtVfe::commandRender(const QString& data)
 	}
 	m_session = new vfeQtSession(this);
 	m_session->m_renderOptions = new vfeRenderOptions();
-	if (m_session->Initialize(NULL, NULL) != vfe::vfeNoError) {
+    if (m_session->Initialize(nullptr, nullptr) != vfe::vfeNoError) {
 
 		sessionErrorExit();
 		char** pp = oldargv;
@@ -263,14 +261,14 @@ void QtVfe::parseCommandLine(const QString& cl, int& argc, char**& argv)
 {
 	string s = cl.toStdString();
 	argc = 0;
-	escaped_list_separator<char> els('\\', ' ','\"');
-	tokenizer<escaped_list_separator<char>> tok(s, els);
-	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg){
+    boost::escaped_list_separator<char> els('\\', ' ','\"');
+    boost::tokenizer<boost::escaped_list_separator<char>> tok(s, els);
+    for(boost::tokenizer<boost::escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg){
 		argc++;
 	}
 	argv = new char*[argc+1];
 	char** nargv = argv;
-	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg){
+    for(boost::tokenizer<boost::escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg){
 		string t = *beg;
 		*nargv = new char[t.size()+1];
 		strcpy(*nargv, t.c_str());
@@ -372,7 +370,7 @@ void QtVfe::printStatus(vfeQtSession* session)
 void QtVfe::cancelRender(vfeQtSession* session)
 {
 #ifdef _DEBUG
-	cerr << "CancelRender" << endl;
+    std::cerr << "CancelRender" << std::endl;
 #endif
 	session->CancelRender();  // request the backend to cancel
 	printStatus (session);
