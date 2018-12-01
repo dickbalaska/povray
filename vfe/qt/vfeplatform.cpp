@@ -54,6 +54,7 @@
 # include <sys/wait.h>
 #endif
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <boost/lexical_cast.hpp>
 // from directory "vfe"
@@ -66,7 +67,7 @@ namespace vfePlatform
 {
     using namespace vfe;
 
-    bool gShelloutsPermittedFixThis = false;
+    static bool gShelloutsPermittedFixThis = false;
 
     /////////////////////////////////////////////////////////////////////////
     // return a number that uniquely identifies the calling thread amongst
@@ -86,10 +87,10 @@ namespace vfePlatform
 
 	vfeQtSession::vfeQtSession(QtVfe* qtVfe) :
 		//vfeSession(id),
+        m_renderOptions(nullptr),
         m_LastTimestamp(0),
-		m_TimestampOffset(0),
-		m_renderOptions(NULL),
-		m_qtVfe(qtVfe)
+        m_TimestampOffset(0),
+        m_qtVfe(qtVfe)
 		//m_hdl(hdl)
     {
 		m_OptionsProc = shared_ptr<QtOptionsProcessor>(new QtOptionsProcessor(qtVfe, this));
@@ -165,7 +166,7 @@ namespace vfePlatform
 	UCS2String vfeQtSession::CreateTemporaryFile(void) const
     {
 		char str [POV_FILENAME_BUFFER_CHARS] = "";
-		snprintf(str, POV_FILENAME_BUFFER_CHARS, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), getpid ());
+        snprintf(str, POV_FILENAME_BUFFER_CHARS, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), QCoreApplication::applicationPid());
         POV_DELETE_FILE (str);
 
         return ASCIItoUCS2String (str);
