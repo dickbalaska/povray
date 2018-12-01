@@ -32,10 +32,26 @@ sDIR = ../../source
 cDIR = ../../unix/povconfig
 
 INCLUDEPATH += "../../source"
-INCLUDEPATH += "../../platform/unix"
 INCLUDEPATH += "../../platform/x86"
-INCLUDEPATH += "../../unix/povconfig"
 INCLUDEPATH += "../../vfe"
+
+unix {
+    INCLUDEPATH += "../../platform/unix"
+    INCLUDEPATH += "../../unix/povconfig"
+}
+win32 {
+    INCLUDEPATH += "../../libraries/boost"
+    INCLUDEPATH += "../../libraries/zlib"
+    INCLUDEPATH += "../../platform/windows"
+    INCLUDEPATH += "../../windows/povconfig"
+    INCLUDEPATH += "../../vfe/win"
+    INCLUDEPATH += "../../libraries/png"
+    INCLUDEPATH += "../../libraries/jpeg"
+    INCLUDEPATH += "../../libraries/tiff/libtiff"
+    #DEFINES += BUILDING_AMD64
+    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
+    DEFINES += OPENEXR_MISSING
+}
 
 # QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
 PRECOMPILED_HEADER = $$sDIR/base/precomp.h

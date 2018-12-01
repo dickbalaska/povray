@@ -5,10 +5,10 @@
 
 QT       -= gui
 
-TARGET = platform
 TEMPLATE = lib
+TARGET = platform
 CONFIG += staticlib warn_off
-CONFIG += object_parallel_to_source
+#CONFIG += object_parallel_to_source
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -24,13 +24,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 #DEFINES += OPENEXR_MISSING
 #DEFINES += BUILD_ARCH="\"$$QMAKE_HOST.arch\""
+unix {
 QMAKE_CLEAN += libplatform.a
+}
+win32 {
+QMAKE_CLEAN += platform.lib
+}
 
 pDIR = ../../platform/x86
 
-INCLUDEPATH += "../../source"
+unix {
 INCLUDEPATH += "../../platform/unix"
 INCLUDEPATH += "../../unix/povconfig"
+}
+win32 {
+INCLUDEPATH += "../../windows/povconfig"
+}
+
+INCLUDEPATH += "../../source"
 INCLUDEPATH += $$pDIR
 
 # QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
@@ -48,6 +59,22 @@ HEADERS += \
 	$$pDIR/avx2fma3/avx2fma3noise.h \
 	$$pDIR/avxfma4/avxfma4noise.h \
 
+win32 {
+    INCLUDEPATH += "../../libraries/boost"
+#    INCLUDEPATH += "../../libraries/zlib"
+#    INCLUDEPATH += "../../platform/windows"
+#    INCLUDEPATH += "../../windows/povconfig"
+#    INCLUDEPATH += "../../vfe/win"
+#    INCLUDEPATH += "../../libraries/png"
+#    INCLUDEPATH += "../../libraries/jpeg"
+#    INCLUDEPATH += "../../libraries/tiff/libtiff"
+    #DEFINES += BUILDING_AMD64
+    DEFINES += _WINDOWS
+#    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
+#    DEFINES += OPENEXR_MISSING
+}
+
+unix {
 SOURCES_AVX = $$pDIR/avx/avxnoise.cpp $$pDIR/avx/avxportablenoise.cpp
 avx.name = avx
 avx.input = SOURCES_AVX
@@ -74,6 +101,7 @@ avxfma4.variable_out = OBJECTS
 avxfma4.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_IN_BASE}$${first(QMAKE_EXT_OBJ)}
 avxfma4.commands = $${QMAKE_CXX} $(CXXFLAGS) -mavx -mfma4 $(INCPATH) -c ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
 QMAKE_EXTRA_COMPILERS += avxfma4
+}	# unix
 
 linux-g++ {
 	DEFINES += TRY_OPTIMIZED_NOISE

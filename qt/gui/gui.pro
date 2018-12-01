@@ -102,6 +102,14 @@ RESOURCES += \
 
 RC_FILE = qtpov.rc
 
+win32 {
+    INCLUDEPATH += "../../libraries/boost"
+    #DEFINES += BUILDING_AMD64
+    DEFINES += _WINDOWS
+#    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
+#    DEFINES += OPENEXR_MISSING
+}
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../vfe/release/ -lvfe
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../vfe/debug/ -lvfe
 else:unix: LIBS += -L$$OUT_PWD/../vfe/ -lvfe

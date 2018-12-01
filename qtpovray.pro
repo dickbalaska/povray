@@ -16,23 +16,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-SUBDIRS = qt/libpovray \
-			qt/platform \
-			qt/vfe \
-			qt/gui
+SUBDIRS = qt/vfe \
+            qt/libpovray \
+            qt/platform \
+            qt/gui
 
 CONFIG += ordered
 
 PACKAGE_NAME = "qtpovray"
-libpovray.subdir = libpovray
-platform.subdir = platform
-qtgui.subdir = qt/gui
-qtconsole.subdir = qt/console
-qtwebsockets.subdir = qt/websockets
+#libpovray.subdir = libpovray
+#platform.subdir = platform
+#qtgui.subdir = qt/gui
+#qtconsole.subdir = qt/console
+#qtwebsockets.subdir = qt/websockets
 
 qtgui.depends = libpovray platform
-qtconsole.depends = libpovray
-qtwebsockets.depends = libpovray
+#qtconsole.depends = libpovray
+#qtwebsockets.depends = libpovray
 
 #HEADERS += \
 #    vfe/qtvfe.h
