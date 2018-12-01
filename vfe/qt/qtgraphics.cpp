@@ -43,7 +43,7 @@ void QtGraphics::SendInit()
 }
 void QtGraphics::DrawPixel(unsigned int x, unsigned int y, const RGBA8& colour)
 {
-	int fullsize = (1+2+1)*4;	// opcode, 2 coords, color
+    const int fullsize = (1+2+1)*4;	// opcode, 2 coords, color
 	uchar buff[fullsize];
 	unsigned int* bi = (unsigned int*)&buff;
 	*bi++ = (quint32)(WSG_DRAW_PIXEL);
@@ -65,7 +65,7 @@ void QtGraphics::DrawRectangleFrame(unsigned int x1, unsigned int y1, unsigned i
 }
 void QtGraphics::DrawFilledRectangle(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RGBA8& colour)
 {
-	int fullsize = (1+4+1)*4;	// opcode, 4 coords, color
+    const int fullsize = (1+4+1)*4;	// opcode, 4 coords, color
 	uchar buff[fullsize];
 	unsigned int* bi = (unsigned int*)&buff;
 	*bi++ = (quint32)(WSG_DRAW_FILLED_RECT);
