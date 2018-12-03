@@ -32,7 +32,10 @@ QMAKE_CLEAN += platform.lib
 }
 
 pDIR = ../../platform/x86
-
+win32 {
+wDIR = ../../platform/windows
+vDIR = ../../vfe
+}
 unix {
 INCLUDEPATH += "../../platform/unix"
 INCLUDEPATH += "../../unix/povconfig"
@@ -60,18 +63,16 @@ HEADERS += \
 	$$pDIR/avxfma4/avxfma4noise.h \
 
 win32 {
-    INCLUDEPATH += "../../libraries/boost"
-#    INCLUDEPATH += "../../libraries/zlib"
-#    INCLUDEPATH += "../../platform/windows"
-#    INCLUDEPATH += "../../windows/povconfig"
-#    INCLUDEPATH += "../../vfe/win"
-#    INCLUDEPATH += "../../libraries/png"
-#    INCLUDEPATH += "../../libraries/jpeg"
-#    INCLUDEPATH += "../../libraries/tiff/libtiff"
+    INCLUDEPATH += ../../libraries/boost
+    INCLUDEPATH += $$vDIR
     #DEFINES += BUILDING_AMD64
     DEFINES += _WINDOWS
 #    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
 #    DEFINES += OPENEXR_MISSING
+    SOURCES += $$wDIR/osversioninfo.cpp \
+        $$wDIR/syspovpath.cpp \
+        $$wDIR/syspovtask.cpp \
+        $$wDIR/syspovtimer.cpp
 }
 
 unix {

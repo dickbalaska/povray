@@ -106,6 +106,7 @@ win32 {
     INCLUDEPATH += "../../libraries/boost"
     #DEFINES += BUILDING_AMD64
     DEFINES += _WINDOWS
+    DEFINES += BOOST_ALL_NO_LIB
 #    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
 #    DEFINES += OPENEXR_MISSING
 }
@@ -150,20 +151,41 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../platform/release/ -
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../platform/debug/ -lplatform
 else:unix: LIBS += -L$$OUT_PWD/../platform/ -lplatform
 
-unix|win32: LIBS += -lz
+unix: LIBS += -ljpeg
+win32: CONFIG(debug, debug|release) {
+    PRE_TARGETDEPS += $$OUT_PWD/../libraries/jpeg/debug/jpeg.lib
+    LIBS += $$OUT_PWD/../libraries/jpeg/debug/jpeg.lib
+}
 
-unix|win32: LIBS += -lboost_system -lboost_thread
+#unix|win32: LIBS += -lpng
+unix: LIBS += -lpng
+win32: CONFIG(debug, debug|release) {
+    PRE_TARGETDEPS += $$OUT_PWD/../libraries/png/debug/png.lib
+    LIBS += $$OUT_PWD/../libraries/png/debug/png.lib
+}
 
-unix|win32: LIBS += -ljpeg
+unix: LIBS += -lz
+win32: CONFIG(debug, debug|release) {
+    PRE_TARGETDEPS += $$OUT_PWD/../libraries/zlib/debug/zlib.lib
+    LIBS += $$OUT_PWD/../libraries/zlib/debug/zlib.lib
+}
 
-unix|win32: LIBS += -lpng
+#unix|win32: LIBS += -lboost_system -lboost_thread
 
-unix|win32: LIBS += -ltiff
+#win32: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libraries/boost_thread/debug/boost_thread.lib
+win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_thread/debug
+win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_date_time/debug
+win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_system/debug
+win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_chrono/debug
 
-#unix|win32: LIBS += -lIlmThread -lIlmImf -lHalf -lSDL -lIex
-unix|win32: LIBS += -lIlmThread -lIlmImf -lHalf -lIex
+#unix|win32: LIBS += -ltiff
+unix: LIBS += -ltiff
 
-unix|win32: LIBS += -lboost_date_time
+#unix|win32: LIBS += -lIlmThread -lIlmImf -lHalf -lIex
+unix: LIBS += -lIlmThread -lIlmImf -lHalf -lIex
+
+#unix|win32: LIBS += -lboost_date_time
+unix: LIBS += -lboost_date_time
 
 ###############################################################################
 # make install options.
