@@ -37,8 +37,10 @@ vDIR = ../../vfe
 vqDIR = ../../vfe/qt
 
 INCLUDEPATH += "../../source"
-#INCLUDEPATH += "../../platform/unix"
-#INCLUDEPATH += "../../unix/povconfig"
+unix {
+	INCLUDEPATH += "../../platform/unix"
+	INCLUDEPATH += "../../unix/povconfig"
+}
 
 win32 {
     INCLUDEPATH += "../../libraries/boost"
@@ -65,8 +67,9 @@ INCLUDEPATH += $$vqDIR
 
 
 SOURCES += \
-    $$vDIR/vfecontrol.cpp \
-    $$vDIR/vfedisplay.cpp \
+	$$vDIR/vfe.cpp \
+	$$vDIR/vfecontrol.cpp \
+	$$vDIR/vfedisplay.cpp \
     $$vDIR/vfepovms.cpp \
     $$vDIR/vfesession.cpp \
     $$vqDIR/qtvfe.cpp \

@@ -38,6 +38,7 @@ INCLUDEPATH += "../../vfe"
 unix {
     INCLUDEPATH += "../../platform/unix"
     INCLUDEPATH += "../../unix/povconfig"
+	INCLUDEPATH += "/usr/include/OpenEXR"
 }
 win32 {
     INCLUDEPATH += "../../libraries/boost"

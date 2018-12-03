@@ -67,7 +67,7 @@ namespace vfePlatform
 {
     using namespace vfe;
 
-    static bool gShelloutsPermittedFixThis = false;
+	bool gShelloutsPermittedFixThis = false;
 
     /////////////////////////////////////////////////////////////////////////
     // return a number that uniquely identifies the calling thread amongst

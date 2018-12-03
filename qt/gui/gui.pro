@@ -170,8 +170,7 @@ win32: CONFIG(debug, debug|release) {
     LIBS += $$OUT_PWD/../libraries/zlib/debug/zlib.lib
 }
 
-#unix|win32: LIBS += -lboost_system -lboost_thread
-
+unix: LIBS += -lboost_system -lboost_thread
 #win32: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libraries/boost_thread/debug/boost_thread.lib
 win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_thread/debug
 win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_date_time/debug
