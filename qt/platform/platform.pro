@@ -24,24 +24,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 #DEFINES += OPENEXR_MISSING
 #DEFINES += BUILD_ARCH="\"$$QMAKE_HOST.arch\""
-unix {
-QMAKE_CLEAN += libplatform.a
-}
-win32 {
-QMAKE_CLEAN += platform.lib
-}
+#unix {
+#QMAKE_CLEAN += libplatform.a
+#}
+#win32 {
+#QMAKE_CLEAN += platform.lib
+#}
 
 pDIR = ../../platform/x86
 win32 {
-wDIR = ../../platform/windows
-vDIR = ../../vfe
+    wDIR = ../../platform/windows
+    vDIR = ../../vfe
 }
 unix {
-INCLUDEPATH += "../../platform/unix"
-INCLUDEPATH += "../../unix/povconfig"
+    INCLUDEPATH += "../../platform/unix"
+    INCLUDEPATH += "../../unix/povconfig"
 }
 win32 {
-INCLUDEPATH += "../../windows/povconfig"
+    INCLUDEPATH += "../../qt/winpovconfig"
 }
 
 INCLUDEPATH += "../../source"
@@ -67,12 +67,17 @@ win32 {
     INCLUDEPATH += $$vDIR
     #DEFINES += BUILDING_AMD64
     DEFINES += _WINDOWS
+    DEFINES += _CONSOLE
 #    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
 #    DEFINES += OPENEXR_MISSING
     SOURCES += $$wDIR/osversioninfo.cpp \
         $$wDIR/syspovpath.cpp \
         $$wDIR/syspovtask.cpp \
-        $$wDIR/syspovtimer.cpp
+        $$wDIR/syspovtimer.cpp \
+        $$pDIR/avx/avxnoise.cpp \
+        $$pDIR/avx/avxportablenoise.cpp \
+        $$pDIR/avx2fma3/avx2fma3noise.cpp \
+        $$pDIR/avxfma4/avxfma4noise.cpp
 }
 
 unix {

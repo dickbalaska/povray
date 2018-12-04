@@ -30,6 +30,7 @@ CONFIG += c++11
 INCLUDEPATH += "../../../libraries/boost"
 
 DEFINES += BOOST_ALL_NO_LIB
+DEFINES += BOOST_THREAD_BUILD_LIB=1
 
 tDIR = ../../../libraries/boost/libs/thread/src/win32
 fDIR = ../../../libraries/boost/libs/thread/src

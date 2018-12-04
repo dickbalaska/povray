@@ -46,7 +46,7 @@ win32 {
     INCLUDEPATH += "../../libraries/boost"
     INCLUDEPATH += "../../libraries/zlib"
     INCLUDEPATH += "../../platform/windows"
-    INCLUDEPATH += "../../windows/povconfig"
+    INCLUDEPATH += "../../qt/winpovconfig"
     INCLUDEPATH += "../../vfe/win"
     INCLUDEPATH += "../../libraries/png"
     INCLUDEPATH += "../../libraries/jpeg"
