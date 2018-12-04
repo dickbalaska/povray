@@ -1,11 +1,15 @@
-# boost_thread.pro - qmake for povray/libraries/boost_thread
+# boost_chrono.pro - qmake for povray/libraries/boost_chrono
 # Copyright 2018 BuckoSoft
 #
+# This is a dummy library to satisfy boost itself that looks for it.
+# We just include boost/error_code which will wash out as a duplicate during link.
 
 QT       -= gui core
 
 TEMPLATE = lib
 TARGET = libboost_chrono-vc140-mt-gd-1_62
+CONFIG(release, debug|release): TARGET = libboost_chrono-vc140-mt-1_62
+
 CONFIG += staticlib warn_off
 CONFIG += c++11
 #CONFIG += precompile_header

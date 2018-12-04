@@ -6,6 +6,7 @@ QT       -= gui core
 
 TEMPLATE = lib
 TARGET = libboost_thread-vc140-mt-gd-1_62
+CONFIG(release, debug|release): TARGET = libboost_thread-vc140-mt-1_62
 CONFIG += staticlib warn_off
 CONFIG += c++11
 #CONFIG += precompile_header

@@ -109,6 +109,8 @@ win32 {
     DEFINES += BOOST_ALL_NO_LIB
 #    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
 #    DEFINES += OPENEXR_MISSING
+    POVLIBDIR = release
+    CONFIG(debug, debug|release): POVLIBDIR = debug
 }
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../vfe/release/ -lvfe
@@ -152,30 +154,30 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../platform/debug/ 
 else:unix: LIBS += -L$$OUT_PWD/../platform/ -lplatform
 
 unix: LIBS += -ljpeg
-win32: CONFIG(debug, debug|release) {
-    PRE_TARGETDEPS += $$OUT_PWD/../libraries/jpeg/debug/jpeg.lib
-    LIBS += $$OUT_PWD/../libraries/jpeg/debug/jpeg.lib
+win32 {
+    PRE_TARGETDEPS += $$OUT_PWD/../libraries/jpeg/$$POVLIBDIR/jpeg.lib
+    LIBS += $$OUT_PWD/../libraries/jpeg/$$POVLIBDIR/jpeg.lib
 }
 
 #unix|win32: LIBS += -lpng
 unix: LIBS += -lpng
-win32: CONFIG(debug, debug|release) {
-    PRE_TARGETDEPS += $$OUT_PWD/../libraries/png/debug/png.lib
-    LIBS += $$OUT_PWD/../libraries/png/debug/png.lib
+win32 {
+    PRE_TARGETDEPS += $$OUT_PWD/../libraries/png/$$POVLIBDIR/png.lib
+    LIBS += $$OUT_PWD/../libraries/png/$$POVLIBDIR/png.lib
 }
 
 unix: LIBS += -lz
-win32: CONFIG(debug, debug|release) {
-    PRE_TARGETDEPS += $$OUT_PWD/../libraries/zlib/debug/zlib.lib
-    LIBS += $$OUT_PWD/../libraries/zlib/debug/zlib.lib
+win32 {
+    PRE_TARGETDEPS += $$OUT_PWD/../libraries/zlib/$$POVLIBDIR/zlib.lib
+    LIBS += $$OUT_PWD/../libraries/zlib/$$POVLIBDIR/zlib.lib
 }
 
 unix: LIBS += -lboost_system -lboost_thread
 #win32: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libraries/boost_thread/debug/boost_thread.lib
-win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_thread/debug
-win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_date_time/debug
-win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_system/debug
-win32: CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libraries/boost_chrono/debug
+win32: LIBS += -L$$OUT_PWD/../libraries/boost_thread/$$POVLIBDIR
+win32: LIBS += -L$$OUT_PWD/../libraries/boost_date_time/$$POVLIBDIR
+win32: LIBS += -L$$OUT_PWD/../libraries/boost_system/$$POVLIBDIR
+win32: LIBS += -L$$OUT_PWD/../libraries/boost_chrono/$$POVLIBDIR
 
 #unix|win32: LIBS += -ltiff
 unix: LIBS += -ltiff
