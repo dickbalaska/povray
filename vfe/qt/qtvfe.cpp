@@ -246,7 +246,7 @@ void  QtVfe::commandRender(const QString& data)
 		deleteArgv(argv);
 		return;
 	}
-	deleteArgv(argv);
+    //deleteArgv(argv);     // XXX temp!!!
 	if (m_renderMonThread)
 		delete m_renderMonThread;
 	m_renderMonThread = new boost::thread(RenderMonitor, this, m_session);
