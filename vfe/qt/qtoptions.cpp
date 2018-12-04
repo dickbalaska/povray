@@ -37,7 +37,7 @@
 ///
 //*******************************************************************************
 
-
+#include <QStandardPaths>
 #include <QDebug>
 
 #include <fstream>
@@ -68,9 +68,9 @@
 
 #define	HAVE_GETCWD	1
 
-#ifdef _WINDOWS
-extern string DocumentsPath;
-#endif
+//#ifdef _WINDOWS
+//extern string DocumentsPath;
+//#endif
 
 using namespace std;
 
@@ -1227,15 +1227,16 @@ namespace vfePlatform
             }
         }
 #ifdef _WINDOWS
+        QString DocumentsPath = QStandardPaths::displayName(QStandardPaths::DocumentsLocation);
 		// See if Windows knows of one
-		if (!DocumentsPath.empty()) {
-			cerr << "DocumentsPath=" << DocumentsPath.c_str() << endl;
-			povini = DocumentsPath + "/povray.ini";
+        if (!DocumentsPath.isEmpty()) {
+            cerr << "DocumentsPath=" << DocumentsPath.toStdString().c_str() << endl;
+            povini = DocumentsPath.toStdString() + "/povray.ini";
 			if (file_exist(povini)) {
 				opts.AddINI(povini);
 				return;
 			}
-			povini = DocumentsPath + "/ini/povray.ini";
+            povini = DocumentsPath.toStdString() + "/ini/povray.ini";
 			if (file_exist(povini)) {
 				opts.AddINI(povini);
 				return;
