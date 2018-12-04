@@ -23,7 +23,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-# DEFINES += OPENEXR_MISSING
+win32 {
+DEFINES += OPENEXR_MISSING
+DEFINES += LIBTIFF_MISSING
+}
+
 #DEFINES += BUILD_ARCH="\"$$QMAKE_HOST.arch\""
 QMAKE_CLEAN += libpovray.a
 
@@ -44,7 +48,8 @@ win32 {
     INCLUDEPATH += "../../libraries/boost"
     INCLUDEPATH += "../../libraries/zlib"
     INCLUDEPATH += "../../platform/windows"
-    INCLUDEPATH += "../../windows/povconfig"
+    #INCLUDEPATH += "../../windows/povconfig"
+    INCLUDEPATH += "../../qt/winpovconfig"
     INCLUDEPATH += "../../vfe/win"
     INCLUDEPATH += "../../libraries/png"
     INCLUDEPATH += "../../libraries/jpeg"
