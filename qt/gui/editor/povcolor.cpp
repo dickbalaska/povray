@@ -262,6 +262,10 @@ void PovColormap::parse(const QString& text)
 
 		double d = text.mid(leftbracket, i-leftbracket).toDouble();
 		i++;
+		for(; i<rightbracket; i++) {	// skip over the space before the color keyword
+			if (!text[i].isSpace())
+				break;
+		}
 		for(; i<rightbracket; i++) {	// skip over the color keyword
 			if (text[i].isSpace())
 				break;
@@ -348,12 +352,12 @@ void PovColormap::paint(QPixmap* target, bool horizontal)
 		end = w;
 	for (int i=0; i<end; i++) {
 		double cmoffset = (double)i/(double)end;
-		PovColormapEntry* before = NULL;
-		PovColormapEntry* after = NULL;
+		PovColormapEntry* before = nullptr;
+		PovColormapEntry* after = nullptr;
 		foreach(PovColormapEntry* cme, m_map) {
-			if (before == NULL || cme->m_offset <= cmoffset)
+			if (before == nullptr || cme->m_offset <= cmoffset)
 				before = cme;
-			if (cme->m_offset >= cmoffset && after == NULL)
+			if (cme->m_offset >= cmoffset && after == nullptr)
 				after = cme;
 		}
 		PovColor c1 = before->m_color;
