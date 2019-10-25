@@ -139,7 +139,7 @@ void SearchConsole::dropdownActivated(const QString& text)
 ///////////////////////////////////////////////////////////////////////////////
 PovrayConsole::PovrayConsole(QTabWidget* parent, QStackedWidget *consoleBar, MainWindow* mainWindow)
 	: QPlainTextEdit(parent),
-	  m_currentError(NULL)
+	  m_currentError(nullptr)
 {
 	m_mainWindow = mainWindow;
 	m_parentTabs = parent;
@@ -215,7 +215,7 @@ void PovrayConsole::clearMessages()
 	}
 	clear();
 	m_consoleMessages.clear();
-	m_currentError = NULL;
+	m_currentError = nullptr;
 }
 
 void PovrayConsole::redrawConsole()
@@ -262,7 +262,7 @@ void PovrayConsole::mouseDoubleClickEvent(QMouseEvent* event)
 	qDebug() << "mouseDoubleClickEvent" << event;
 	QTextCursor c = cursorForPosition(event->pos());
 	int line = c.blockNumber();
-	if (false) {
+	if (/* DISABLES CODE */ (false)) {
 		QString s = c.block().text();
 		qDebug() << "line" << line << "text:" << s;
 	}
@@ -283,7 +283,7 @@ ConsoleMessage* PovrayConsole::messageFromBlock(int line)
 		if (index >= line)
 			return(cl);
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 int PovrayConsole::blockFromMessage(ConsoleMessage* cm)
@@ -340,10 +340,10 @@ void PovrayConsole::selectError(ConsoleMessage* cm)
 }
 void PovrayConsole::previousError()
 {
-	ConsoleMessage* possibleMatch = NULL;
+	ConsoleMessage* possibleMatch = nullptr;
 	foreach(ConsoleMessage* cm, m_consoleMessages) {
 		if (cm == m_currentError) {
-			if (possibleMatch != NULL) {
+			if (possibleMatch != nullptr) {
 				selectError(possibleMatch);
 				return;
 			}
@@ -358,7 +358,7 @@ void PovrayConsole::nextError()
 	bool foundMe = false;
 	foreach(ConsoleMessage* cm, m_consoleMessages) {
 		if (!cm->m_file.isEmpty()) {
-			if (m_currentError == NULL) {
+			if (m_currentError == nullptr) {
 				selectError(cm);
 				return;
 			}
