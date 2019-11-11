@@ -19,11 +19,11 @@
  *
  *****************************************************************************/
 
-#ifndef _version_h_		// use lower case, because the install builder wants to grep the upper case label
-#define _version_h_
+#ifndef version_h_		// use lower case, because the install builder wants to grep the upper case label
+#define version_h_
 
 
-#define VERSION "3.80.9"
+#define VERSION "3.80.10-alpha"
 #define ROOT_VERSION	"3.8"	// used for directory names
 
-#endif // _version_h_
+#endif // version_h_
