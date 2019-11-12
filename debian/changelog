@@ -1,3 +1,9 @@
+qtpovray (3.80.10~xenial1) xenial; urgency=low
+
+  * Update to POV-Ray Development build v3.8.0-alpha.10064268
+
+ -- Dick Balaska <dick@buckosoft.com>  Tue, 12 Nov 2019 00:05:32 -0500
+
 qtpovray (3.80.9~xenial1) xenial; urgency=low
 
   * Update to POV-Ray Development build v3.8.0-alpha.9861167+av620

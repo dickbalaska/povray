@@ -1,6 +1,6 @@
 Source: qtpovray
 Section: graphics
-Priority: extra
+Priority: optional
 Maintainer: Dick Balaska <dick@buckosoft.com>
 Standards-Version: 3.9.7
 Homepage: http://www.buckosoft.com/qtpovray
