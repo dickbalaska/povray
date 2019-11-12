@@ -68,6 +68,7 @@ SOURCES += \
 	$$sDIR/backend/control/benchmark_pov.cpp \
 	$$sDIR/backend/control/benchmark.cpp \
 	$$sDIR/backend/control/messagefactory.cpp \
+    $$sDIR/backend/control/parsertask.cpp \
 	$$sDIR/backend/control/renderbackend.cpp \
 	$$sDIR/backend/control/scene.cpp \
 	$$sDIR/backend/lighting/photonestimationtask.cpp \
@@ -89,6 +90,7 @@ SOURCES += \
 	$$sDIR/base/colour.cpp \
 	$$sDIR/base/data/bluenoise64a.cpp \
 	$$sDIR/base/fileinputoutput.cpp \
+    $$sDIR/base/filesystem.cpp \
 	$$sDIR/base/fileutil.cpp \
 	$$sDIR/base/font/crystal.cpp \
 	$$sDIR/base/font/cyrvetic.cpp \
@@ -150,6 +152,7 @@ SOURCES += \
 	$$sDIR/core/math/randcosweighted.cpp \
 	$$sDIR/core/math/randomsequence.cpp \
 	$$sDIR/core/math/spline.cpp \
+    $$sDIR/core/math/vector.cpp \
 	$$sDIR/core/render/ray.cpp \
 	$$sDIR/core/render/trace.cpp \
 	$$sDIR/core/render/tracepixel.cpp \
@@ -184,6 +187,7 @@ SOURCES += \
 	$$sDIR/core/shape/torus.cpp \
 	$$sDIR/core/shape/triangle.cpp \
 	$$sDIR/core/shape/truetype.cpp \
+    $$sDIR/core/support/cracklecache.cpp \
 	$$sDIR/core/support/imageutil.cpp \
 	$$sDIR/core/support/octree.cpp \
 	$$sDIR/core/support/statisticids.cpp \
@@ -207,9 +211,13 @@ SOURCES += \
 	$$sDIR/parser/parser_functions_utilities.cpp \
 	$$sDIR/parser/parser_materials.cpp \
 	$$sDIR/parser/parser_obj.cpp \
+    $$sDIR/parser/parsertypes.cpp \
 	$$sDIR/parser/parser_strings.cpp \
 	$$sDIR/parser/parser_tokenizer.cpp \
+    $$sDIR/parser/rawtokenizer.cpp \
 	$$sDIR/parser/reservedwords.cpp \
+    $$sDIR/parser/scanner.cpp \
+    $$sDIR/parser/symboltable.cpp \
 	$$sDIR/povms/povms.cpp \
 	$$sDIR/povms/povmscpp.cpp \
 	$$sDIR/povms/povmsutil.cpp \
@@ -223,6 +231,7 @@ HEADERS += \
 	$$sDIR/backend/control/benchmark_pov.h \
 	$$sDIR/backend/control/benchmark.h \
 	$$sDIR/backend/control/messagefactory.h \
+    $$sDIR/backend/control/parsertask.h \
 	$$sDIR/backend/control/renderbackend.h \
 	$$sDIR/backend/control/scene.h \
 	$$sDIR/backend/lighting/photonestimationtask.h \
@@ -238,7 +247,6 @@ HEADERS += \
 	$$sDIR/backend/scene/viewthreaddata.h \
 	$$sDIR/backend/support/task.h \
 	$$sDIR/backend/support/taskqueue.h \
-	$$sDIR/backend/frame.h \
 	$$sDIR/backend/povray.h \
 	$$sDIR/base/animation/animation.h \
 	$$sDIR/base/animation/moov.h \
@@ -247,6 +255,7 @@ HEADERS += \
 	$$sDIR/base/configbase.h \
 	$$sDIR/base/data/bluenoise64a.h \
 	$$sDIR/base/fileinputoutput.h \
+    $$sDIR/base/filesystem.h \
 	$$sDIR/base/fileutil.h \
 	$$sDIR/base/font/crystal.h \
 	$$sDIR/base/font/cyrvetic.h \
@@ -311,6 +320,7 @@ HEADERS += \
 	$$sDIR/core/math/randcosweighted.h \
 	$$sDIR/core/math/randomsequence.h \
 	$$sDIR/core/math/spline.h \
+    $$sDIR/core/math/vector.h \
 	$$sDIR/core/render/ray.h \
 	$$sDIR/core/render/trace.h \
 	$$sDIR/core/render/tracepixel.h \
@@ -345,6 +355,7 @@ HEADERS += \
 	$$sDIR/core/shape/torus.h \
 	$$sDIR/core/shape/triangle.h \
 	$$sDIR/core/shape/truetype.h \
+    $$sDIR/core/support/cracklecache.h \
 	$$sDIR/core/support/imageutil.h \
 	$$sDIR/core/support/octree.h \
 	$$sDIR/core/support/statisticids.h \
@@ -366,6 +377,10 @@ HEADERS += \
 	$$sDIR/parser/configparser.h \
 	$$sDIR/parser/fncode.h \
 	$$sDIR/parser/parser.h \
+    $$sDIR/parser/parsertypes.h \
+    $$sDIR/parser/rawtokenizer.h \
+    $$sDIR/parser/scanner.h \
+    $$sDIR/parser/symboltable.h \
 	$$sDIR/parser/reservedwords.h \
 	$$sDIR/povms/configpovms.h \
 	$$sDIR/povms/povms.h \
