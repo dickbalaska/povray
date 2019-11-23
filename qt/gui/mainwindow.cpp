@@ -196,7 +196,7 @@ bool MainWindow::eventFilter(QObject*, QEvent* e)
 		}
 	}
 	// ...
-	default: break;
+	break; default: break;
 	}
 
 	return false;
@@ -647,7 +647,7 @@ void MainWindow::savePreferences() {
 
 #define writeColor(_highlight) \
 	settings.setValue(#_highlight "Color", preferenceData.getEditorColorsNC()->_highlight.getColor()); \
-	settings.setValue(#_highlight "Bold", preferenceData.getEditorColorsNC()->_highlight.isBold());
+	settings.setValue(#_highlight "Bold", preferenceData.getEditorColorsNC()->_highlight.isBold())
 
 	settings.beginGroup(s_EditorColors);
 	writeColor(common);
@@ -662,7 +662,7 @@ void MainWindow::savePreferences() {
 
 
 #define writeKey(_key) \
-	settings.setValue(#_key, preferenceData.getGlobalKeys()->_key.toString());
+	settings.setValue(#_key, preferenceData.getGlobalKeys()->_key.toString())
 
 	settings.beginGroup(s_Keys);
 	writeKey(keyOpenPreferences);

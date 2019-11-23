@@ -32,10 +32,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #}
 
 pDIR = ../../platform/x86
+unix {
+    uDIR = ../../platform/unix
+}
 win32 {
     wDIR = ../../platform/windows
     vDIR = ../../vfe
 }
+
 unix {
     INCLUDEPATH += "../../platform/unix"
     INCLUDEPATH += "../../unix/povconfig"
@@ -107,6 +111,10 @@ avxfma4.variable_out = OBJECTS
 avxfma4.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_IN_BASE}$${first(QMAKE_EXT_OBJ)}
 avxfma4.commands = $${QMAKE_CXX} $(CXXFLAGS) -mavx -mfma4 $(INCPATH) -c ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
 QMAKE_EXTRA_COMPILERS += avxfma4
+
+SOURCES += $$uDIR/syspovfilesystem.cpp
+HEADERS += $$uDIR/syspovfilesystem.h
+
 }	# unix
 
 linux-g++ {

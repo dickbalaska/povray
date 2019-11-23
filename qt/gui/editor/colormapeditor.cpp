@@ -26,15 +26,15 @@
 #include "coloreditor.h"
 #include "colormapeditor.h"
 
-QColor backgroundColor(128, 128, 128);
-QColor selectedColor(192,192,192);
+static QColor backgroundColor(128, 128, 128);
+static QColor selectedColor(192,192,192);
 
 ColormapEditor::ColormapEditor(QWidget *parent, MainWindow* mainWindow, const PovColormap& colormap)
 	: QDialog(parent),
 	  m_colormap(colormap),
 	  m_mainWindow(mainWindow)
 {
-	m_colorEditor = NULL;
+	m_colorEditor = nullptr;
 	setWindowTitle(tr("Colormap Editor"));
 	QVBoxLayout* mainLayout = new QVBoxLayout();
 	m_cmwidget = new CMWidget(this, &m_colormap);
@@ -84,14 +84,14 @@ void ColormapEditor::onEditColor(const PovColor &color)
 void ColormapEditor::onEditColorClosed()
 {
 	qDebug() << "ColormapEditor::onEditColorClosed";
-	m_colorEditor = NULL;
+	m_colorEditor = nullptr;
 }
 ///////////////////////////////////////////////////////////////////////////////
 CMWidget::CMWidget(ColormapEditor* parent, PovColormap* colormap)
 	: QLabel(parent)
 {
 	m_colormap = colormap;
-	m_draggingEntry = NULL;
+	m_draggingEntry = nullptr;
 	setMinimumWidth(250);
 	setMinimumHeight(200);
 //	m_font.setFamily("Courier");
@@ -171,8 +171,8 @@ void CMWidget::paintEvent(QPaintEvent*)
 	foreach(PovColormapEntry* cme, m_colormap->m_map) {
 
 		double row = height()-mar-interpolate(0.0, (double)(height()-(double)mar2), cme->m_offset);
-		int tr = row+mar-1;	// text row
-		int lr = row;		// line row
+		int tr = (int)(row+mar-1);	// text row
+		int lr = (int)row;		// line row
 		QString s = QString::number(cme->m_offset, 'f', 2);
 //		if (s.length() == 1)
 //			s.append(".00");
@@ -199,7 +199,7 @@ void CMWidget::paintEvent(QPaintEvent*)
 QString CMWidget::getColormapColor(const PovColor& color)
 {
 #define _number(C, V)	s.append(C); s.append(':'); \
-	if (V == 1.0) s.append("1.00"); else s.append(QString::number(V, 'f', 3).right(4));
+	if (V == 1.0) s.append("1.00"); else s.append(QString::number(V, 'f', 3).right(4))
 
 	QString s;
 	_number ('r', color.redF());
@@ -261,7 +261,7 @@ void CMWidget::mousePressEvent(QMouseEvent* event)
 void CMWidget::mouseReleaseEvent(QMouseEvent* event)
 {
 	qDebug() << "mouseReleaseEvent" << event->pos();
-	m_draggingEntry = NULL;
+	m_draggingEntry = nullptr;
 
 }
 
@@ -271,11 +271,11 @@ PovColormapEntry* CMWidget::getColormapEntryAt(int y)
 	int mar2 = mar*2;
 	foreach(PovColormapEntry* cme, m_colormap->m_map) {
 		double row = height()-mar-interpolate(0.0, (double)(height()-(double)mar2), cme->m_offset);
-		int tr = row+mar-1;	// text row
+		int tr = (int)(row+mar-1);	// text row
 		if (tr > y && tr-m_fontHOfs*2 < y)
 			return(cme);
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 double CMWidget::getColormapOffsetAt(int y)

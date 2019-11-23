@@ -150,13 +150,13 @@ void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp)
 	qtVfe->printStatus(session);
 //    delete sigthread;
 	delete session;
-	sessionp = NULL;
+	sessionp = nullptr;
 	//wsSend(hdl, "done");
 	qtVfe->sendPovrayTextMessage("done");
 
 }
 
-QtVfe*	gQtVfe;
+static QtVfe*	gQtVfe;
 
 static vfeDisplay* QtDisplayCreator (unsigned int width, unsigned int height, vfeSession *session, bool visible)
 {
@@ -274,7 +274,7 @@ void QtVfe::parseCommandLine(const QString& cl, int& argc, char**& argv)
 		strcpy(*nargv, t.c_str());
 		nargv++;
 	}
-	*nargv = NULL;
+	*nargv = nullptr;
 }
 
 void QtVfe::sessionErrorExit()
@@ -286,7 +286,7 @@ void QtVfe::sessionErrorExit()
 	qWarning() << "ErrorExit: " << s;
 	m_session->Shutdown();
 	delete m_session;
-	m_session = NULL;
+	m_session = nullptr;
 	//wsSend(hdl, "done");
 
 	sendPovrayTextMessage("done");
@@ -342,7 +342,7 @@ void QtVfe::printStatusMessage(vfeQtSession* session)
 		QString qs = QString("%1 %2 %3")
 				.arg(msg.m_Type)
 				.arg(msg.m_Message.c_str())
-				.arg(UCS2toASCIIString(msg.m_Filename).c_str());
+				.arg(UCS2toSysString(msg.m_Filename).c_str());
 		//ss << "stream " << msg.m_Type << " " << msg.m_Message << " " << UCS2toASCIIString(msg.m_Filename);
 #ifdef _DEBUG
 		qDebug() << "PrintStatusMessage: " << qs;

@@ -1,6 +1,6 @@
 //******************************************************************************
 ///
-/// @file vfe/websockets/vfeplatform.cpp
+/// @file vfe/qt/vfeplatform.cpp
 ///
 /// This module contains *nix platform-specific support code for the VFE.
 ///
@@ -9,8 +9,8 @@
 /// @copyright
 /// @parblock
 ///
-/// Persistence of Vision Ray Tracer ('POV-Ray') version 3.7.
-/// Copyright 1991-2016 Persistence of Vision Raytracer Pty. Ltd.
+/// Persistence of Vision Ray Tracer ('POV-Ray') version 3.8.
+/// Copyright 1991-2019 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -38,14 +38,17 @@
 // must come first, will pull in "config.h" for HAVE_* macros
 #include "syspovconfig.h"
 
-// C++ variants of C standard headers
+// C++ variants of C standard header files
+
 #include <cstdlib>
 #include <cstring>
 #ifdef HAVE_TIME_H
 # include <ctime>
 #endif
 
-// other library headers
+// C++ standard header files
+
+// other library header files
 //#include <pthread.h>
 #ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
@@ -67,7 +70,7 @@ namespace vfePlatform
 {
     using namespace vfe;
 
-	bool gShelloutsPermittedFixThis = false;
+	static bool gShelloutsPermittedFixThis = false;
 
     /////////////////////////////////////////////////////////////////////////
     // return a number that uniquely identifies the calling thread amongst
@@ -93,7 +96,7 @@ namespace vfePlatform
         m_qtVfe(qtVfe)
 		//m_hdl(hdl)
     {
-		m_OptionsProc = shared_ptr<QtOptionsProcessor>(new QtOptionsProcessor(qtVfe, this));
+		m_OptionsProc = std::shared_ptr<QtOptionsProcessor>(new QtOptionsProcessor(qtVfe, this));
 		m_OptimizeForConsoleOutput = false;
     }
 
@@ -156,7 +159,7 @@ namespace vfePlatform
     // *nix platforms might want to just return "/tmp/" here.
 	UCS2String vfeQtSession::GetTemporaryPath(void) const
     {
-        return ASCIItoUCS2String (m_OptionsProc->GetTemporaryPath().c_str());
+        return SysToUCS2String (m_OptionsProc->GetTemporaryPath());
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -165,11 +168,14 @@ namespace vfePlatform
     // name to one that it can use.
 	UCS2String vfeQtSession::CreateTemporaryFile(void) const
     {
-		char str [POV_FILENAME_BUFFER_CHARS] = "";
-        snprintf(str, POV_FILENAME_BUFFER_CHARS, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), QCoreApplication::applicationPid());
-        POV_DELETE_FILE (str);
+		pov_base::Filesystem::TemporaryFilePtr tempFile(new pov_base::Filesystem::TemporaryFile);
+        //m_TempFiles.push_back(tempFile);
+        return tempFile->GetFileName();
 
-        return ASCIItoUCS2String (str);
+//		char str [POV_FILENAME_BUFFER_CHARS] = "";
+//      snprintf(str, POV_FILENAME_BUFFER_CHARS, "%spov%d", m_OptionsProc->GetTemporaryPath().c_str(), QCoreApplication::applicationPid());
+//      POV_DELETE_FILE (str);
+//      return ASCIItoUCS2String (str);
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -178,7 +184,8 @@ namespace vfePlatform
     // example doesn't do that but it's not a bad idea to add.
 	void vfeQtSession::DeleteTemporaryFile(const UCS2String& filename) const
     {
-        POV_DELETE_FILE (UCS2toASCIIString (filename).c_str());
+		pov_base::Filesystem::DeleteFile(filename);
+        //POV_DELETE_FILE (UCS2toASCIIString (filename).c_str());
     }
 
     //////////////////////////////////////////////////////////////
@@ -201,7 +208,7 @@ namespace vfePlatform
     // interface), we may want to set a flag to display the message later
     // rather than pop up a messagebox on the local windowstation. Otherwise
     // you would probably display the message immediately.
-	void vfeQtSession::NotifyCriticalError (const char *message, const char *filename, int line)
+	void vfeQtSession::NotifyCriticalError (const char *message, const char* /*filename*/, int /*line*/)
     {
         fprintf (stderr, "POV-Ray Critical Error: %s", message);
     }
@@ -281,7 +288,7 @@ namespace vfePlatform
 	void vfeQtSession::AppendErrorMessage (const string& Msg, const UCS2String& File, int Line, int Col)
     {
 		QString qs = QString("error \"%1\" %2 %3 %4")
-				.arg(POVMS_UCS2toASCIIString(File).c_str())
+				.arg(POVMS_UCS2toSysString(File).c_str())
 				.arg(Line).arg(Col).arg(Msg.c_str());
 #ifdef _DEBUG
 //    	std::cerr << "================ AppendErrorMessageDecorated: '" << Msg << "' File:'" << POVMS_UCS2toASCIIString(File)
@@ -318,8 +325,8 @@ namespace vfePlatform
         if (StrCompare(path.GetVolume(), file.GetVolume()) == false)
             return (false);
 
-        vector<UCS2String> pc = path.GetAllFolders();
-        vector<UCS2String> fc = file.GetAllFolders();
+        std::vector<UCS2String> pc = path.GetAllFolders();
+        std::vector<UCS2String> fc = file.GetAllFolders();
         if (fc.size() < pc.size())
             return (false) ;
         for (int i = 0 ; i < pc.size(); i++)
@@ -339,7 +346,7 @@ namespace vfePlatform
         if (!m_OptionsProc->isIORestrictionsEnabled(isWrite))
             return true;
 
-        string FullFnm = m_OptionsProc->CanonicalizePath(UCS2toASCIIString(file()));
+        string FullFnm = m_OptionsProc->CanonicalizePath(UCS2toSysString(file()));
         if(FullFnm.length() == 0)
             return false;
 
@@ -352,7 +359,7 @@ namespace vfePlatform
             {
                 if (TestPath(it->GetPath(), fullPath, it->IsRecursive()))
                 {
-                    m_OptionsProc->IORestrictionsError(UCS2toASCIIString(file()), isWrite, false);
+                    m_OptionsProc->IORestrictionsError(UCS2toSysString(file()), isWrite, false);
                     return (false) ;
                 }
             }
@@ -372,7 +379,7 @@ namespace vfePlatform
             if (TestPath(it->GetPath(), fullPath, it->IsRecursive()))
                 return (true) ;
 
-        m_OptionsProc->IORestrictionsError(UCS2toASCIIString(file()), isWrite, true);
+        m_OptionsProc->IORestrictionsError(UCS2toSysString(file()), isWrite, true);
         return (false);
     }
 
@@ -489,3 +496,4 @@ namespace vfePlatform
         return gShelloutsPermittedFixThis;
     }
 }
+// end of namespace vfePlatform

@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
-#ifndef _COLORMAPEDITOR_H_
-#define _COLORMAPEDITOR_H_
+#ifndef COLORMAPEDITOR_H_
+#define COLORMAPEDITOR_H_
 
 #include <QLabel>
 #include <QDialog>
@@ -98,4 +98,4 @@ private:
 };
 
 
-#endif // _COLORMAPEDITOR_H_
+#endif // COLORMAPEDITOR_H_

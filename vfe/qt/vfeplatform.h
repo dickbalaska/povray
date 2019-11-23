@@ -35,8 +35,8 @@
 ///
 //******************************************************************************
 
-#ifndef __VFEQTPLATFORM_H__
-#define __VFEQTPLATFORM_H__
+#ifndef VFEQTPLATFORM_H_
+#define VFEQTPLATFORM_H_
 
 #include <QObject>
 
@@ -66,23 +66,23 @@ namespace vfePlatform
     class UnixShelloutProcessing: public pov_frontend::ShelloutProcessing
     {
         public:
-            UnixShelloutProcessing(POVMS_Object& opts, const string& scene, unsigned int width, unsigned int height);
+            UnixShelloutProcessing(POVMS_Object& opts, const std::string& scene, unsigned int width, unsigned int height);
             virtual ~UnixShelloutProcessing();
 
             virtual int ProcessID(void);
             virtual bool ShelloutsSupported(void) { return true; }
 
         protected:
-            virtual bool ExecuteCommand(const string& cmd, const string& params);
+            virtual bool ExecuteCommand(const std::string& cmd, const std::string& params);
             virtual bool KillCommand(int timeout, bool force = false);
             virtual bool CommandRunning(void);
-            virtual int CollectCommand(string& output);
+            virtual int CollectCommand(std::string& output);
             virtual int CollectCommand(void);
-            virtual bool CommandPermitted(const string& command, const string& parameters);
+            virtual bool CommandPermitted(const std::string& command, const std::string& parameters);
 
             bool m_ProcessRunning;
-            string m_Command;
-            string m_Params;
+            std::string m_Command;
+            std::string m_Params;
             unsigned long m_ExitCode;
             unsigned long m_LastError;
             unsigned long m_ProcessId;
@@ -108,12 +108,12 @@ namespace vfePlatform
 		virtual void DeleteTemporaryFile(const UCS2String& filename) const;
 		virtual POV_LONG GetTimestamp(void) const ;
 		virtual void NotifyCriticalError(const char *message, const char *file, int line);
-		virtual int RequestNewOutputPath(int CallCount, const string& Reason, const UCS2String& OldPath, UCS2String& NewPath);
+		virtual int RequestNewOutputPath(int CallCount, const std::string& Reason, const UCS2String& OldPath, UCS2String& NewPath);
 		virtual bool TestAccessAllowed(const Path& file, bool isWrite) const;
-		virtual ShelloutProcessing *CreateShelloutProcessing(POVMS_Object& opts, const string& scene, unsigned int width, unsigned int height)
+		virtual ShelloutProcessing *CreateShelloutProcessing(POVMS_Object& opts, const std::string& scene, unsigned int width, unsigned int height)
 		{ return new UnixShelloutProcessing(opts, scene, width, height); }
 
-		shared_ptr<QtOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
+		std::shared_ptr<QtOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
 
 		//void setWebSocketHdl(websocketpp::connection_hdl hdl) { this->m_hdl = hdl; }
 		vfeRenderOptions*		m_renderOptions;
@@ -123,8 +123,8 @@ namespace vfePlatform
 		virtual void WorkerThreadStartup();
 		virtual void WorkerThreadShutdown();
 
-		virtual void AppendErrorMessage (const string& Msg);
-		virtual void AppendErrorMessage (const string& Msg, const UCS2String& File, int Line = 0, int Col = 0);
+		virtual void AppendErrorMessage (const std::string& Msg);
+		virtual void AppendErrorMessage (const std::string& Msg, const UCS2String& File, int Line = 0, int Col = 0);
 
 		///////////////////////////////////////////////////////////////////////
 		// return true if the path component of file is equal to the path component
@@ -146,7 +146,7 @@ namespace vfePlatform
 		mutable POV_LONG m_TimestampOffset;
 
 		// platform specific configuration options
-		shared_ptr<QtOptionsProcessor> m_OptionsProc;
+		std::shared_ptr<QtOptionsProcessor> m_OptionsProc;
 
 		//websocketpp::connection_hdl m_hdl;
 		QtVfe*	m_qtVfe;
@@ -158,4 +158,4 @@ namespace vfePlatform
     POVMS_Sys_Thread_Type GetThreadId();
 }
 
-#endif		// __VFEQTPLATFORM_H__
+#endif		// VFEQTPLATFORM_H_

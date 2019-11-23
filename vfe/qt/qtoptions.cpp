@@ -79,7 +79,7 @@ namespace vfePlatform
     using std::cerr;
     using std::endl;
 
-    extern bool gShelloutsPermittedFixThis;
+    static bool gShelloutsPermittedFixThis;
 
 	const QtOptionsProcessor::Option_Info QtOptionsProcessor::Standard_Options[] =
     {
@@ -363,7 +363,7 @@ namespace vfePlatform
 					strcpy(nargv[i], oargv[i]);
 				}
 
-				nargv[nargc] = NULL;
+				nargv[nargc] = nullptr;
 
 				vector<string> CmdVariations;
 				boost::split(CmdVariations, (*iter).CmdOption, boost::is_any_of("|"));
@@ -377,7 +377,7 @@ namespace vfePlatform
 							if ((*iter).has_param)
 							{
 								int j = i + 1;
-								if (j < nargc && nargv[j] != NULL)
+								if (j < nargc && nargv[j] != nullptr)
 								{
 									(*iter).Value = nargv[j];
 									remove_arg(&nargc, nargv, j);
@@ -389,7 +389,7 @@ namespace vfePlatform
 						}
 						else
 							i++;
-						if (nargv[i] == NULL)
+						if (nargv[i] == nullptr)
 							break;
 					}
 				}
@@ -427,7 +427,7 @@ namespace vfePlatform
         if (index >= *argc || index == 0)
             return;
 
-        if (argv[index] != NULL)
+        if (argv[index] != nullptr)
             free(argv[index]);
 
         for (; index < *argc; index++)
@@ -445,7 +445,7 @@ namespace vfePlatform
         len = 256;  // default buffer size
         char *tmp = new char[len];
 
-        while(getcwd(tmp, len) == NULL)  // buffer is too small
+        while(getcwd(tmp, len) == nullptr)  // buffer is too small
         {
             delete[] tmp;
             len *= 2;  // double buffer size and try again
@@ -511,7 +511,7 @@ namespace vfePlatform
     }
 
     // based on 3.6 unix_readlink()
-	string QtOptionsProcessor::unix_readlink(const string &path)
+	string QtOptionsProcessor::unix_readlink(const string& /*path*/)
     {
 #ifdef HAVE_READLINK
         char   *tmp;
@@ -569,7 +569,7 @@ namespace vfePlatform
             { "%HOME%", m_home.c_str() },
             { "//", "/" },
             { "/./", "/" },
-            { NULL, NULL }  // sentinel
+            { nullptr, nullptr }  // sentinel
         };
 
         // nothing to canonicalize; return an empty string
@@ -792,7 +792,7 @@ namespace vfePlatform
             { "[File I/O Security]", FILE_IO         },
             { "[Shellout Security]", SHELLOUT        },
             { "[Permitted Paths]"  , PERMITTED_PATHS },
-            { NULL                 , UNKNOWN         }   // sentinel
+            { nullptr              , UNKNOWN         }   // sentinel
         };
 
         typedef struct IOSettings { const char *label; const FileIO value; } IOSettings;
@@ -802,7 +802,7 @@ namespace vfePlatform
             { "none"      , IO_NONE       },
             { "read-only" , IO_READONLY   },
             { "restricted", IO_RESTRICTED },
-            { NULL        , IO_UNKNOWN    }
+            { nullptr     , IO_UNKNOWN    }
         };
 
         typedef struct SHLSettings { const char *label; const ShellOut value; } SHLSettings;
@@ -811,7 +811,7 @@ namespace vfePlatform
             { ""         , SHL_UNSET     },
             { "allowed"  , SHL_ALLOWED   },
             { "forbidden", SHL_FORBIDDEN },
-            { NULL       , SHL_UNKNOWN   }
+            { nullptr    , SHL_UNKNOWN   }
         };
 
         // inits
@@ -1196,7 +1196,7 @@ namespace vfePlatform
     {
         FILE *file = fopen(name.c_str(), "r");
 
-        if(file != NULL)
+        if(file != nullptr)
             fclose(file);
         else
             return false;
