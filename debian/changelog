@@ -1,3 +1,9 @@
+qtpovray (3.80.11~xenial1) xenial; urgency=low
+
+  * Bug 24 - qtpovray crashes when double-clicking on an error in the console
+
+ -- Dick Balaska <dick@buckosoft.com>  Sat, 23 Nov 2019 02:48:22 -0500
+
 qtpovray (3.80.10~xenial1) xenial; urgency=low
 
   * Update to POV-Ray Development build v3.8.0-alpha.10064268
