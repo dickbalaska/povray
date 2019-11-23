@@ -32,7 +32,7 @@
 #include <QtWidgets>
 #include <QtGlobal>
 
-QHash<QString, int>	editKeywords;
+static QHash<QString, int>	editKeywords;
 
 void CodeEditor::init()
 {
@@ -47,7 +47,7 @@ CodeEditor::CodeEditor(MainWindow* parent, PreferenceData* prefs)
 	: QPlainTextEdit(parent),
 	  m_mainWindow(parent),
 //	  m_prefs(prefs),
-	  m_tooltip(NULL),
+	  m_tooltip(nullptr),
 	  m_tooltipTimer(this),
 	  m_backgroundPixmap(80,50)
 	  //m_tooltipPixmap(40,40)
@@ -695,10 +695,10 @@ public:
 		if (c == '>') return('<');
 		return(0);
 	}
-	bool		valid;
-	int			position;
 	QTextCursor	tc;
 	QString		matchedString;
+	int			position;
+	bool		valid;
 
 };
 
@@ -889,7 +889,7 @@ void CodeEditor::hideTooltip()
 {
 	if (m_tooltip)
 		delete m_tooltip;
-	m_tooltip = NULL;
+	m_tooltip = nullptr;
 	m_lastTooltipPosition = -1;
 }
 
