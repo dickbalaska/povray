@@ -2,7 +2,7 @@ qtpovray (3.80.12~xenial1) xenial; urgency=low
 
   * Bug 23 - Check for open files in the editor being modified by outside sources
 
- -- Dick Balaska <dick@buckosoft.com>  ???
+ -- Dick Balaska <dick@buckosoft.com>  Sun, 24 Nov 2019 18:16:33 -0500
 
 qtpovray (3.80.11~xenial1) xenial; urgency=low
 
