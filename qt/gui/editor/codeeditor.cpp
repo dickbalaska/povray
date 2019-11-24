@@ -292,6 +292,12 @@ bool CodeEditor::event(QEvent *e)
 	return(QPlainTextEdit::event(e));
 }
 
+void CodeEditor::focusInEvent(QFocusEvent* event)
+{
+	qDebug() << "ce:Focus";
+	m_mainWindow->focused();
+}
+
 void CodeEditor::keyPressEvent(QKeyEvent* event)
 {
 	//qDebug() << "key" << event->key();

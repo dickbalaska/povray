@@ -218,6 +218,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	event->accept();
 }
 
+
 Workspace* MainWindow::getWorkspace() { return(m_dockMan->getWorkspace()); }
 
 void MainWindow::needWorkspace()
@@ -238,7 +239,7 @@ void MainWindow::initWorkspace()
 int MainWindow::openEditor(const QString& filePath)
 {
 	int i;
-	if (m_editorTabs == NULL) {
+	if (m_editorTabs == nullptr) {
 		m_editorTabs = new QTabWidget(this);
 		m_editorTabs->setMinimumSize(400, 205);
 		m_editorTabs->setTabsClosable(true);
@@ -274,6 +275,8 @@ int MainWindow::openEditor(const QString& filePath)
 		ce = new CodeEditor(this, &preferenceData);
 		ce->setFilePath(filePath);
 		ce->setFileName(fileName);
+		QFileInfo fi(filePath);
+		ce->setFileTime(fi.lastModified());
 
 //		qDebug() << "openEditor ce=" << ce;
 //		qDebug() << "openEditor filename=" << ce->getFileName();
@@ -330,7 +333,7 @@ void MainWindow::closeEditorRequested(int which)
 	// qDebug() << "m_editorTabs" << m_editorTabs->count();
 	if (m_editorTabs->count() == 0) {
 		delete m_editorTabs;
-		m_editorTabs = NULL;
+		m_editorTabs = nullptr;
 //		QLabel* ql = new QLabel(this);	// puts the icon in the middle,
 //		ql->setPixmap(*mainPixmap);		// ugly because it resizes the tabs
 //		this->setCentralWidget(ql);
@@ -341,7 +344,7 @@ void MainWindow::closeEditorRequested(int which)
 }
 void MainWindow::deleteAllEditorTabs()
 {
-	if (m_editorTabs != NULL) {
+	if (m_editorTabs != nullptr) {
 		while (m_editorTabs->count()) {
 			m_editorTabs->setCurrentIndex(0);
 			CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(0);
@@ -350,10 +353,52 @@ void MainWindow::deleteAllEditorTabs()
 			delete ce;
 		}
 	}
-	m_editorTabs = NULL;
+	m_editorTabs = nullptr;
 //	QLabel* ql = new QLabel(this);
 //	ql->setPixmap(*mainPixmap);
 //	this->setCentralWidget(ql);
+}
+
+void MainWindow::focused()
+{
+	for (int i=0; i<m_editorTabs->count(); i++) {
+		CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
+		QFileInfo fi(ce->getFilePath());
+		if (fi.lastModified() == ce->getFileTime())
+			continue;
+		QString s = QString("%1\nhas been modified on disk.  Reload?").arg(ce->getFilePath());
+		QMessageBox::Icon ic = QMessageBox::Question;
+		QMessageBox::StandardButton defbut = QMessageBox::Yes;
+		
+		if (ce->isModified()) {
+			s = QString("%1\nhas been modified on disk and in the editor.\nEither way, data will be lost.\nReload?").arg(ce->getFilePath());
+			ic = QMessageBox::Warning;
+			defbut = QMessageBox::No;
+		}
+		int ret = QMessageBox::Yes;
+		if (!preferenceData.getAlwaysReloadFiles()) {
+			QMessageBox mb(ic, "File Modified", s, QMessageBox::Yes | QMessageBox::No, this);
+			mb.setDefaultButton(defbut);
+			mb.setCheckBox(new QCheckBox("&Always reload"));
+			ret = mb.exec();
+			if (mb.checkBox()->isChecked())
+				preferenceData.setAlwaysReloadFiles(true);
+		}
+		qDebug() << "ret=" << ret;
+		ce->setFileTime(fi.lastModified());
+		if (ret == QMessageBox::Yes) {
+			qDebug() << "Reloading" << ce->getFilePath();
+			QFile file(ce->getFilePath());
+			if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+				QMessageBox::critical(this, "File Error", QString("%1\nFailed to open file for reading").arg(ce->getFilePath()));
+			} else {
+				QTextStream in(&file);
+				QString s = in.readAll();
+				file.close();
+				ce->setPlainText(s);				
+			}
+		}			
+	}	
 }
 
 bool MainWindow::maybeSaveEditor(CodeEditor* ce)
@@ -382,6 +427,8 @@ void MainWindow::saveCurrentEditor()
 	QString s = ce->toPlainText();
 	file.write(s.toLocal8Bit());
 	file.close();
+	QFileInfo fi(ce->getFilePath());
+	ce->setFileTime(fi.lastModified());
 	ce->document()->setModified(false);
 }
 
@@ -400,7 +447,9 @@ void MainWindow::saveAllEditors()
 				QString s = ce->toPlainText();
 				file.write(s.toLocal8Bit());
 				file.close();
-				ce->document()->setModified(false);
+				QFileInfo fi(ce->getFilePath());
+				ce->setFileTime(fi.lastModified());
+				ce->document()->setModified(false);				
 			}
 		}
 	}
@@ -572,7 +621,7 @@ void MainWindow::onPreferences() {
 	Preferences p(this, &pd);
 	//qDebug() << "MainColor" << pd.getEditorColors()->comment.getColor() << &pd.getEditorColors()->comment;
 	int ret = p.exec();
-	prefVersionWidget = NULL;
+	prefVersionWidget = nullptr;
 	if (ret == QDialog::Accepted) {
 		bool changeIcons = false;
 		if (preferenceData.getUseLargeIcons() != pd.getUseLargeIcons())
@@ -621,6 +670,7 @@ static QString s_PovraySceneDirectory	("PovraySceneDirectory");
 static QString s_Preferences			("Preferences");
 static QString s_QtpovrayHelpDirectory	("QtpovrayHelpDirectory");
 static QString s_UseLargeIcons			("UseLargeIcons");
+static QString s_AlwaysReloadFiles		("AlwaysReloadFiles");
 
 void MainWindow::savePreferences() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, s_companyName, s_productName);
@@ -643,6 +693,7 @@ void MainWindow::savePreferences() {
 	settings.setValue(s_EditorFont,				preferenceData.getEditorFont().toString());
 	settings.setValue(s_ConsoleFont,			preferenceData.getConsoleFont().toString());
 	settings.setValue(s_UseLargeIcons,			preferenceData.getUseLargeIcons());
+	settings.setValue(s_AlwaysReloadFiles,		preferenceData.getAlwaysReloadFiles());
 	settings.endGroup();
 
 #define writeColor(_highlight) \
@@ -693,7 +744,8 @@ void MainWindow::loadPreferences() {
 	preferenceData.setEditorTabWidth(settings.value(s_EditorTabWidth, 4).toInt());
 	preferenceData.setAutoIndent(settings.value(s_EditorAutoIndent, true).toBool());
 	preferenceData.setAutoBraceCompletion(settings.value(s_EditorAutoBrace, true).toBool());
-	preferenceData.setUseLargeIcons((settings.value(s_UseLargeIcons, true).toBool()));
+	preferenceData.setUseLargeIcons(settings.value(s_UseLargeIcons, true).toBool());
+	preferenceData.setAlwaysReloadFiles(settings.value(s_AlwaysReloadFiles, false).toBool());
 	preferenceData.setEditorHighlightCurrentLine(settings.value(s_EditorHighlightLine, true).toBool());
 	preferenceData.setEditorHighlightTokens(settings.value(s_EditorHighlightTokens, true).toBool());
 	QString s = settings.value(s_EditorFont).toString();
@@ -750,14 +802,14 @@ void MainWindow::loadPreferences() {
 	settings.value(#_highlight "Bold", _defaultBold).toBool()); \
 
 	settings.beginGroup(s_EditorColors);
-	readColor(common, QColor(Qt::darkMagenta), false);
-	readColor(math, QColor(Qt::darkRed), false);
-	readColor(modifier, QColor(Qt::darkMagenta), false);
-	readColor(object, QColor(Qt::darkYellow), true);
-	readColor(texture, QColor(Qt::darkYellow), false);
-	readColor(color, QColor(Qt::red), false);
-	readColor(comment, QColor(Qt::darkGreen), false);
-	readColor(string, QColor(Qt::darkBlue), false);
+	readColor(common, QColor(Qt::darkMagenta), false)
+	readColor(math, QColor(Qt::darkRed), false)
+	readColor(modifier, QColor(Qt::darkMagenta), false)
+	readColor(object, QColor(Qt::darkYellow), true)
+	readColor(texture, QColor(Qt::darkYellow), false)
+	readColor(color, QColor(Qt::red), false)
+	readColor(comment, QColor(Qt::darkGreen), false)
+	readColor(string, QColor(Qt::darkBlue), false)
 	settings.endGroup();
 
 #define readKey(_key) \
@@ -765,15 +817,15 @@ void MainWindow::loadPreferences() {
 	{ preferenceData.getGlobalKeys()->_key = QKeySequence(settings.value(#_key).toString()); }
 
 	settings.beginGroup(s_Keys);
-	readKey(keyOpenPreferences);
-	readKey(keyBookmarkToggle);
-	readKey(keyBookmarkNext);
-	readKey(keyBookmarkPrevious);
-	readKey(keyFindNext);
-	readKey(keyFindPrevious);
-	readKey(keyStartRender);
-	readKey(keyErrorNext);
-	readKey(keyErrorPrevious);
+	readKey(keyOpenPreferences)
+	readKey(keyBookmarkToggle)
+	readKey(keyBookmarkNext)
+	readKey(keyBookmarkPrevious)
+	readKey(keyFindNext)
+	readKey(keyFindPrevious)
+	readKey(keyStartRender)
+	readKey(keyErrorNext)
+	readKey(keyErrorPrevious)
 	settings.endGroup();
 	setShortcutKeys();
 

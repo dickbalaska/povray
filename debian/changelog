@@ -1,3 +1,9 @@
+qtpovray (3.80.12~xenial1) xenial; urgency=low
+
+  * Bug 23 - Check for open files in the editor being modified by outside sources
+
+ -- Dick Balaska <dick@buckosoft.com>  ???
+
 qtpovray (3.80.11~xenial1) xenial; urgency=low
 
   * Bug 24 - qtpovray crashes when double-clicking on an error in the console
