@@ -87,6 +87,7 @@ CodeEditor::CodeEditor(MainWindow* parent, PreferenceData* prefs)
 	updateLineNumberAreaWidth(0);
 	updateHighlights();
 	configure(prefs);
+	setCursorWidth(2);
 
 	// create the background pixmap
 	int size = 10;
@@ -296,6 +297,7 @@ void CodeEditor::focusInEvent(QFocusEvent* event)
 {
 	qDebug() << "ce:Focus";
 	m_mainWindow->focused();
+	QPlainTextEdit::focusInEvent(event);
 }
 
 void CodeEditor::keyPressEvent(QKeyEvent* event)
