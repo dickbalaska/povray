@@ -1,3 +1,9 @@
+qtpovray (3.80.13~xenial1) xenial; urgency=low
+
+  * Bug 25 - Text cursor (I-beam) is invisible after certain keystrokes
+
+ -- Dick Balaska <dick@buckosoft.com>  Tue, 10 Dec 2019 22:38:47 -0500
+
 qtpovray (3.80.12~xenial1) xenial; urgency=low
 
   * Bug 23 - Check for open files in the editor being modified by outside sources
