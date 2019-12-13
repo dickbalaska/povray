@@ -1,3 +1,21 @@
+qtpovray (3.80.13~xenial1) xenial; urgency=low
+
+  * Bug 25 - Text cursor (I-beam) is invisible after certain keystrokes
+
+ -- Dick Balaska <dick@buckosoft.com>  Tue, 10 Dec 2019 22:38:47 -0500
+
+qtpovray (3.80.12~xenial1) xenial; urgency=low
+
+  * Bug 23 - Check for open files in the editor being modified by outside sources
+
+ -- Dick Balaska <dick@buckosoft.com>  Sun, 24 Nov 2019 18:16:33 -0500
+
+qtpovray (3.80.11~xenial1) xenial; urgency=low
+
+  * Bug 24 - qtpovray crashes when double-clicking on an error in the console
+
+ -- Dick Balaska <dick@buckosoft.com>  Sat, 23 Nov 2019 02:48:22 -0500
+
 qtpovray (3.80.10~xenial1) xenial; urgency=low
 
   * Update to POV-Ray Development build v3.8.0-alpha.10064268

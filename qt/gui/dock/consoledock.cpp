@@ -109,6 +109,7 @@ void PovrayConsoleButtonBar::setSelected(int selected)
 	for (int i=0; i<_max; i++) {
 		m_buttons[i]->setChecked(selected & (1<<i) ? true : false);
 	}
+	m_selected |= 1 << fatal;	// fatal is always on
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -262,7 +263,7 @@ void PovrayConsole::mouseDoubleClickEvent(QMouseEvent* event)
 	qDebug() << "mouseDoubleClickEvent" << event;
 	QTextCursor c = cursorForPosition(event->pos());
 	int line = c.blockNumber();
-	if (/* DISABLES CODE */ (false)) {
+	if (/* DISABLES CODE */ (true)) {
 		QString s = c.block().text();
 		qDebug() << "line" << line << "text:" << s;
 	}

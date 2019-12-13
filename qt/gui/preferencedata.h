@@ -19,8 +19,8 @@
  *
  *****************************************************************************/
 
-#ifndef _PREFERENCEDATA_H_
-#define _PREFERENCEDATA_H_
+#ifndef PREFERENCEDATA_H_
+#define PREFERENCEDATA_H_
 
 #include <QString>
 #include <QColor>
@@ -179,7 +179,8 @@ public:
 		editorHighlightCurrentLine(true),
 		editorHighlightTokens(true),
 		m_useLargeIcons(true),
-		m_useEditorViMode(true)
+		m_useEditorViMode(true),
+	    m_alwaysReloadFiles(true)
 	{
 		m_editorFont.setFamily("Source Code Pro");
 		m_editorFont.setPointSize(10);
@@ -231,6 +232,9 @@ public:
 	bool getUseLargeIcons() const { return(m_useLargeIcons); }
 	void setUseLargeIcons(bool b) { m_useLargeIcons = b; }
 
+	bool getAlwaysReloadFiles() const { return(m_alwaysReloadFiles); }
+	void setAlwaysReloadFiles(bool b) { m_alwaysReloadFiles = b; }
+
 	bool getUseEditorViMode() const { return(m_useEditorViMode); }
 	void setUseEditorViMode(bool b) { m_useEditorViMode = b; }
 
@@ -260,6 +264,7 @@ private:
 	bool	editorHighlightTokens;
 	bool	m_useLargeIcons;
 	bool	m_useEditorViMode;
+	bool	m_alwaysReloadFiles;
 //	QString	m_editorFontFamily;
 //	int		m_editorFontPointSize;
 	QFont	m_editorFont;
@@ -278,6 +283,7 @@ inline void PreferenceData::operator=(const PreferenceData& other) {
 	this->povrayHelpDirectory = other.povrayHelpDirectory;
 	this->qtpovrayHelpDirectory = other.qtpovrayHelpDirectory;
 	this->m_useLargeIcons = other.m_useLargeIcons;
+	this->m_alwaysReloadFiles = other.m_alwaysReloadFiles;
 	this->editorWrapText = other.editorWrapText;
 	this->editorTabWidth = other.editorTabWidth;
 	this->editorAutoIndent = other.editorAutoIndent;
@@ -290,4 +296,4 @@ inline void PreferenceData::operator=(const PreferenceData& other) {
 	this->keys = other.keys;
 }
 
-#endif // _PREFERENCEDATA_H_
+#endif // PREFERENCEDATA_H_

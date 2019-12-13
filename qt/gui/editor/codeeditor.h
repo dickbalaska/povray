@@ -19,8 +19,8 @@
  *
  *****************************************************************************/
 
-#ifndef _CODEEDITOR_H_
-#define _CODEEDITOR_H_
+#ifndef CODEEDITOR_H_
+#define CODEEDITOR_H_
 
 #include "highlighter.h"
 #include "povcolor.h"
@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QLabel>
 #include <QTimer>
+#include <QDateTime>
 
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
@@ -59,6 +60,8 @@ public:
 	const QString& getFilePath();
 	void	setFileName(const QString& filePath);
 	const QString& getFileName();
+	void	setFileTime(const QDateTime& fileTime);
+	const QDateTime& getFileTime();
 
 	//EditorType	getEditorType();
 
@@ -101,7 +104,9 @@ protected:
 	virtual void keyPressEvent(QKeyEvent* event) override;
 	//virtual void mousePressEvent(QMouseEvent *mouseEvent) override;
 	virtual	bool event(QEvent *e) override;
-	virtual void contextMenuEvent(QContextMenuEvent *event);
+	virtual void contextMenuEvent(QContextMenuEvent *event) override;
+	virtual void focusInEvent(QFocusEvent* event) override;
+	
 private slots:
 	void	updateLineNumberAreaWidth(int newBlockCount);
 	void	updateHighlights();
@@ -152,6 +157,7 @@ private:
 
 	QString			m_filePath;		// absolute path to the file
 	QString			m_fileName;		// just the filename displayed in the tab
+	QDateTime		m_fileTime;		// 
 };
 
 inline void CodeEditor::setModified(bool mod) { modified = mod; }
@@ -160,6 +166,8 @@ inline void CodeEditor::setFilePath(const QString& filePath) { this->m_filePath 
 inline const QString& CodeEditor::getFilePath() { return(m_filePath); }
 inline void CodeEditor::setFileName(const QString& fileName) { this->m_fileName = fileName; }
 inline const QString& CodeEditor::getFileName() { return(m_fileName); }
+inline void CodeEditor::setFileTime(const QDateTime& fileTime) { this->m_fileTime = fileTime; }
+inline const QDateTime& CodeEditor::getFileTime() { return(m_fileTime); }
 //inline EditorType CodeEditor::getEditorType() { return(m_editorType); }
 
 
@@ -179,7 +187,7 @@ public:
 		return(m_bookmarks.contains(lineNumber));
 	}
 protected:
-	virtual void contextMenuEvent(QContextMenuEvent* event);
+	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 	void paintEvent(QPaintEvent *event) override {
 		m_codeEditor->lineNumberAreaPaintEvent(event);
 	}
@@ -228,4 +236,4 @@ public:
 	CodeEditor*	m_parent;
 };
 
-#endif	// _CODEEDITOR_H_
+#endif	// CODEEDITOR_H_

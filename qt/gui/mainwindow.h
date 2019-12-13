@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
-#ifndef _MAINWINDOW_H_
-#define _MAINWINDOW_H_
+#ifndef MAINWINDOW_H_
+#define MAINWINDOW_H_
 
 #include <QMainWindow>
 #include <QCloseEvent>
@@ -100,8 +100,8 @@ class MainWindow : public QMainWindow
 	friend class MainToolbar;
 
 public:
-	explicit MainWindow(QWidget* parent = 0);
-    ~MainWindow();
+	explicit MainWindow(QWidget* parent = nullptr);
+    virtual ~MainWindow() override;
 
 	QStringList updateMRU(const QString& recent);
 	Workspace*	getWorkspace();
@@ -152,9 +152,10 @@ public slots:
 	void	onRenderStartIfNotRunning();
 	void	needWorkspace();
 	void	moveToEditor(const QString& file, int line, int col);
+	void	focused();
 
 protected:
-	void closeEvent(QCloseEvent *event) override;
+	void closeEvent(QCloseEvent* event) override;
 
 private:
 	void	loadPreferences();
@@ -164,7 +165,7 @@ private:
 	QString findPath(const QString& in);		// search for this subdirectory
 	void	setShortcutKeys();
 	void	setTitle(int which);
-	bool	eventFilter(QObject*, QEvent* e);
+	bool	eventFilter(QObject*, QEvent* e) override;
 	EditorType determineEditorType(const QString &filePath, const QString&);
 
 
@@ -208,4 +209,4 @@ private:
 inline QTabWidget* MainWindow::getEditorTabs() { return(m_editorTabs); }
 inline DockMan* MainWindow::getDockMan() { return(m_dockMan); }
 inline HelpMan* MainWindow::getHelpMan() { return(m_helpMan); }
-#endif // _MAINWINDOW_H_
+#endif // MAINWINDOW_H_
