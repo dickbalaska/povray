@@ -234,7 +234,7 @@ void  QtVfe::commandRender(const QString& data)
 //            fprintf(stderr,"%s%c",argv_copy[loony],loony+1<argc_copy?' ':'\n');
 //        }
 		sessionErrorExit();
-		deleteArgv(argv);
+		//deleteArgv(argv);
 		return;
 	}
 //	gHdl = hdl;
@@ -243,7 +243,7 @@ void  QtVfe::commandRender(const QString& data)
 
 	if (m_session->StartRender() != vfeNoError) {
 		sessionErrorExit();
-		deleteArgv(argv);
+		//deleteArgv(argv);
 		return;
 	}
     //deleteArgv(argv);     // XXX temp!!!
