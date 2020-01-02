@@ -37,10 +37,6 @@ VfeClient::VfeClient(bool debug, QObject *parent) :
 	,m_connected(false)
 #endif
 {
-//	if (m_debug)
-//		qDebug() << "WebSocket server:" << url;
-//	connect(&m_webSocket, &QWebSocket::connected, this, &WsClient::onConnected);
-//	connect(&m_webSocket, &QWebSocket::disconnected, this, &WsClient::onDisconnected);
 	m_qtVfe = new QtVfe(this);
 	connect(m_qtVfe, &QtVfe::emitPovrayBinaryMessage,
 			this, &VfeClient::onBinaryMessageReceived);
@@ -52,23 +48,15 @@ VfeClient::VfeClient(bool debug, QObject *parent) :
 
 VfeClient::~VfeClient()
 {
-//	if (povrayProcess) {
-//		povrayProcess->kill();
-//		povrayProcess = NULL;
-//	}
 	delete m_qtVfe;
 }
 
 void VfeClient::close()
 {
-//	if (!m_url.isEmpty()) {
-//		m_webSocket.sendTextMessage("quit");
-//		m_webSocket.close();
-//	}
 	if (m_qtVfe) {
 		sendMessage("quit");
 		delete m_qtVfe;
-		m_qtVfe = NULL;
+		m_qtVfe = nullptr;
 	}
 
 }
