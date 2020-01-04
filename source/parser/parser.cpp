@@ -142,19 +142,20 @@ const DBL INFINITE_VOLUME = BOUND_HUGE;
 Parser::Parser(shared_ptr<SceneData> sd, const Options& opts,
                GenericMessenger& mf, FileResolver& fr, ProgressReporter& pr, TraceThreadData& td) :
     sceneData(sd),
+	mMessageFactory(mf),
+	mFileResolver(fr),
+	mProgressReporter(pr),
+	mThreadData(td),
+	Debug_Message_Buffer(mf),
+	mpFunctionVM(new FunctionVM),
+	fnVMContext(new FPUContext(mpFunctionVM.get(), GetParserDataPtr())),
     clockValue(opts.clock),
-    useClock(opts.useClock),
-    mMessageFactory(mf),
-    mFileResolver(fr),
-    mProgressReporter(pr),
-    mThreadData(td),
-    Debug_Message_Buffer(mf),
-    mpFunctionVM(new FunctionVM),
-    fnVMContext(new FPUContext(mpFunctionVM.get(), GetParserDataPtr())),
+	useClock(opts.useClock),
     Destroying_Frame(false),
     mTokenCount(0),
     mTokensSinceLastProgressReport(0),
-    next_rand(nullptr)
+    next_rand(nullptr),
+	mDebugger(nullptr)
 {
     std::tm tmY2K;
     // Field       = Value - Base
@@ -171,7 +172,8 @@ Parser::Parser(shared_ptr<SceneData> sd, const Options& opts,
     pre_init_tokenizer();
     if (sceneData->realTimeRaytracing)
         mBetaFeatureFlags.realTimeRaytracing = true;
-
+	if (sceneData->debuggerEnabled)
+		mDebugger = new Debugger(*this);
     sceneData->functionContextFactory = mpFunctionVM;
 }
 
@@ -179,6 +181,8 @@ Parser::~Parser()
 {
     // NB: We need to keep fnVMContext around until all functions have been destroyed.
     delete fnVMContext;
+	if (mDebugger)
+		delete mDebugger;
 }
 
 /* Parse the file. */
@@ -187,6 +191,10 @@ void Parser::Run()
     SourceInfo errorInfo(UCS2String(POV_FILENAME_BUFFER_CHARS, u'\0'), // Pre-claim some memory, so we can handle an out-of-memory error.
                          SourcePosition(-1,-1,-1));
 
+	if (mDebugger) {
+		mDebugger->send("Init\n");
+		mDebugger->parserPaused();
+	}
     // Outer try/catch block to handle out-of-memory conditions
     // occurring during regular error handling.
     try
@@ -342,7 +350,7 @@ void Parser::Run()
     Cleanup();
 
     // Check for experimental features
-    char str[512] = "";
+    //char str[512] = "";
 
     vector<std::string> featureList;
     std::string featureString;
@@ -5939,7 +5947,7 @@ ObjectPtr Parser::Parse_Torus()
     DBL majorRadius, minorRadius;
     bool invert = false;
     SpindleTorus::SpindleMode spindleMode = SpindleTorus::UnionSpindle;
-    bool spindleModeSet = false;
+    //bool spindleModeSet = false;
 
     Parse_Begin();
 
@@ -6555,6 +6563,7 @@ void Parser::Parse_Frame ()
     FOG  *Local_Fog;
     SKYSPHERE  *Local_Skysphere;
     bool had_camera = false;
+	//bool cyclic = renderOptions.TryGetBool(kPOVAttrib_CyclicAnimation, false);
 
     EXPECT
         CASE (RAINBOW_TOKEN)

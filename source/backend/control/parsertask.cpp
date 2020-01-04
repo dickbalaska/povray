@@ -50,6 +50,7 @@
 
 // POV-Ray header files (parser module)
 #include "parser/parser.h"
+#include "parser/debugger.h"
 
 // POV-Ray header files (POVMS module)
 #include "povms/povmscpp.h"
@@ -78,6 +79,8 @@ ParserTask::ParserTask(std::shared_ptr<BackendSceneData> sd, const ParserOptions
 void ParserTask::Run()
 {
     mpParser.reset(new Parser(mpBackendSceneData, mOptions, *mpMessageFactory, *this, *this, *reinterpret_cast<TraceThreadData *>(GetDataPtr())));
+	if (mpParser->hasDebugger())
+		mpParser->getDebugger()->setParserTask(this);
     mpParser->Run();
 }
 

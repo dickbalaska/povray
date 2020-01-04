@@ -133,7 +133,8 @@ RenderFrontendBase::RenderFrontendBase(POVMSContext ctx) :
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Warning, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Error, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_FatalError, this, &RenderFrontendBase::HandleMessage);
-    InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Debug, this, &RenderFrontendBase::HandleMessage);
+	InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Debug, this, &RenderFrontendBase::HandleMessage);
+	InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Debugger, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Progress, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Done, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Failed, this, &RenderFrontendBase::HandleMessage);
@@ -1942,6 +1943,12 @@ void RenderTime(POVMS_Object& cppmsg, TextStreamBuffer *tsb)
 void DebugInfo(POVMS_Object& cppmsg, TextStreamBuffer *tsb)
 {
     std::string str = cppmsg.TryGetString(kPOVAttrib_EnglishText, "<Error retrieving debug output>");
+    tsb->printf("%s\n", str.c_str());
+}
+
+void DebuggerInfo(POVMS_Object& cppmsg, TextStreamBuffer *tsb)
+{
+    std::string str = cppmsg.TryGetString(kPOVAttrib_EnglishText, "<Error retrieving debugger output>");
     tsb->printf("%s\n", str.c_str());
 }
 

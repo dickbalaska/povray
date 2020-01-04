@@ -115,6 +115,11 @@ void MessageFactory::SendMessage(MessageClass mc, WarningLevel level, const char
             (void)POVMSUtil_SetInt(&msg, kPOVAttrib_Error, 0);
             break;
 
+		case kMessageClass_Debugger:
+		    msgIdent = kPOVMsgIdent_Debugger;
+		    break;
+		
+		/*NOTREACHED*/
         default:
             POV_ASSERT(false);
             break;

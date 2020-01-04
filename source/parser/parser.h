@@ -81,6 +81,8 @@
 #include "parser/rawtokenizer.h"
 #include "parser/symboltable.h"
 
+#include "parser/debugger.h"
+
 namespace pov
 {
 
@@ -103,6 +105,8 @@ using namespace pov_base;
 using namespace pov;
 
 const int TOKEN_OVERFLOW_RESET_COUNT = 2500;
+
+class Debugger;
 
 /*****************************************************************************
 * Global preprocessor defines
@@ -215,6 +219,8 @@ struct BetaFlags final
 
 class Parser final
 {
+	friend class Debugger;
+
     public:
 
         using Options = ParserOptions;
@@ -736,7 +742,7 @@ class Parser final
         size_t MaxCachedMacroSize;
 
         std::chrono::system_clock::time_point mY2K;
-
+		
         // parse.h/parse.cpp
         void Frame_Init(void);
         void InitDefaults(int version);
@@ -933,6 +939,16 @@ class Parser final
 
         // TODO - obsolete
         RGBFTColour *Create_Colour (void);
+		
+// Debugger foo
+public:
+
+		bool hasDebugger() { return(mDebugger != nullptr); }
+		Debugger*	getDebugger() { return(mDebugger); }
+private:
+		Debugger*	mDebugger;
+
+		
 };
 
 }

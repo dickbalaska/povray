@@ -91,6 +91,9 @@ using namespace pov_base;
 #define SYS_ALPHA_FLAG false
 #endif // SYS_HAS_ALPHA
 
+extern struct ProcessOptions::INI_Parser_Table RenderOptions_INI_Table[];
+extern struct ProcessOptions::Cmd_Parser_Table RenderOptions_Cmd_Table[];
+
 /*
    Keyword table for the INI-file parser.
    The parser converts the INI-file options into a POVMS object using
@@ -143,6 +146,7 @@ struct ProcessOptions::INI_Parser_Table RenderOptions_INI_Table[] =
     { "Dither_Method",       kPOVAttrib_DitherMethod,       kUseSpecialHandler },
     { "Draw_Vistas",         kPOVAttrib_DrawVistas,         kPOVMSType_Bool },
 
+    { "Enable_Debugger",	 kPOVAttrib_EnableDebugger,		kPOVMSType_Bool },
     { "End_Column",          kPOVAttrib_Right,              kPOVMSType_Float },
     { "End_Row",             kPOVAttrib_Bottom,             kPOVMSType_Float },
 
@@ -355,6 +359,7 @@ struct ProcessOptions::Cmd_Parser_Table RenderOptions_Cmd_Table[] =
 
     { "X",   kPOVAttrib_TestAbortCount,     kUseSpecialHandler,     kPOVAttrib_TestAbort,           kCmdOptFlag_Optional },
 
+    { "ZZ",  kNoParameter,					kNoParameter,			kPOVAttrib_EnableDebugger},
     { nullptr }
 };
 

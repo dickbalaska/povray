@@ -147,6 +147,7 @@ void Scene::StartParser(POVMS_Object& parseOptions)
     sceneData->bspMissChance = clip<float>(parseOptions.TryGetFloat(kPOVAttrib_BSP_MissChance, 0.0f), 0.0f, 1.0f - EPSILON);
 
     sceneData->realTimeRaytracing = parseOptions.TryGetBool(kPOVAttrib_RealTimeRaytracing, false);
+	sceneData->debuggerEnabled = parseOptions.TryGetBool(kPOVAttrib_EnableDebugger, false);
 
     if(parseOptions.Exist(kPOVAttrib_Declare) == true)
     {

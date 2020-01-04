@@ -11,17 +11,17 @@
 #include "qtvfe.h"
 #include "base/version_info.h"
 #include "backend/povray.h"
-#include "config.h"
+//#include "config.h"
 
 using povray::qtpov::QtGraphics;
 
 namespace vfe {
 
 const char* s_stream = "stream";
-const char* s_stream_fatal	 = "fatal";
-const char* s_stream_warning = "warning";
+static const char* s_stream_fatal	 = "fatal";
+static const char* s_stream_warning = "warning";
 
-bool gCancelRender = false;
+static bool gCancelRender = false;
 
 QtVfe::QtVfe(QObject *parent) : QObject(parent)
 {
@@ -228,11 +228,6 @@ void  QtVfe::commandRender(const QString& data)
 	if (m_session->SetOptions(*m_session->m_renderOptions) != vfeNoError) {
 		string s = s_stream_fatal;
 		s += "Problem with option setting";
-//		wsSend(hdl, s);
-//        for(int loony=0;loony<argc_copy;loony++)
-//        {
-//            fprintf(stderr,"%s%c",argv_copy[loony],loony+1<argc_copy?' ':'\n');
-//        }
 		sessionErrorExit();
 		//deleteArgv(argv);
 		return;
@@ -325,11 +320,11 @@ void QtVfe::printNonStatusMessage(vfeQtSession* session)
 
 void QtVfe::printStatusMessage(vfeQtSession* session)
 {
-	vfeSession::MessageType type;
+	//vfeSession::MessageType type;
 	string str;
 	UCS2String file;
-	int	line;
-	int	col;
+	//int	line;
+	//int	col;
 	vfeSession::StatusMessage msg(*session);
 	while (session->GetNextStatusMessage(msg)) {
 		//stringstream ss;

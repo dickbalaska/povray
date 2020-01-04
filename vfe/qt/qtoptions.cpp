@@ -50,7 +50,7 @@
 #include "qtoptions.h"
 #include "qtvfe.h"
 
-#undef UNIX_DEBUG
+//#undef UNIX_DEBUG
 
 // Note: I use povray for the PACKAGE here, so that is what gets reported in the error messages.
 // Use PRODUCT when specifically meaning qtpovray.
@@ -223,17 +223,17 @@ namespace vfePlatform
         cerr << endl;
     }
 
-	void QtOptionsProcessor::Register(const Option_Info options[])
-    {
-        for (int i = 0; options[i].Section != ""; i++)
-        {
-            list<Option_Info>::iterator iter = find(m_user_options.begin(), m_user_options.end(), options[i]);
+//	void QtOptionsProcessor::Register(const Option_Info options[])
+//    {
+//        for (int i = 0; options[i].Section != ""; i++)
+//        {
+//            list<Option_Info>::iterator iter = find(m_user_options.begin(), m_user_options.end(), options[i]);
 
-            // add this option if not already there
-            if (iter == m_user_options.end())
-                m_user_options.push_back(options[i]);
-        }
-    }
+//            // add this option if not already there
+//            if (iter == m_user_options.end())
+//                m_user_options.push_back(options[i]);
+//        }
+//    }
 
 	void QtOptionsProcessor::QueryOption(Option_Info &option)
     {

@@ -61,6 +61,11 @@ GenericMessenger::GenericMessenger(unsigned int wl, const char *sn) :
 GenericMessenger::~GenericMessenger()
 {}
 
+void GenericMessenger::Debugger(const char* text)
+{
+    SendMessage(kMessageClass_Debugger, kWarningNone, text);
+}
+
 void GenericMessenger::UserDebug(const char *text)
 {
     SendMessage(kMessageClass_UserDebug, kWarningNone, text);

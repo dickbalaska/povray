@@ -204,6 +204,7 @@ SOURCES += \
 	$$sDIR/frontend/renderfrontend.cpp \
 	$$sDIR/frontend/rendermessagehandler.cpp \
 	$$sDIR/frontend/shelloutprocessing.cpp \
+	$$sDIR/parser/debugger.cpp \
 	$$sDIR/parser/fncode.cpp \
 	$$sDIR/parser/parser.cpp \
 	$$sDIR/parser/parser_expressions.cpp \
@@ -375,6 +376,7 @@ HEADERS += \
 	$$sDIR/frontend/rendermessagehandler.h \
 	$$sDIR/frontend/shelloutprocessing.h \
 	$$sDIR/parser/configparser.h \
+	$$sDIR/parser/debugger.h \
 	$$sDIR/parser/fncode.h \
 	$$sDIR/parser/parser.h \
     $$sDIR/parser/parsertypes.h \

@@ -375,6 +375,7 @@ namespace vfe
         mError,
         mAnimationStatus,
         mGenericStatus,
+		mDebugger,
         mDivider
       } MessageType ;
 

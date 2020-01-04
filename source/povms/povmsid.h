@@ -228,6 +228,7 @@ enum
     kPOVMsgIdent_Error               = 'ErrW',
     kPOVMsgIdent_FatalError          = 'ErrF',
     kPOVMsgIdent_Debug               = 'Dbug',
+	kPOVMsgIdent_Debugger			 = 'Dbgr',
 
     kPOVMsgIdent_Progress            = 'Prog',
 
@@ -248,6 +249,7 @@ enum
     kPOVMsgIdent_CmdError            = 'CErr',
     kPOVMsgIdent_CmdAbort            = 'CAbo',
 
+	kPOVAttrib_EnableDebugger		 = 'EnDB',
     // other
     kPOVMsgIdent_ParserOptions       = 'POpt',
     kPOVMsgIdent_RenderOptions       = 'ROpt',

@@ -147,7 +147,8 @@ namespace vfe
       virtual void Warning(Console *, POVMS_Object&, bool) override;
       virtual void Error(Console *, POVMS_Object&, bool) override;
       virtual void FatalError(Console *, POVMS_Object&, bool) override;
-      virtual void DebugInfo(Console *, POVMS_Object&, bool) override;
+	  virtual void DebugInfo(Console *, POVMS_Object&, bool) override;
+	  virtual void DebuggerInfo(Console *, POVMS_Object&, bool) override;
 
       vfeSession* m_Session;
   };

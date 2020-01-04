@@ -81,7 +81,7 @@ class POVMSMessageDetails
 {
   public:
     POVMSMessageDetails (POVMS_Object &Obj);
-    virtual ~POVMSMessageDetails () {} ;
+    virtual ~POVMSMessageDetails () {}
     string GetContext (int NumLines) ;
 
   protected:
@@ -139,8 +139,8 @@ string POVMSMessageDetails::GetContext (int NumLines)
 class ParseWarningDetails : public POVMSMessageDetails
 {
   public:
-    ParseWarningDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {} ;
-    virtual ~ParseWarningDetails () override {} ;
+    ParseWarningDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {}
+    virtual ~ParseWarningDetails () override {}
 
   public:
     using POVMSMessageDetails::File ;
@@ -154,8 +154,8 @@ class ParseWarningDetails : public POVMSMessageDetails
 class ParseErrorDetails : public POVMSMessageDetails
 {
   public:
-    ParseErrorDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {} ;
-    virtual ~ParseErrorDetails () override {} ;
+    ParseErrorDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {}
+    virtual ~ParseErrorDetails () override {}
 
   public:
     using POVMSMessageDetails::File ;
@@ -419,6 +419,19 @@ void vfeParserMessageHandler::DebugInfo(Console *Con, POVMS_Object& Obj, bool co
     m_Session->AppendStreamMessage (vfeSession::mDebug, str.c_str()) ;
 }
 
+void vfeParserMessageHandler::DebuggerInfo(Console *Con, POVMS_Object& Obj, bool conout)
+{
+  string str(Obj.GetString(kPOVAttrib_EnglishText));
+//  if (m_Session->m_OptimizeForConsoleOutput == true)
+//  {
+//    if (conout)
+//        Con->puts (str.c_str()) ;
+//  }
+//  else
+    m_Session->AppendStreamMessage (vfeSession::mDebugger, str.c_str()) ;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 // class vfeRenderMessageHandler
@@ -601,7 +614,7 @@ void vfeProcessRenderOptions::WriteError(const char *format, ...)
 ////////////////////////////////////////////////////////////////////////////////////////
 
 VirtualFrontEnd::VirtualFrontEnd(vfeSession& session, POVMSContext ctx, POVMSAddress addr, POVMS_Object& msg, POVMS_Object *result, shared_ptr<Console>& console) :
-  m_Session(&session), m_PlatformBase(session), renderFrontend (ctx)
+ renderFrontend (ctx), m_Session(&session), m_PlatformBase(session)
 {
   backendAddress = addr ;
   state = kReady ;
@@ -927,8 +940,8 @@ bool VirtualFrontEnd::HandleShelloutCancel()
   return true;
 }
 
-State VirtualFrontEnd::Process()
-{
+State VirtualFrontEnd::Process()	// dik: Sometimes returns a bool.
+{									// Only called from vfesession which ignores the result anyway.
   if (state == kReady)
     return kReady;
 
