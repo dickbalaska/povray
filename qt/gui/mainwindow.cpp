@@ -526,7 +526,7 @@ void MainWindow::setTitle(int which)
 				fname = "***broken***";
 			}
 		}
-		QString s = QString("%1%2 - qtpovray").arg(fname).arg(mod);
+		QString s = QString("%1%2 - qtpovray").arg(fname, mod);
 		setWindowTitle(s);
 	}
 }
@@ -919,7 +919,7 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 			return;
 		} else {
 			stream = streamT.toInt();
-			if (streamT == "0" || stream == 1 || stream == 8 || stream == 3) {
+			if (streamT == "0" || stream == mDebug || stream == mDivider || stream == mWarning) {
 				emit(emitStatusMessage(stream, msg));
 				return;
 			} else if (streamT == "7") {
@@ -1018,6 +1018,11 @@ void MainWindow::onRenderStartIfNotRunning()
 	onRenderAction();
 }
 
+void MainWindow::onStartDebugger()
+{
+	startRender(true);
+}
+
 void MainWindow::onRenderAction()
 {
 	qDebug() << "onRenderAction";
@@ -1026,6 +1031,11 @@ void MainWindow::onRenderAction()
 		sendPovrayMessage("cancel");
 		return;
 	}
+	startRender(false);
+}
+
+void MainWindow::startRender(bool useDebugger)
+{
 	saveAllEditors();
 	this->m_statusBar->showMessage(tr("Start render"));
 	m_dockMan->getConsoleDock()->getPovrayConsole()->clearMessages();
@@ -1056,6 +1066,9 @@ void MainWindow::onRenderAction()
 	}
 
 	cl += rdir;
+
+	if (useDebugger)
+		cl += " +ZZ";
 
 	if (!preferenceData.getPovrayIncludes().isEmpty()) {
 		cl += " +L";

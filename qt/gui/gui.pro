@@ -42,6 +42,7 @@ QMAKE_CXXFLAGS -= -Wdate-time -Wsign-conversion
 INCLUDEPATH += "../../vfe"
 
 SOURCES += \
+	debuggerman.cpp \
         main.cpp \
         mainwindow.cpp \
     dock/resourcedock.cpp \
@@ -68,6 +69,7 @@ SOURCES += \
     editor/imagedisplayer.cpp
 
 HEADERS += \
+	debuggerman.h \
         mainwindow.h \
     dock/resourcedock.h \
     dock/dockman.h \

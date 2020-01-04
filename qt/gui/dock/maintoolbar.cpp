@@ -34,10 +34,10 @@
 #include "dockman.h"
 #include "helpman.h"
 
-QIcon* renderGoIcon;
-QIcon* renderStopIcon;
-QString renderGoText;
-QString renderStopText;
+static QIcon* renderGoIcon;
+static QIcon* renderStopIcon;
+static QString renderGoText;
+static QString renderStopText;
 
 
 MainToolbar::MainToolbar(const QString &title, bool useLargeIcons, MainWindow *parent)
@@ -75,6 +75,8 @@ MainToolbar::MainToolbar(const QString &title, bool useLargeIcons, MainWindow *p
 	addAction(m_insertMenu->menuAction());
 	addAction(QIcon(iString("Settings")), "Settings", m_mainWindow, SLOT(onPreferences()));
 	m_renderAction = addAction(*renderGoIcon, renderGoText, m_mainWindow, SLOT(onRenderAction()));
+	m_debuggerAction = addAction(QIcon(iString("Debug")), "Debug", m_mainWindow, SLOT(onStartDebugger()));
+
 	renderCl = new Dropdown(this);
 	connect(renderCl, SIGNAL(enterPressed()), m_mainWindow, SLOT(onRenderStartIfNotRunning()));
 	addWidget(renderCl);

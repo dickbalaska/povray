@@ -33,6 +33,19 @@ class QtVfe;
 }
 using vfe::QtVfe;
 
+enum MsgType {
+	mUnclassified = 0,
+	mDebug,
+	mInformation,
+	mWarning,
+	mPossibleError,
+	mError,
+	mAnimationStatus,
+	mGenericStatus,
+	mDebugger,
+	mDivider	
+};
+
 class VfeClient : public QObject
 {
 	Q_OBJECT

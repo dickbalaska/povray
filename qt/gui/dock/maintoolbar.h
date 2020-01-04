@@ -71,6 +71,7 @@ private:
 	QAction*	m_saveAction;
 	QAction*	m_saveAllAction;
 	QAction*	m_renderAction;
+	QAction*	m_debuggerAction;
 	QAction*	m_editUndoAction;
 	QAction*	m_editRedoAction;
 	QAction*	m_editCutAction;

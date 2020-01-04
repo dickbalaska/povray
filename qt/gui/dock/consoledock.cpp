@@ -157,7 +157,7 @@ PovrayConsole::PovrayConsole(QTabWidget* parent, QStackedWidget *consoleBar, Mai
 					 << "orangered" << "firebrick" << "red" << "red";
 	m_mapStreamToConsole << unclassified << debug << info << fatal
 					   << unclassified << statistic << warning << error
-					   << info;
+					   << unclassified << info;
 }
 
 PovrayConsole::~PovrayConsole()

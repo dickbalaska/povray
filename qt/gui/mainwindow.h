@@ -150,6 +150,7 @@ public slots:
 	void	wsMessageReceived(const QString& command, const QString& text);
 	void	onRenderAction();
 	void	onRenderStartIfNotRunning();
+	void	onStartDebugger();
 	void	needWorkspace();
 	void	moveToEditor(const QString& file, int line, int col);
 	void	focused();
@@ -167,7 +168,7 @@ private:
 	void	setTitle(int which);
 	bool	eventFilter(QObject*, QEvent* e) override;
 	EditorType determineEditorType(const QString &filePath, const QString&);
-
+	void	startRender(bool useDebugger);
 
 	QTextEdit*		prefVersionWidget;		// If prefs are open, this points to where the version is displayed
 	QShortcut		m_shortcutConfigure;
