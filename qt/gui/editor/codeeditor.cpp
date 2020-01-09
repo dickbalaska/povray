@@ -23,6 +23,7 @@
 #include "../dock/maintoolbar.h"
 #include "mainwindow.h"
 #include "bookmarkman.h"
+#include "debuggerman.h"
 #include "findman.h"
 #include "insertmenuman.h"
 #include "coloreditor.h"
@@ -33,6 +34,7 @@
 #include <QtGlobal>
 
 static QHash<QString, int>	editKeywords;
+static QPixmap*		stopPixmap;
 
 void CodeEditor::init()
 {
@@ -41,6 +43,8 @@ void CodeEditor::init()
 	editKeywords["rgbt"] = 0;
 	editKeywords["rgbft"] = 0;
 	editKeywords["color_map"] = 1;
+	stopPixmap = new QPixmap(":/resources/icons/stop.png");
+	
 }
 
 CodeEditor::CodeEditor(MainWindow* parent, PreferenceData* prefs)
@@ -74,6 +78,7 @@ CodeEditor::CodeEditor(MainWindow* parent, PreferenceData* prefs)
 	connect(this, SIGNAL(toggleComments()), parent, SLOT(editToggleComments()));
 	connect(this, SIGNAL(findDialog()), parent->getFindMan(), SLOT(onFindDialog()));
 	connect(this, SIGNAL(updateBookmarks(QList<int>)), parent->getBookmarkMan(), SLOT(onUpdateBookmarks(QList<int>)));
+	connect(this, SIGNAL(updateBreakpoints(QList<int>)), parent->getDebuggerMan(), SLOT(onUpdateBreakpoints(QList<int>)));
 
 	connect(&m_tooltipTimer, SIGNAL(timeout()), this, SLOT(tooltipTimeout()));
 	m_tooltipTimer.setSingleShot(true);
@@ -166,6 +171,15 @@ void CodeEditor::updateLineNumberAreaWidth(int newBlockCount)
 		}
 		if (bookmarksChanged)
 			emit(updateBookmarks(m_lineNumberArea->m_bookmarks));
+		bool breakpointsChanged = false;
+		for (int i=0; i<m_lineNumberArea->m_breakpoints.size(); i++) {
+			if (m_lineNumberArea->m_breakpoints[i] > pos) {
+				m_lineNumberArea->m_breakpoints[i] += diff;
+				breakpointsChanged = true;
+			}
+		}
+		if (breakpointsChanged)
+			emit(updateBreakpoints(m_lineNumberArea->m_breakpoints));
 		m_lineNumberArea->repaint();
 		m_bookmarkOldBlockCount = newBlockCount;
 	}
@@ -199,6 +213,10 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent* event) {
 				QRect rect(0, top, lineNumberAreaWidth()-1, fontMetrics().height());
 				painter.fillRect(rect, Qt::cyan);
 			}
+			if (m_lineNumberArea->hasBreakpoint(blockNumber+1)) {
+				QRect rect(0, top, lineNumberAreaWidth()-1, fontMetrics().height());
+				painter.drawPixmap(rect, *stopPixmap);
+			}
 			QString number = QString::number(blockNumber + 1);
 			painter.setPen(Qt::black);
 			painter.drawText(0, top, m_lineNumberArea->width(), fontMetrics().height(),
@@ -217,6 +235,12 @@ void CodeEditor::setBookmarks(QList<int> newBookmarks)
 	m_lineNumberArea->m_bookmarks = newBookmarks;
 	m_lineNumberArea->repaint();
 	m_bookmarkOldBlockCount = this->blockCount();
+}
+
+void CodeEditor::setBreakpoints(QList<int> newBreakpoints)
+{
+	m_lineNumberArea->m_breakpoints = newBreakpoints;
+	m_lineNumberArea->repaint();
 }
 
 void CodeEditor::resizeEvent(QResizeEvent* e)
@@ -254,7 +278,6 @@ void CodeEditor::contextMenuEvent(QContextMenuEvent *event)
 		menu->addAction(tr("Edit color_map"), this, SLOT(editColormap()));
 	else
 		menu->addAction(tr("Insert color_map"), this, SLOT(insertColormap()));
-
 
 	menu->exec(this->mapToGlobal(event->pos()));
 	delete menu;
@@ -707,6 +730,9 @@ public:
 	QString		matchedString;
 	int			position;
 	bool		valid;
+	bool		unused0;
+	bool		unused1;
+	bool		unused2;
 
 };
 
@@ -799,6 +825,11 @@ void CodeEditor::highlightCurrentLine(QList<QTextEdit::ExtraSelection>& es)
 		selection.cursor.clearSelection();
 		es.append(selection);
 	}
+}
+
+void CodeEditor::highlightDebuggerLine(QList<QTextEdit::ExtraSelection>& es)
+{
+	
 }
 
 void CodeEditor::handleHover(const QPoint& globalPos, QPoint& , QTextCursor& tc)
@@ -951,8 +982,14 @@ void LineNumberArea::contextMenuEvent(QContextMenuEvent* event)
 	menu.addAction(t, this, SLOT(onBookmarkToggle()), Qt::CTRL + Qt::Key_F2);
 	menu.addAction(tr("Next Bookmark"), this, SLOT(onBookmarkNext()), Qt::Key_F2);
 	menu.addAction(tr("Previous Bookmark"), this, SLOT(onBookmarkPrevious()), Qt::SHIFT + Qt::Key_F2);
+	t = tr("Add Breakpoint");
+	if (hasBreakpoint(line))
+		t = tr("Remove Breakpoint");
+	menu.addAction(t, this, SLOT(onBreakpointToggle()), Qt::Key_F9);
+	
 	menu.exec(event->globalPos());
 }
 void LineNumberArea::onBookmarkToggle()	{ emit m_codeEditor->bookmarkCommand(bmToggle, m_contextLine); }
 void LineNumberArea::onBookmarkNext()	{ emit m_codeEditor->bookmarkCommand(bmNext, m_contextLine); }
 void LineNumberArea::onBookmarkPrevious(){ emit m_codeEditor->bookmarkCommand(bmPrevious, m_contextLine); }
+void LineNumberArea::onBreakpointToggle() { emit m_codeEditor->breakpointToggle(m_contextLine); }

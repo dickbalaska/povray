@@ -55,5 +55,6 @@
         <file>resources/icons/povray_16x16_ssel.png</file>
         <file>resources/icons/Debug_24x24.png</file>
         <file>resources/icons/Debug_32x32.png</file>
+        <file>resources/icons/stop.png</file>
     </qresource>
 </RCC>

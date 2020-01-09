@@ -26,19 +26,15 @@
 #include "findman.h"
 
 FindMan::FindMan(MainWindow* parent)
-	: QObject(NULL)
+	: QObject(nullptr)
 {
 	m_mainWindow = parent;
-	m_findDialog = NULL;
+	m_findDialog = nullptr;
 }
 
 void FindMan::onFindDialog()
 {
 	qDebug() << "onFindDialog";
-//	EditorBase* eb = m_mainWindow->getEditor();
-//	if (!eb || eb->getEditorType() != EditorTypeCode)
-//		return;
-//	CodeEditor* ce = (CodeEditor*)eb;
 	CodeEditor* ce = m_mainWindow->getCodeEditor();
 	if (!ce)
 		return;
@@ -63,7 +59,7 @@ void FindMan::onFindDialogClosed()
 	qDebug() << "FindMan::onFindDialogClosed";
 	m_findDialogPos = m_findDialog->pos();
 	m_findDialogSize = m_findDialog->size();
-	m_findDialog = NULL;
+	m_findDialog = nullptr;
 }
 
 void FindMan::onFindDialogFind(int findType)
@@ -73,7 +69,7 @@ void FindMan::onFindDialogFind(int findType)
 	if (!ce)
 		return;
 	m_lastFindText = m_findDialog->m_findText->text();
-	QRegExp* re = NULL;
+	QRegExp* re = nullptr;
 	int flags = 0;
 	if (m_findDialog->m_caseSensitive->isChecked())
 		flags |= QTextDocument::FindCaseSensitively;

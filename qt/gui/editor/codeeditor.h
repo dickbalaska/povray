@@ -77,6 +77,7 @@ public:
 	bool	isRedoAvailable() { return(m_hasRedo); }
 
 	void	setBookmarks(QList<int> newBookmarks);
+	void	setBreakpoints(QList<int> newBreakpoints);
 
 	void	handleEditIndent();
 	void	handleEditUnindent();
@@ -94,6 +95,8 @@ signals:
 	void	bookmarkNext(int lineNumber);
 	void	bookmarkPrevious(int lineNumber);
 	void	updateBookmarks(const QList<int> marks);
+	void	breakpointToggle(int lineNumber);
+	void	updateBreakpoints(const QList<int> marks);
 
 public slots:
 	void	gotoMatchingBrace();
@@ -131,6 +134,7 @@ private slots:
 private:
 	void		onFindDialog();
 	void		highlightCurrentLine(QList<QTextEdit::ExtraSelection>& es);
+	void		highlightDebuggerLine(QList<QTextEdit::ExtraSelection>& es);
 	void		highlightMatchingTokens(QList<QTextEdit::ExtraSelection>& es);
 	void		handleHover(const QPoint& globalPos, QPoint& pos, QTextCursor &tc);
 
@@ -186,6 +190,9 @@ public:
 	bool hasBookmark(int lineNumber) {
 		return(m_bookmarks.contains(lineNumber));
 	}
+	bool hasBreakpoint(int lineNumber) {
+		return(m_breakpoints.contains(lineNumber));
+	}
 protected:
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 	void paintEvent(QPaintEvent *event) override {
@@ -195,10 +202,12 @@ protected slots:
 	void	onBookmarkToggle();
 	void	onBookmarkNext();
 	void	onBookmarkPrevious();
+	void	onBreakpointToggle();
 
 private:
 	CodeEditor*	m_codeEditor;
 	QList<int>	m_bookmarks;
+	QList<int>	m_breakpoints;
 	int			m_contextLine;
 };
 

@@ -63,7 +63,7 @@ void	BookmarkMan::onBookmarkToggle(int lineNumber)
 		lineNumber = ce->textCursor().blockNumber()+1;
 	QString path = ce->getFilePath();
 	bool found = false;
-	Bookmark* bm;
+	Bookmark* bm = nullptr;
 	foreach(bm, m_bookmarks) {
 		if (bm->m_pathName == path && bm->m_lineNumber == lineNumber) {
 			found = true;

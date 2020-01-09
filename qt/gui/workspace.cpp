@@ -33,12 +33,14 @@
 #include "editor/codeeditor.h"
 #include "editor/imagedisplayer.h"
 #include "findman.h"
+#include "debuggerman.h"
 
 #include "workspace.h"
 
 static QString s_aboutRect			("aboutRect");
 static QString s_activeEditor		("activeEditor");
 static QString s_bookmarks			("bookmarks");
+static QString s_breakpoints		("breakpoints");
 static QString s_bmP				("bmP");
 static QString s_bmL				("bmL");
 static QString s_CL					("CL");
@@ -197,6 +199,23 @@ void Workspace::load(const QString& filename)
 		m_mainWindow->m_bookmarkMan->addBookmark(bm);
 	}
 	settings.endGroup();
+
+	settings.beginGroup(s_breakpoints);
+	m_mainWindow->m_debuggerMan->m_breakpoints.clear();
+	for (int i=0;; i++) {
+		index.setNum(i);
+		QString s = settings.value(index).toString();
+		if (s.isNull())
+			break;
+		int z = s.indexOf(' ');
+		QString t = s.left(z);
+		s = s.mid(z+1);
+		Breakpoint* bp = new Breakpoint;
+		bp->m_lineNumber = t.toInt();
+		bp->m_pathName = s;
+		m_mainWindow->m_debuggerMan->addBreakpoint(bp);
+	}
+	settings.endGroup();
 }
 
 void Workspace::save()
@@ -261,6 +280,20 @@ void Workspace::save()
 		++i;
 	}
 	settings.endGroup();
+	
+	settings.beginGroup(s_breakpoints);
+	settings.remove("");
+	i=0;
+	foreach(Breakpoint* bp, m_mainWindow->m_debuggerMan->m_breakpoints) {
+		index.setNum(i);
+		s.setNum(bp->m_lineNumber);
+		s += ' ';
+		s += bp->m_pathName;
+		settings.setValue(index, s);
+		++i;
+	}
+	settings.endGroup();
+	
 }
 
 void Workspace::addDirRoot(const QString &path)

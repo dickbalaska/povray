@@ -34,28 +34,31 @@
 #include "preferences.h"
 #include "dock/filterdialog.h"
 #include "editor/bookmarkman.h"
+#include "debuggerman.h"
 #include "findman.h"
 #include "helpman.h"
 #include "insertmenuman.h"
 #include "qtpovrayversion.h"
 
-QString	s_companyName = "qtpovray";		// directory to put the ini file in
-QString	s_productName = "qtpovray";		// name of the ini file
-QString s_recentWsList = "recentWorkspaces";
+static QString	s_companyName = "qtpovray";		// directory to put the ini file in
+static QString	s_productName = "qtpovray";		// name of the ini file
+static QString s_recentWsList = "recentWorkspaces";
 
-bool DEBUG = false;
+//static bool DEBUG = false;
+
 QPixmap* mainPixmap;
 
-QStringList streams = {"banner", "status", "debug", "fatal", "render", "statistic", "warning", "error"};
+static QStringList streams = {"banner", "status", "debug", "fatal", "render", "statistic", "warning", "error"};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-	prefVersionWidget(NULL),
+	prefVersionWidget(nullptr),
 	m_shortcutConfigure(this),		shortcutRender(this),
 	shortcutNextError(this),		shortcutPreviousError(this),
 	shortcutBookmarkToggle(this),	shortcutBookmarkNext(this),
 	shortcutBookmarkPrevious(this),	shortcutFindNext(this),
-	shortcutFindPrevious(this),		m_shortcutSaveAllEditors(this),
+	shortcutFindPrevious(this),		
+	m_shortcutToggleBreakpoint(this), m_shortcutSaveAllEditors(this),
 	m_shortcutEditCut(this),		m_shortcutEditCopy(this),
 	m_shortcutEditPaste(this),		m_shortcutEditSelectAll(this),
 	m_shortcutEditShiftLeft(this),	m_shortcutEditShiftRight(this),
@@ -68,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef USE_WEBSOCKETS
 	wsClient = NULL;
 #endif
-	m_editorTabs = NULL;
+	m_editorTabs = nullptr;
 	CodeEditor::init();
 	PovColor::init();
 	setWindowTitle("qtpovray");
@@ -77,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(this, SIGNAL(emitNeedWorkspace()), this, SLOT(needWorkspace()), Qt::QueuedConnection);
 	loadPreferences();
 	m_bookmarkMan = new BookmarkMan(this);
+	m_debuggerMan = new DebuggerMan(this);
 	m_findMan = new FindMan(this);
 	m_dockMan = new DockMan(this);
 	m_helpMan = new HelpMan(this);
@@ -102,6 +106,8 @@ MainWindow::MainWindow(QWidget *parent) :
 		emit(this->emitNeedWorkspace());
 	m_searchMan = new SearchMan(this);
 	m_searchMan->setSearchConsole(m_dockMan->getConsoleDock()->getSearchConsole());
+	
+	
 	m_shortcutConfigure.setContext(Qt::ApplicationShortcut);
 	connect(&m_shortcutConfigure, SIGNAL(activated()), this, SLOT(onPreferences()));
 	shortcutRender.setContext(Qt::ApplicationShortcut);
@@ -127,6 +133,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	shortcutFindPrevious.setContext(Qt::ApplicationShortcut);
 	connect(&shortcutFindPrevious, SIGNAL(activated()),
 			m_findMan, SLOT(onFindPrevious()));
+	m_shortcutToggleBreakpoint.setContext(Qt::ApplicationShortcut);
+	connect(&m_shortcutToggleBreakpoint, SIGNAL(activated()),
+			m_debuggerMan, SLOT(onBreakpointToggle()));
 	m_shortcutSaveAllEditors.setContext(Qt::ApplicationShortcut);
 	connect(&m_shortcutSaveAllEditors, SIGNAL(activated()),
 			this, SLOT(saveAllEditors()));
@@ -297,7 +306,9 @@ int MainWindow::openEditor(const QString& filePath)
 		connect(ce, SIGNAL(bookmarkToggle(int)), m_bookmarkMan, SLOT(onBookmarkToggle(int)));
 		connect(ce, SIGNAL(bookmarkNext(int)), m_bookmarkMan, SLOT(onBookmarkNext(int)));
 		connect(ce, SIGNAL(bookmarkPrevious(int)), m_bookmarkMan, SLOT(onBookmarkPrevious(int)));
+		connect(ce, SIGNAL(breakpointToggle(int)), m_debuggerMan, SLOT(onBreakpointToggle(int)));
 		ce->setBookmarks(m_bookmarkMan->gatherBookmarks(ce));
+		ce->setBreakpoints(m_debuggerMan->gatherBreakpoints(ce));
 		m_editorTabs->widget(m_editorTabs->currentIndex())->setFocus();
 		return(index);
 	} else if (et == EditorTypeGraphic) {

@@ -1,15 +1,15 @@
 /******************************************************************************
- * mainwindow.h - The Qt QMainWindow for qtpov
+ * mainwindow.h - The Qt QMainWindow for qtpovray
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -41,6 +41,7 @@ QT_END_NAMESPACE
 
 class BookmarkMan;
 class CodeEditor;
+class DebuggerMan;
 class DockMan;
 class FindMan;
 class HelpMan;
@@ -113,6 +114,7 @@ public:
 	CodeEditor*	getCodeEditor(int which = -1);
 	DockMan*	getDockMan();
 	HelpMan*	getHelpMan();
+	DebuggerMan* getDebuggerMan();
 	void		deleteAllEditorTabs();	// delete all CodeEditors. Ask before deleting changed editors.
 	bool		isSoftSelect();			// Check if there is a render selected
 
@@ -180,6 +182,7 @@ private:
 	QShortcut		shortcutBookmarkPrevious;
 	QShortcut		shortcutFindNext;
 	QShortcut		shortcutFindPrevious;
+	QShortcut		m_shortcutToggleBreakpoint;
 	QShortcut		m_shortcutSaveAllEditors;
 	QShortcut		m_shortcutEditCut;
 	QShortcut		m_shortcutEditCopy;
@@ -195,6 +198,7 @@ private:
 	VfeClient*		m_vfeClient;
 	QTabWidget*		m_editorTabs;
 	QSize			editorTabsCloseSize;
+	DebuggerMan*	m_debuggerMan;
 	DockMan*		m_dockMan;
 	SearchMan*		m_searchMan;
 	BookmarkMan*	m_bookmarkMan;
@@ -210,4 +214,6 @@ private:
 inline QTabWidget* MainWindow::getEditorTabs() { return(m_editorTabs); }
 inline DockMan* MainWindow::getDockMan() { return(m_dockMan); }
 inline HelpMan* MainWindow::getHelpMan() { return(m_helpMan); }
+inline DebuggerMan* MainWindow::getDebuggerMan() { return(m_debuggerMan); }
+
 #endif // MAINWINDOW_H_
