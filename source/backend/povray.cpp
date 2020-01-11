@@ -553,25 +553,25 @@ void ExtractLibraryVersion(const char *str, char *buffer)
     buffer[pos] = 0;
 }
 
-void ExitFunction()
-{
-    if ((POV_RenderContext != nullptr) && (POV_FrontendAddress != POVMSInvalidAddress))
-    {
-        POVMSObject msg;
-        int err = kNoErr;
+//void ExitFunction()
+//{
+//    if ((POV_RenderContext != nullptr) && (POV_FrontendAddress != POVMSInvalidAddress))
+//    {
+//        POVMSObject msg;
+//        int err = kNoErr;
 
-        if(err == kNoErr)
-            err = POVMSObject_New(&msg, kPOVMSType_WildCard);
-        if(err == kNoErr)
-            err = POVMSMsg_SetupMessage(&msg, kPOVMsgClass_BackendControl, kPOVMsgIdent_Failed);
-        if(err == kNoErr)
-            err = POVMSMsg_SetDestinationAddress(&msg, const_cast<POVMSAddress>(POV_FrontendAddress));
-        if(err == kNoErr)
-            err = POVMS_Send(POV_RenderContext, &msg, nullptr, kPOVMSSendMode_NoReply);
-        if(err != 0)
-            (void)POVMS_ASSERT_OUTPUT("Sending backend termination notice failed!", __FILE__, __LINE__);
-    }
-}
+//        if(err == kNoErr)
+//            err = POVMSObject_New(&msg, kPOVMSType_WildCard);
+//        if(err == kNoErr)
+//            err = POVMSMsg_SetupMessage(&msg, kPOVMsgClass_BackendControl, kPOVMsgIdent_Failed);
+//        if(err == kNoErr)
+//            err = POVMSMsg_SetDestinationAddress(&msg, const_cast<POVMSAddress>(POV_FrontendAddress));
+//        if(err == kNoErr)
+//            err = POVMS_Send(POV_RenderContext, &msg, nullptr, kPOVMSSendMode_NoReply);
+//        if(err != 0)
+//            (void)POVMS_ASSERT_OUTPUT("Sending backend termination notice failed!", __FILE__, __LINE__);
+//    }
+//}
 
 void MainThreadFunction(const boost::function0<void>& threadExit)
 {
