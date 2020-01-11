@@ -58,6 +58,7 @@
 
 // POV-Ray header files (parser module)
 #include "parser/parsertypes.h"
+#include "parser/debugger.h"
 
 // POV-Ray header files (backend module)
 #include "backend/bounding/boundingtask.h"
@@ -120,8 +121,8 @@ void Scene::StartParser(POVMS_Object& parseOptions)
     sceneData->inputFile = parseOptions.TryGetUCS2String(kPOVAttrib_InputFile, "object.pov");
     sceneData->headerFile = parseOptions.TryGetUCS2String(kPOVAttrib_IncludeHeader, "");
 
-    DBL outputWidth  = parseOptions.TryGetFloat(kPOVAttrib_Width, 160);
-    DBL outputHeight = parseOptions.TryGetFloat(kPOVAttrib_Height, 120);
+    DBL outputWidth  = (DBL)parseOptions.TryGetFloat(kPOVAttrib_Width, 160);
+    DBL outputHeight = (DBL)parseOptions.TryGetFloat(kPOVAttrib_Height, 120);
     sceneData->aspectRatio = outputWidth / outputHeight;
 
     sceneData->defaultFileType = parseOptions.TryGetInt(kPOVAttrib_OutputFileType, DEFAULT_OUTPUT_FORMAT); // TODO - should get DEFAULT_OUTPUT_FORMAT from the front-end
@@ -181,9 +182,12 @@ void Scene::StartParser(POVMS_Object& parseOptions)
         }
     }
 
+	if (sceneData->debuggerEnabled) {
+		mDebugger = new pov_parser::Debugger();
+	}
     // do parsing
     sceneThreadData.push_back(dynamic_cast<TraceThreadData *>(parserTasks.AppendTask(new ParserTask(
-        sceneData, pov_parser::ParserOptions(bool(parseOptions.Exist(kPOVAttrib_Clock)), parseOptions.TryGetFloat(kPOVAttrib_Clock, 0.0), seed)
+        sceneData, pov_parser::ParserOptions(bool(parseOptions.Exist(kPOVAttrib_Clock)), parseOptions.TryGetFloat(kPOVAttrib_Clock, 0.0), seed), mDebugger
         ))));
 
     // wait for parsing
@@ -240,6 +244,13 @@ bool Scene::IsPaused()
 bool Scene::Failed()
 {
     return parserTasks.Failed();
+}
+
+void Scene::RecvDebuggerCommand(const char *msg)
+{
+	if (mDebugger) {
+		mDebugger->messageFromGui(msg);
+	}
 }
 
 std::shared_ptr<View> Scene::NewView(unsigned int width, unsigned int height, RenderBackend::ViewId vid)

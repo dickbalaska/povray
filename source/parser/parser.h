@@ -381,7 +381,7 @@ class Parser final
 
         // constructor
         Parser(std::shared_ptr<SceneData> sd, const Options& opts,
-               GenericMessenger& mf, FileResolver& fnr, ProgressReporter& pr, TraceThreadData& td);
+               GenericMessenger& mf, FileResolver& fnr, ProgressReporter& pr, TraceThreadData& td, Debugger* debugger);
 
         ~Parser();
 

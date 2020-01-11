@@ -140,7 +140,7 @@ const DBL INFINITE_VOLUME = BOUND_HUGE;
 //******************************************************************************
 
 Parser::Parser(shared_ptr<SceneData> sd, const Options& opts,
-               GenericMessenger& mf, FileResolver& fr, ProgressReporter& pr, TraceThreadData& td) :
+               GenericMessenger& mf, FileResolver& fr, ProgressReporter& pr, TraceThreadData& td, Debugger* debugger) :
     sceneData(sd),
 	mMessageFactory(mf),
 	mFileResolver(fr),
@@ -155,7 +155,7 @@ Parser::Parser(shared_ptr<SceneData> sd, const Options& opts,
     mTokenCount(0),
     mTokensSinceLastProgressReport(0),
     next_rand(nullptr),
-	mDebugger(nullptr)
+	mDebugger(debugger)
 {
     std::tm tmY2K;
     // Field       = Value - Base
@@ -172,8 +172,6 @@ Parser::Parser(shared_ptr<SceneData> sd, const Options& opts,
     pre_init_tokenizer();
     if (sceneData->realTimeRaytracing)
         mBetaFeatureFlags.realTimeRaytracing = true;
-	if (sceneData->debuggerEnabled)
-		mDebugger = new Debugger(*this);
     sceneData->functionContextFactory = mpFunctionVM;
 }
 
@@ -193,7 +191,7 @@ void Parser::Run()
 
 	if (mDebugger) {
 		mDebugger->send("Init\n");
-		mDebugger->parserPaused();
+		mDebugger->debuggerPaused();
 	}
     // Outer try/catch block to handle out-of-memory conditions
     // occurring during regular error handling.

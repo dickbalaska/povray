@@ -2,8 +2,8 @@
 #define DEBUGGER_H
 
 #include "rawtokenizer.h"
-#include "parser.h"
 #include "backend/control/parsertask.h"
+#include "parser.h"
 
 namespace pov_parser
 {
@@ -11,15 +11,18 @@ namespace pov_parser
 class Debugger
 {
 public:
-	Debugger(Parser& parser);
+	Debugger();
 	
 	void send(const char* text);
-	void parserPaused();
+	void debuggerPaused();
 	void checkForBreakpoint(const RawToken& rawToken);
+	void setParser(Parser* parser) { mParser = parser; }
 	void setParserTask(ParserTask* task) { mParserTask = task; }
 	
+	void messageFromGui(const std::string& msg);
+
 private:
-	Parser&	mParser;
+	Parser*	mParser;
 	ParserTask* mParserTask;
 };
 

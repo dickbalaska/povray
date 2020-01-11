@@ -1,4 +1,4 @@
-
+#include <QDebug>
 #include "scanner.h"
 
 #include "debugger.h"
@@ -6,21 +6,20 @@
 namespace pov_parser
 {
 
-Debugger::Debugger(Parser& parser)
-	: mParser(parser)
+Debugger::Debugger()
 {
 	
 }
 
 void Debugger::send(const char* text)
 {
-	mParser.mMessageFactory.Debugger(text);
+	mParser->mMessageFactory.Debugger(text);
 }
 
-void Debugger::parserPaused()
+void Debugger::debuggerPaused()
 {
-	mParserTask->Pause();
-	mParserTask->Cooperate();
+	mParserTask->PauseForDebugger();
+	mParserTask->DebuggerPaused();
 }
 
 void Debugger::checkForBreakpoint(const RawToken& rawToken)
@@ -29,6 +28,12 @@ void Debugger::checkForBreakpoint(const RawToken& rawToken)
 	if (col == 1) {
 		
 	}
+}
+
+void Debugger::messageFromGui(const std::string& msg)
+{
+	qDebug() << "Debugger:messageFromGui";
+	mParserTask->ResumeFromDebugger();
 }
 
 }

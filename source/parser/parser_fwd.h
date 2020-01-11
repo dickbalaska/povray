@@ -44,7 +44,7 @@ namespace pov_parser
 {
 
 class Parser;
-
+class Debugger;
 }
 // end of namespace pov
 
