@@ -452,25 +452,25 @@ class POVMS_MessageReceiver
             AddNodeFront(hclass, hid, nullptr, new FunctionHandler(hptr, pptr));
         }
 
-        template<class T> void InstallBack(POVMSType hclass, POVMSType hid, T *cptr, typename MemberHandlerOO<T>::MemberHandlerPtr hptr)
-        {
-            AddNodeBack(hclass, hid, new MemberHandlerOO<T>(cptr, hptr), nullptr);
-        }
+//        template<class T> void InstallBack(POVMSType hclass, POVMSType hid, T *cptr, typename MemberHandlerOO<T>::MemberHandlerPtr hptr)
+//        {
+//            AddNodeBack(hclass, hid, new MemberHandlerOO<T>(cptr, hptr), nullptr);
+//        }
 
-        template<class T> void InstallBack(POVMSType hclass, POVMSType hid, T *cptr, typename MemberHandler<T>::MemberHandlerPtr hptr)
-        {
-            AddNodeBack(hclass, hid, nullptr, new MemberHandler<T>(cptr, hptr));
-        }
+//        template<class T> void InstallBack(POVMSType hclass, POVMSType hid, T *cptr, typename MemberHandler<T>::MemberHandlerPtr hptr)
+//        {
+//            AddNodeBack(hclass, hid, nullptr, new MemberHandler<T>(cptr, hptr));
+//        }
 
-        void InstallBack(POVMSType hclass, POVMSType hid, FunctionHandlerOO::FunctionHandlerPtr hptr, void *pptr)
-        {
-            AddNodeBack(hclass, hid, new FunctionHandlerOO(hptr, pptr), nullptr);
-        }
+//        void InstallBack(POVMSType hclass, POVMSType hid, FunctionHandlerOO::FunctionHandlerPtr hptr, void *pptr)
+//        {
+//            AddNodeBack(hclass, hid, new FunctionHandlerOO(hptr, pptr), nullptr);
+//        }
 
-        void InstallBack(POVMSType hclass, POVMSType hid, FunctionHandler::FunctionHandlerPtr hptr, void *pptr)
-        {
-            AddNodeBack(hclass, hid, nullptr, new FunctionHandler(hptr, pptr));
-        }
+//        void InstallBack(POVMSType hclass, POVMSType hid, FunctionHandler::FunctionHandlerPtr hptr, void *pptr)
+//        {
+//            AddNodeBack(hclass, hid, nullptr, new FunctionHandler(hptr, pptr));
+//        }
 
         void Remove(POVMSType hclass, POVMSType hid);
     private:
