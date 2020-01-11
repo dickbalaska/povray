@@ -935,13 +935,16 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 				return;
 			} else if (streamT == "7") {
 				// render progress
-				if (msg.contains("(100%)"))		// Hacky McHackface. Force a picture redraw when we see 100%
+				if (msg.contains("(100%)"))			// Hacky McHackface. Force a picture redraw when we see 100%
 					m_dockMan->getRenderDock()->repaint();	// (This should be handled by the render window itself)
 				this->m_statusBar->showRenderMessage(msg);
 				return;
 			} else if (streamT == "6") {
 				// animation status
 				this->m_statusBar->showAnimationMessage(msg);
+				return;
+			} else if (stream == mDebugger) {
+				this->m_debuggerMan->messageFromPovray(msg);
 				return;
 			}
 			if (stream == -1) {
