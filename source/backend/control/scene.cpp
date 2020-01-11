@@ -98,6 +98,9 @@ Scene::~Scene()
     for(std::vector<TraceThreadData*>::iterator i(sceneThreadData.begin()); i != sceneThreadData.end(); i++)
         delete (*i);
     sceneThreadData.clear();
+	
+	if (mDebugger)
+		delete mDebugger;
 }
 
 void Scene::StartParser(POVMS_Object& parseOptions)

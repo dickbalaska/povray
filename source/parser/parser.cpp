@@ -179,8 +179,6 @@ Parser::~Parser()
 {
     // NB: We need to keep fnVMContext around until all functions have been destroyed.
     delete fnVMContext;
-	if (mDebugger)
-		delete mDebugger;
 }
 
 /* Parse the file. */
