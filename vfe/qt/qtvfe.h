@@ -46,6 +46,7 @@ private:
 	void	commandVersion();
 	void	commandRender(const QString& data);
 	void	commandCancel();
+	void	commandDebugger(const QString& data);
 
 	void	parseCommandLine(const QString& cl, int& argc, char**& argv);
 	void	sessionErrorExit();

@@ -75,6 +75,7 @@ class Task
         inline bool IsRunning() { return !done && !paused && !stopRequested && (taskThread != nullptr); }
         inline bool IsDone() { return done; }
         inline bool Failed() { return done && (failed != kNoError); }
+		inline bool IsStopRequested() { return(stopRequested); }
 
         int FailureCode(int defval = kNoError);
 

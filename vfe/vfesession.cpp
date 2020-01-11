@@ -1091,5 +1091,12 @@ int vfeSession::Initialize(vfeDestInfo *Dest, vfeAuthInfo *Auth)
   return (vfeNoError) ;
 }
 
+void vfeSession::sendMessageToDebugger(const char* msg)
+{
+	m_Frontend->SendDebuggerCommand(msg);
+}
+
+
+
 }
 // end of namespace vfe

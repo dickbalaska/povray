@@ -56,6 +56,8 @@ void QtVfe::sendMessageToPovray(const QString& message) {
 		commandRender(data);
 	else if (command == "cancel")
 		commandCancel();
+	else if (command == "dbg")
+		commandDebugger(data);
 	else {
 		qCritical() << "QtVfe unknown command:" << command << "from:" << message;
 	}
@@ -252,6 +254,12 @@ void  QtVfe::commandCancel()
 	gCancelRender = true;
 }
 
+void QtVfe::commandDebugger(const QString &data)
+{
+	std::string s = data.toStdString();
+	m_session->sendMessageToDebugger(s.c_str());
+}
+
 void QtVfe::parseCommandLine(const QString& cl, int& argc, char**& argv)
 {
 	string s = cl.toStdString();
@@ -351,7 +359,7 @@ void QtVfe::printStatus(vfeQtSession* session)
 {
 	string str;
 	vfeSession::MessageType type;
-	static vfeSession::MessageType lastType = vfeSession::mUnclassified;
+	//static vfeSession::MessageType lastType = vfeSession::mUnclassified;
 
 	while (session->GetNextCombinedMessage (type, str)) {
 		QString qs = QString("%1 %2").arg(type).arg(str.c_str());

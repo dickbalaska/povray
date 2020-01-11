@@ -2,7 +2,7 @@
 ///
 /// @file vfe/qt/vfeplatform.cpp
 ///
-/// This module contains *nix platform-specific support code for the VFE.
+/// This module contains qt platform-specific support code for the VFE.
 ///
 /// Based on @ref vfe/win/vfeplatform.cpp by Christopher J. Cason
 ///

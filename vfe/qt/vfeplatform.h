@@ -92,14 +92,11 @@ namespace vfePlatform
     };
 
 	///////////////////////////////////////////////////////////////////////
-	// most of the methods in vfeUnixSession are derived from vfeSession.
+	// most of the methods in vfeQtSession are derived from vfeSession.
 	// see vfeSession for documentation for those cases.
 	class vfeQtSession : public vfeSession
 	{
-//		Q_OBJECT
-
 	public:
-		//vfeQtSession(websocketpp::connection_hdl hdl, int id = 0);
 		vfeQtSession(QtVfe* qtVfe);
 		virtual ~vfeQtSession();
 

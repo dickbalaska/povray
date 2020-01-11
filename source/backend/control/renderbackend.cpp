@@ -90,6 +90,8 @@ RenderBackend::RenderBackend(POVMSContext ctx,  bool (*val)(POVMSAddress)) :
     InstallFront(kPOVMsgClass_ViewControl, kPOVMsgIdent_ResumeRender, this, &RenderBackend::ResumeRender);
 
     InstallFront(kPOVMsgClass_FileAccess, kPOVMsgIdent_ReadFile, this, &RenderBackend::ReadFile);
+
+	InstallFront(kPOVMsgClass_SceneControl, kPOVMsgIdent_DebuggerCmd, this, &RenderBackend::DebuggerMessage);
 }
 
 RenderBackend::~RenderBackend()
@@ -740,6 +742,41 @@ void RenderBackend::ResumeRender(POVMS_Message& msg, POVMS_Message& result, int)
     catch(std::bad_alloc&)
     {
         MakeFailedResult(kOutOfMemoryErr, result);
+    }
+}
+
+void RenderBackend::DebuggerMessage(POVMS_Message &msg, POVMS_Message&, int)
+{
+//    if(ValidateFrontendAddress(msg.GetSourceAddress(), result) == false)
+//        return;
+
+    try
+    {
+        SceneId sid = msg.GetInt(kPOVAttrib_SceneId);
+
+        SceneMap::iterator i(scenes.find(sid));
+
+        if(i == scenes.end())
+            throw POV_EXCEPTION_CODE(kInvalidIdentifierErr);
+		std::string s = msg.GetString(kPOVAttrib_DebuggerCommand);
+//        if((i->second->IsParsing() == false) && (i->second->IsPaused() == false))
+//            throw POV_EXCEPTION_CODE(kNotNowErr);
+
+        i->second->RecvDebuggerCommand(s.c_str());
+
+       // MakeDoneResult(result);
+    }
+    catch(pov_base::Exception& e)
+    {
+        //MakeFailedResult(e, result);
+    }
+    catch(std::runtime_error& e)
+    {
+        //MakeFailedResult(e.what(), result);
+    }
+    catch(std::bad_alloc&)
+    {
+        //MakeFailedResult(kOutOfMemoryErr, result);
     }
 }
 

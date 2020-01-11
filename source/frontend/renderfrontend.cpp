@@ -449,6 +449,22 @@ void RenderFrontendBase::StopParser(SceneData& shd, SceneId sid)
     }
 }
 
+void RenderFrontendBase::SendDebuggerCommand(SceneData& shd, SceneId sid, const char* command)
+{
+    if(shd.state != SceneData::Scene_Parsing && shd.state != SceneData::Scene_Paused)
+        throw POV_EXCEPTION_CODE(kNotNowErr);
+
+    POVMS_Message msg(kPOVObjectClass_ControlData, kPOVMsgClass_SceneControl, kPOVMsgIdent_DebuggerCmd);
+
+	msg.SetSourceAddress(sid.GetAddress());
+    msg.SetDestinationAddress(sid.GetAddress());
+    msg.SetInt(kPOVAttrib_SceneId, sid.GetIdentifier());
+	msg.SetString(kPOVAttrib_DebuggerCommand, command);
+
+    POVMS_SendMessage(msg);
+
+}
+
 RenderFrontendBase::ViewId RenderFrontendBase::CreateView(SceneData& shd, ViewData& vhd, SceneId sid, POVMS_Object& obj)
 {
     POVMS_Message msg(obj, kPOVMsgClass_SceneControl, kPOVMsgIdent_CreateView);

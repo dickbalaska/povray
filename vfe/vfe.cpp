@@ -81,7 +81,7 @@ class POVMSMessageDetails
 {
   public:
     POVMSMessageDetails (POVMS_Object &Obj);
-    virtual ~POVMSMessageDetails () {}
+    virtual ~POVMSMessageDetails ();
     string GetContext (int NumLines) ;
 
   protected:
@@ -125,7 +125,7 @@ POVMSMessageDetails::POVMSMessageDetails (POVMS_Object& Obj)
   POVMSObject_Delete(msg);
 }
 
-string POVMSMessageDetails::GetContext (int NumLines)
+string POVMSMessageDetails::GetContext (int /*NumLines*/)
 {
   return ("") ;
 }
@@ -140,7 +140,7 @@ class ParseWarningDetails : public POVMSMessageDetails
 {
   public:
     ParseWarningDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {}
-    virtual ~ParseWarningDetails () override {}
+    virtual ~ParseWarningDetails () override;
 
   public:
     using POVMSMessageDetails::File ;
@@ -155,7 +155,7 @@ class ParseErrorDetails : public POVMSMessageDetails
 {
   public:
     ParseErrorDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {}
-    virtual ~ParseErrorDetails () override {}
+    virtual ~ParseErrorDetails () override;
 
   public:
     using POVMSMessageDetails::File ;
@@ -165,6 +165,11 @@ class ParseErrorDetails : public POVMSMessageDetails
     using POVMSMessageDetails::Col ;
     using POVMSMessageDetails::Offset ;
 } ;
+
+// Move one class virtual out of line to give the vtable an anchor
+POVMSMessageDetails::~POVMSMessageDetails() {}
+ParseWarningDetails::~ParseWarningDetails() {}
+ParseErrorDetails::~ParseErrorDetails() {}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -239,7 +244,7 @@ void vfeConsole::Output(const string& str)
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
-vfePlatformBase::vfePlatformBase(vfeSession& session) : m_Session(&session), PlatformBase()
+vfePlatformBase::vfePlatformBase(vfeSession& session) : PlatformBase(), m_Session(&session)
 {
 }
 
@@ -262,7 +267,7 @@ void vfePlatformBase::DeleteTemporaryFile(const UCS2String& filename)
   m_Session->DeleteTemporaryFile(filename);
 }
 
-bool vfePlatformBase::ReadFileFromURL(OStream *file, const UCS2String& url, const UCS2String& referrer)
+bool vfePlatformBase::ReadFileFromURL(OStream* /*file*/, const UCS2String& /*url*/, const UCS2String& /*referrer*/)
 {
   return false;
 }
@@ -916,6 +921,11 @@ bool VirtualFrontEnd::Resume()
     return (false) ;
   }
   return false;
+}
+
+void VirtualFrontEnd::SendDebuggerCommand(const char* command)
+{
+	renderFrontend.SendDebuggerCommand(sceneId, command);
 }
 
 bool VirtualFrontEnd::HandleShelloutCancel()

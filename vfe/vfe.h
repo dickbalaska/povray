@@ -234,6 +234,10 @@ namespace vfe
       // TODO: take care of any pending messages (e.g. a thread waiting on a blocking send)
       virtual void InvalidateBackend() { backendAddress = POVMSInvalidAddress; }
 
+	  void	SendDebuggerCommand(const char* command);
+	  
+	  //RenderFrontendBase::SceneId getSceneId() const { return(sceneId); }
+	  //POVMSAddress				  getBackendAddress() const { return(backendAddress); }
     protected:
       virtual Console *CreateConsole()
         { return new vfeConsole(m_Session, m_Session->GetConsoleWidth()); }
