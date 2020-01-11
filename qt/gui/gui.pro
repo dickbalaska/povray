@@ -42,9 +42,9 @@ QMAKE_CXXFLAGS -= -Wdate-time -Wsign-conversion
 INCLUDEPATH += "../../vfe"
 
 SOURCES += \
-	debuggerman.cpp \
         main.cpp \
         mainwindow.cpp \
+	debugger/debuggerman.cpp \
     dock/resourcedock.cpp \
     dock/dockman.cpp \
     dock/consoledock.cpp \
@@ -69,32 +69,32 @@ SOURCES += \
     editor/imagedisplayer.cpp
 
 HEADERS += \
-	debuggerman.h \
-        mainwindow.h \
-    dock/resourcedock.h \
-    dock/dockman.h \
+	debugger/debuggerman.h \
     dock/consoledock.h \
-    dock/maintoolbar.h \
-    workspace.h \
-    editor/codeeditor.h \
-    preferences.h \
-    preferencedata.h \
-    editor/highlighter.h \
-    dock/renderdock.h \
-    dock/statusbar.h \
+    dock/dockman.h \
+    dock/dropdown.h \
     dock/filterdialog.h \
+    dock/maintoolbar.h \
+    dock/renderdock.h \
+    dock/resourcedock.h \
+    dock/statusbar.h \
     dock/searchman.h \
     editor/bookmarkman.h \
-    findman.h \
-    insertmenuman.h \
-    dock/dropdown.h \
+    editor/codeeditor.h \
     editor/coloreditor.h \
-    editor/povcolor.h \
     editor/colormapeditor.h \
-    vfeclient.h \
-    qtpovrayversion.h \
+    editor/highlighter.h \
+    editor/imagedisplayer.h \
+    editor/povcolor.h \
+    findman.h \
     helpman.h \
-    editor/imagedisplayer.h
+    insertmenuman.h \
+    mainwindow.h \
+    preferences.h \
+    preferencedata.h \
+    qtpovrayversion.h \
+    vfeclient.h \
+    workspace.h 
 
 FORMS += \
         mainwindow.ui

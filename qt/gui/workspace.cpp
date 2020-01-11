@@ -33,7 +33,7 @@
 #include "editor/codeeditor.h"
 #include "editor/imagedisplayer.h"
 #include "findman.h"
-#include "debuggerman.h"
+#include "debugger/debuggerman.h"
 
 #include "workspace.h"
 

@@ -34,7 +34,7 @@
 #include "preferences.h"
 #include "dock/filterdialog.h"
 #include "editor/bookmarkman.h"
-#include "debuggerman.h"
+#include "debugger/debuggerman.h"
 #include "findman.h"
 #include "helpman.h"
 #include "insertmenuman.h"

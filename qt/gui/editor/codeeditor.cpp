@@ -23,7 +23,7 @@
 #include "../dock/maintoolbar.h"
 #include "mainwindow.h"
 #include "bookmarkman.h"
-#include "debuggerman.h"
+#include "debugger/debuggerman.h"
 #include "findman.h"
 #include "insertmenuman.h"
 #include "coloreditor.h"
