@@ -214,14 +214,11 @@ void Workspace::load(const QString& filename)
 		QString s = settings.value(index).toString();
 		if (s.isNull())
 			break;
-//		int z = s.indexOf(' ');
-//		QString t = s.left(z);
-//		s = s.mid(z+1);
 		QRegularExpression re("(\\w+) (\\w+) (.*)");
 		QRegularExpressionMatch match = re.match(s);
 		QStringList captured = match.capturedTexts();
 		//if (parseDebug)
-		qDebug() << "captured" << captured;
+		//qDebug() << "captured" << captured;
 		if (captured.size() != 4) {
 			qCritical() << QString("workspace: Failed to parse line: \"%1\"").arg(s);
 			continue;
