@@ -21,13 +21,13 @@
 #include "editor/codeeditor.h"
 #include "mainwindow.h"
 #include "debuggerman.h"
+#include "debuggerpanel.h"
 #include "debuggerconsole.h"
 
 static const QString	s_dbg("dbg ");
 
 DebuggerMan::DebuggerMan(MainWindow* mainWindow)
-	: m_mainWindow(mainWindow),
-	  m_state(dsInit)
+	: m_mainWindow(mainWindow)
 {	
 }
 
@@ -110,6 +110,24 @@ void DebuggerMan::onUpdateBreakpoints(const QList<int>& list)
 		bp->m_lineNumber = *liter;
 		addBreakpoint(bp);
 	}
+}
+
+void DebuggerMan::setState(DbgState ns)
+{
+	m_state = ns;
+	bool playPause = false;
+	if (ns == dsInit || ns == dsReady)
+		playPause = true;
+	bool runEnabled = false;
+	if (ns == dsInit || ns == dsParsing)
+		runEnabled = true;
+	bool stopEnabled = false;
+	if (ns == dsReady || ns == dsParsing || ns == dsRendering)
+		stopEnabled = true;
+	bool stepEnabled = false;
+	if (ns == dsReady)
+		stepEnabled = true;
+	m_debuggerConsole->m_debuggerPanel->setButtonStates(playPause, runEnabled, stopEnabled, stepEnabled);
 }
 
 void DebuggerMan::messageFromPovray(const QString& msg)

@@ -20,6 +20,7 @@
  *****************************************************************************/
 #include <QLabel>
 #include <QToolBar>
+#include <QHeaderView>
 #include <QDebug>
 
 #include "debuggerpanel.h"
@@ -64,6 +65,7 @@ BreakpointsWidget::BreakpointsWidget(QTabWidget* parent, MainWindow* mainWindow)
 {
 	this->setColumnCount(3);
 	setHorizontalHeaderLabels(QStringList({"Enabled", "#", "File"}));
+	this->horizontalHeader()->setStretchLastSection(true);
 }
 
 void BreakpointsWidget::addBreakpoint(Breakpoint* bp)

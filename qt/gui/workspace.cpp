@@ -230,6 +230,7 @@ void Workspace::load(const QString& filename)
 		m_mainWindow->m_debuggerMan->addBreakpoint(bp);
 	}
 	settings.endGroup();
+	m_mainWindow->m_debuggerMan->setState();
 }
 
 void Workspace::save()

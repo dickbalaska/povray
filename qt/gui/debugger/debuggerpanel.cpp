@@ -24,6 +24,9 @@
 #include "debuggerman.h"
 #include "mainwindow.h"
 
+static QIcon* playIcon;
+static QIcon* pauseIcon;
+
 DebuggerPanel::DebuggerPanel(QWidget *parent, MainWindow* mainWindow)
 	: QWidget(parent),
 	  m_mainWindow(mainWindow)
@@ -44,12 +47,32 @@ DebuggerPanel::DebuggerPanel(QWidget *parent, MainWindow* mainWindow)
 		sizeString = "_24x24.png";
 	}
 	
+	playIcon = new QIcon(iString("Debug"));
+	pauseIcon = new QIcon(iString("Pause"));
+	
 	DebuggerMan* dm = m_mainWindow->getDebuggerMan();
-	m_debuggerAction = m_buttonBar->addAction(QIcon(iString("Debug")),		"Debug", dm, SLOT(onDebuggerStart()));
+	m_debuggerAction = m_buttonBar->addAction(*playIcon,					"Debug", dm, SLOT(onDebuggerStart()));
 	m_stopAction = m_buttonBar->addAction(QIcon(iString("Stop")),			"Stop",  dm, SLOT(onDebuggerStop()));
 	m_stepAction = m_buttonBar->addAction(QIcon(iString("debugStepOver")),	"Step",  dm, SLOT(onDebuggerStep()));
 	
 	mainLayout->addWidget(m_buttonBar);
 	mainLayout->addStretch(2);
 	this->setLayout(mainLayout);
+}
+
+DebuggerPanel::~DebuggerPanel()
+{
+	delete playIcon;
+	delete pauseIcon;
+}
+
+void DebuggerPanel::setButtonStates(bool playPause, bool playEnabled, bool stopEnabled, bool stepEnabled)
+{
+	if (playPause)
+		m_debuggerAction->setIcon(*playIcon);
+	else
+		m_debuggerAction->setIcon(*pauseIcon);
+	m_debuggerAction->setEnabled(playEnabled);
+	m_stopAction->setEnabled(stopEnabled);
+	m_stepAction->setEnabled(stepEnabled);
 }

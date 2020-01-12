@@ -33,7 +33,10 @@ class DebuggerPanel : public QWidget
 	Q_OBJECT
 public:
 	explicit DebuggerPanel(QWidget *parent, MainWindow* mainWindow);
+	virtual ~DebuggerPanel() override;
 	
+	void	setButtonStates(bool playPause, bool playEnabled, bool stopEnabled, bool stepEnabled);
+
 signals:
 	
 private:

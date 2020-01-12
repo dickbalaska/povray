@@ -58,13 +58,14 @@ public:
 	DebuggerMan(MainWindow* mainWindow);
 	virtual ~DebuggerMan();
 
-	void	setDebuggerConsole(DebuggerConsole* debuggerConsole) { m_debuggerConsole = debuggerConsole; }
+	void	setDebuggerConsole(DebuggerConsole* debuggerConsole) { m_debuggerConsole = debuggerConsole; setState(); }
 	DebuggerConsole*	getDebuggerConsole() { return(m_debuggerConsole); }
 
 	QList<int>	gatherBreakpoints(CodeEditor* ce);
 	void		addBreakpoint(Breakpoint* bm);
 
 	void		messageFromPovray(const QString& msg);
+	void		setState(DbgState newState = dsInit);
 
 public slots:
 	void	onBreakpointToggle(int lineNumber = 0);
