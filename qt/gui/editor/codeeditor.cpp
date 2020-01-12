@@ -318,7 +318,7 @@ bool CodeEditor::event(QEvent *e)
 
 void CodeEditor::focusInEvent(QFocusEvent* event)
 {
-	qDebug() << "ce:Focus";
+	//qDebug() << "ce:Focus";
 	m_mainWindow->focused();
 	QPlainTextEdit::focusInEvent(event);
 }
