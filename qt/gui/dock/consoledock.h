@@ -1,15 +1,15 @@
 /******************************************************************************
  * consoledock.h - The dock widget where povray writes his text
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -19,8 +19,8 @@
  *
  *****************************************************************************/
 
-#ifndef _CONSOLEDOCK_H_
-#define _CONSOLEDOCK_H_
+#ifndef CONSOLEDOCK_H_
+#define CONSOLEDOCK_H_
 
 #include <QDockWidget>
 #include <QPlainTextEdit>
@@ -35,6 +35,7 @@ class QToolButton;
 QT_END_NAMESPACE
 
 class ConsoleDock;
+class DebuggerConsole;
 class PovrayConsole;
 class SearchTreeView;
 class Dropdown;
@@ -147,13 +148,13 @@ class ConsoleDock : public QDockWidget
 {
 	Q_OBJECT
 public:
-	explicit ConsoleDock(MainWindow* parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
+	explicit ConsoleDock(MainWindow* parent = Q_NULLPTR, Qt::WindowFlags flags = nullptr);
 
 	PovrayConsole* getPovrayConsole() { return(m_povrayConsole); }
 	SearchConsole*	getSearchConsole() { return(m_searchConsole); }
 
 	void	configure(const PreferenceData* prefs);
-
+	int		getActiveConsole();
 public slots:
 	void	showConsole(int which);
 	void	tabChanged(int which);
@@ -163,10 +164,11 @@ private:
 	QStackedWidget*			m_consoleBar;
 	PovrayConsole*			m_povrayConsole;
 	SearchConsole*			m_searchConsole;
+	DebuggerConsole*		m_debuggerConsole;
 	MainWindow*				m_mainWindow;
 
 };
 
 inline void ConsoleDock::showConsole(int which) { m_consoleTabs->setCurrentIndex(which); m_consoleBar->setCurrentIndex(which); }
-
-#endif // _CONSOLEDOCK_H_
+inline int ConsoleDock::getActiveConsole() { return(m_consoleTabs->currentIndex());}
+#endif // CONSOLEDOCK_H_

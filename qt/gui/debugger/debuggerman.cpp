@@ -114,3 +114,16 @@ void DebuggerMan::messageFromPovray(const QString& msg)
 		m_mainWindow->sendPovrayMessage(s);
 	}
 }
+
+void DebuggerMan::onDebuggerStart()
+{
+	m_mainWindow->onStartDebugger();
+}
+void DebuggerMan::onDebuggerStop()
+{
+	
+}
+void DebuggerMan::onDebuggerStep()
+{
+	
+}

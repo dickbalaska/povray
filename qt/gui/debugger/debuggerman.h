@@ -24,6 +24,7 @@
 #include <QObject>
 
 class CodeEditor;
+class DebuggerConsole;
 class MainWindow;
 
 /// A POV-Ray parser location, file and line number. We only deal with column 1
@@ -36,8 +37,10 @@ public:
 
 class Breakpoint : public DebuggerLocation
 {
-	
+public:
+	bool	m_enabled;
 };
+
 
 class DebuggerMan : public QObject
 {
@@ -47,17 +50,24 @@ public:
 	DebuggerMan(MainWindow* mainWindow);
 	virtual ~DebuggerMan();
 
+	void	setDebuggerConsole(DebuggerConsole* debuggerConsole) { m_debuggerConsole = debuggerConsole; }
+	DebuggerConsole*	getDebuggerConsole() { return(m_debuggerConsole); }
+
 	QList<int>	gatherBreakpoints(CodeEditor* ce);
 	void		addBreakpoint(Breakpoint* bm);
 
 	void		messageFromPovray(const QString& msg);
 
 public slots:
-	void onBreakpointToggle(int lineNumber = 0);
-	void onUpdateBreakpoints(const QList<int>& list);
+	void	onBreakpointToggle(int lineNumber = 0);
+	void	onUpdateBreakpoints(const QList<int>& list);
+	void	onDebuggerStart();
+	void	onDebuggerStop();
+	void	onDebuggerStep();
 	
 private:
 	MainWindow*			m_mainWindow;
+	DebuggerConsole*	m_debuggerConsole;
 	DebuggerLocation	m_currentLocation;
 	QList<Breakpoint*>	m_breakpoints;
 };
