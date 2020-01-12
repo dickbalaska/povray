@@ -41,6 +41,14 @@ public:
 	bool	m_enabled;
 };
 
+enum DbgState {
+	dsInit,
+	dsStartup,
+	dsReady,
+	dsParsing,
+	dsRendering,
+	dsStopping,
+};
 
 class DebuggerMan : public QObject
 {
@@ -70,6 +78,7 @@ private:
 	DebuggerConsole*	m_debuggerConsole;
 	DebuggerLocation	m_currentLocation;
 	QList<Breakpoint*>	m_breakpoints;
+	DbgState			m_state;
 };
 
 #endif // DEBUGGERMAN_H

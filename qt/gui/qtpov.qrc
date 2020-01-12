@@ -56,5 +56,6 @@
         <file>resources/icons/Debug_24x24.png</file>
         <file>resources/icons/Debug_32x32.png</file>
         <file>resources/icons/stop.png</file>
+        <file>resources/icons/debugStepOver_24x24.png</file>
     </qresource>
 </RCC>

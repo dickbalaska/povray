@@ -21,11 +21,13 @@
 #include "editor/codeeditor.h"
 #include "mainwindow.h"
 #include "debuggerman.h"
+#include "debuggerconsole.h"
 
 static const QString	s_dbg("dbg ");
 
 DebuggerMan::DebuggerMan(MainWindow* mainWindow)
-	: m_mainWindow(mainWindow)
+	: m_mainWindow(mainWindow),
+	  m_state(dsInit)
 {	
 }
 
@@ -48,6 +50,7 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 		if (bp->m_pathName == filePath && bp->m_lineNumber == lineNumber) {
 			found = true;
 			m_breakpoints.removeOne(bp);
+			m_debuggerConsole->m_breakpointsWidget->removeBreakpoint(bp);
 			break;
 		}
 	}
@@ -56,6 +59,7 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 		bp->m_pathName = filePath;
 		bp->m_lineNumber = lineNumber;
 		m_breakpoints.append(bp);
+		m_debuggerConsole->m_breakpointsWidget->addBreakpoint(bp);
 	}
 	QList<int> ql = gatherBreakpoints(ce);
 	ce->setBreakpoints(ql);
@@ -73,8 +77,10 @@ void DebuggerMan::addBreakpoint(Breakpoint* bp)
 		return;
 	}
 	m_breakpoints.append(bp);
+	m_debuggerConsole->m_breakpointsWidget->addBreakpoint(bp);
 }
 
+/// Return a list of the line numbers of the breakpoints for this file
 QList<int>	DebuggerMan::gatherBreakpoints(CodeEditor* ce)
 {
 	QList<int> ql;

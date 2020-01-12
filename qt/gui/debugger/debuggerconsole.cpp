@@ -20,9 +20,11 @@
  *****************************************************************************/
 #include <QLabel>
 #include <QToolBar>
+#include <QDebug>
 
 #include "debuggerpanel.h"
 #include "debuggerconsole.h"
+#include "debuggerman.h"
 
 DebuggerConsole::DebuggerConsole(QTabWidget* parent, QStackedWidget* consoleBar, MainWindow* mainWindow)
 	: QSplitter(Qt::Horizontal, parent),
@@ -60,6 +62,38 @@ BreakpointsWidget::BreakpointsWidget(QTabWidget* parent, MainWindow* mainWindow)
 	: QTableWidget(parent),
 	  m_mainWindow(mainWindow)
 {
-	
+	this->setColumnCount(3);
+	setHorizontalHeaderLabels(QStringList({"Enabled", "#", "File"}));
 }
 
+void BreakpointsWidget::addBreakpoint(Breakpoint* bp)
+{
+	int row = this->rowCount();
+	this->setRowCount(row+1);
+	QTableWidgetItem* twi;
+	twi = new QTableWidgetItem();
+	twi->setCheckState(bp->m_enabled ? Qt::Checked : Qt::Unchecked);
+	this->setItem(row, 0, twi);
+	twi = new QTableWidgetItem(QString("%1").arg(bp->m_lineNumber));
+	twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	this->setItem(row, 1, twi);
+	twi  = new QTableWidgetItem(bp->m_pathName);
+	twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	this->setItem(row, 2, twi);
+}
+
+void BreakpointsWidget::removeBreakpoint(Breakpoint* bp)
+{
+	for (int row = 0; row < this->rowCount(); row++) {
+		QTableWidgetItem* twi = this->item(row, 2);
+		if (twi->text() == bp->m_pathName) {
+			twi = this->item(row, 1);
+			int line = twi->text().toInt();
+			if (line == bp->m_lineNumber) {
+				this->removeRow(row);
+				return;
+			}
+		}
+	}
+	qWarning() << "BreakpointsWidget: failed to remove Breakpoint" << bp->m_pathName << bp->m_lineNumber;
+}

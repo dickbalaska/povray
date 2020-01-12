@@ -29,6 +29,7 @@
 
 class QToolBar;
 
+class Breakpoint;
 class MainWindow;
 class DebuggerPanel;
 
@@ -56,6 +57,8 @@ class BreakpointsWidget : public QTableWidget
 	Q_OBJECT
 public:
 	explicit BreakpointsWidget(QTabWidget* parent, MainWindow* mainWindow);
+	void	addBreakpoint(Breakpoint* bp);
+	void	removeBreakpoint(Breakpoint* bp);
 private:
 	MainWindow*	m_mainWindow;
 };
@@ -64,6 +67,7 @@ private:
 /// The DebuggerConsole is the entire Tab, left and right sides
 class DebuggerConsole : public QSplitter
 {
+	friend class DebuggerMan;
 	Q_OBJECT
 public:
 	explicit DebuggerConsole(QTabWidget* parent, QStackedWidget* consoleBar, MainWindow* mainWindow);
