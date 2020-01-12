@@ -26,12 +26,12 @@
 #include "preferences.h"
 #include "insertmenuman.h"
 
-#define	_INSDEBUG	true
+#define	INSDEBUG_	false
 InsertMenuMan::InsertMenuMan(MainWindow* parent)
 	: QObject(parent),
 	  m_mainWindow(parent)
 {
-	m_preview = NULL;
+	m_preview = nullptr;
 	QMenu* rootMenu = m_mainWindow->getToolbar()->getInsertMenu();
 	connect(rootMenu, SIGNAL(aboutToHide()), SLOT(menuHidden()));
 }
@@ -57,7 +57,7 @@ void InsertMenuMan::populateMenu(bool enable)
 
 	}
 	foreach (QFileInfo fi, rootMap) {
-		if (_INSDEBUG) qDebug() << "File:" << fi.fileName();
+		if (INSDEBUG_) qDebug() << "File:" << fi.fileName();
 		QString s = fixFileName(fi.fileName());
 		QMenu* submenu = new QMenu(s, m_mainWindow);
 		populateSubMenu(submenu, fi);
@@ -88,7 +88,7 @@ void InsertMenuMan::populateSubMenu(QMenu* menu, QFileInfo fi)
 			continue;
 		}
 		if (s.endsWith(".txt")) {
-			if (_INSDEBUG) qDebug() << "File:" << fi.fileName();
+			if (INSDEBUG_) qDebug() << "File:" << fi.fileName();
 			if (s == "-.txt") {
 				menu->addSeparator();
 				continue;
@@ -202,10 +202,10 @@ void InsertMenuMan::menuHidden()
 {
 	if (m_preview) {
 		delete m_preview;
-		m_preview = NULL;
+		m_preview = nullptr;
 	}
 }
-QPixmap* pm;
+static QPixmap* pm;
 void InsertMenuMan::itemHovered()
 {
 	InsertMenuAction* action =  qobject_cast<InsertMenuAction*>(sender());
@@ -221,7 +221,7 @@ void InsertMenuMan::itemHovered()
 		qa = menu->activeAction();
 	}
 	if (!qa) {
-		if (_INSDEBUG) qDebug() << "No QAction";
+		if (INSDEBUG_) qDebug() << "No QAction";
 		return;
 	}
 	pm = new QPixmap(gfile);
@@ -230,14 +230,14 @@ void InsertMenuMan::itemHovered()
 		m_preview = new InsertMenuPreview(menu->parentWidget(), Qt::FramelessWindowHint);
 		m_preview->setMinimumSize(160,120);
 		m_preview->setVisible(true);
-		if (_INSDEBUG) qDebug() << "Created window";
+		if (INSDEBUG_) qDebug() << "Created window";
 	}
 	m_preview->m_loadedFile = gfile;
 	m_preview->m_label->setPixmap(*pm);
 	m_preview->m_label->setMinimumSize(pm->size());
-	if (_INSDEBUG) qDebug() << "";
-	if (_INSDEBUG) qDebug() << "gfile" << gfile;
-	if (_INSDEBUG) qDebug() << "pm size" << pm->size();
+	if (INSDEBUG_) qDebug() << "";
+	if (INSDEBUG_) qDebug() << "gfile" << gfile;
+	if (INSDEBUG_) qDebug() << "pm size" << pm->size();
 
 	QRect mainGeom = m_mainWindow->geometry();
 	QRect mgeom = menu->geometry();
@@ -246,11 +246,11 @@ void InsertMenuMan::itemHovered()
 	QSize menuRect = menu->size();
 	QPoint p(mgeom.left()-mainGeom.left()+menuRect.width(),
 			 mpos.y()-mainGeom.top()+arect.top());
-	if (_INSDEBUG) qDebug() << "mainGeom" << mainGeom << "mgeom" << mgeom;
-	if (_INSDEBUG) qDebug() << "mpos" << mpos << "arect" << arect << "p" << p;
+	if (INSDEBUG_) qDebug() << "mainGeom" << mainGeom << "mgeom" << mgeom;
+	if (INSDEBUG_) qDebug() << "mpos" << mpos << "arect" << arect << "p" << p;
 	if (p.y() < 0)
 		p.ry() = 0;
-	if (_INSDEBUG) qDebug() << "p" << p << "mainGeom.height" << mainGeom.height() << "pm.height" << pm->height();
+	if (INSDEBUG_) qDebug() << "p" << p << "mainGeom.height" << mainGeom.height() << "pm.height" << pm->height();
 #define	SLOP	20
 	if (p.y()+pm->height() > mainGeom.height()-SLOP)
 		p.setY(mainGeom.height()-pm->height()-SLOP);
@@ -258,7 +258,7 @@ void InsertMenuMan::itemHovered()
 //		if (_INSDEBUG) qDebug() << "Move to left of menu" << (p.x()+pm->width()) << ">" << mainGeom.width();
 //		p.rx() = mgeom.left()-mainGeom.left()-pm->width();
 //	}
-	if (_INSDEBUG) qDebug() << "final p" << p;
+	if (INSDEBUG_) qDebug() << "final p" << p;
 	m_preview->move(p);
 }
 
@@ -323,7 +323,7 @@ InsertSubstitutionsDialog::InsertSubstitutionsDialog(
 	foreach(QString s, in) {
 		layout->addWidget(new QLabel(s), index, 0);
 		QLineEdit* le = new QLineEdit(this);
-		le->setText(insertMenuMan->getSubstitution(s, NULL));
+		le->setText(insertMenuMan->getSubstitution(s, nullptr));
 		layout->addWidget(le, index, 1);
 		m_lineEditList.append(le);
 		index++;
