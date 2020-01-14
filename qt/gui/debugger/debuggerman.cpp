@@ -2,7 +2,7 @@
  * debuggerman.cpp - Manage the gui side of the debugger for qtpovray
  *
  * qtpovray - A Qt IDE frontend for POV-Ray
- * Copyright(c) 2019 - Dick Balaska, and BuckoSoft.
+ * Copyright(c) 2020 - Dick Balaska, and BuckoSoft.
  *
  * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -29,10 +29,17 @@
 
 static const QString	s_dbg("dbg ");		// note the space
 
+// The commands that we send to the debugger
+static const QString s_cont("cont");		// continue
+static const QString s_pause("pause");
+static const QString s_b("b");
+
 DebuggerMan::DebuggerMan(MainWindow* mainWindow)
 	: m_mainWindow(mainWindow)
 {	
 	m_currentParserLocation.m_valid = false;
+	connect(this, SIGNAL(emitMoveToEditor(QString,int,int)), m_mainWindow, SLOT(moveToEditor(QString,int,int)));
+	
 }
 
 DebuggerMan::~DebuggerMan()
@@ -112,6 +119,7 @@ void DebuggerMan::onUpdateBreakpoints(const QList<int>& list)
 		Breakpoint* bp = new Breakpoint();
 		bp->m_fileName = ce->getFilePath();
 		bp->m_lineNumber = *liter;
+		bp->m_enabled = true;
 		addBreakpoint(bp);
 	}
 }
@@ -123,7 +131,7 @@ void DebuggerMan::setState(DbgState ns)
 	if (ns == dsInit || ns == dsReady)
 		playPause = true;
 	bool runEnabled = false;
-	if (ns == dsInit || ns == dsParsing)
+	if (ns == dsInit || ns == dsParsing || ns == dsReady)
 		runEnabled = true;
 	bool stopEnabled = false;
 	if (ns == dsReady || ns == dsParsing || ns == dsRendering)
@@ -136,9 +144,20 @@ void DebuggerMan::setState(DbgState ns)
 
 void DebuggerMan::onDebuggerStart()
 {
-//	setState(dsStartup);
-//	m_mainWindow->onStartDebugger();
-	handleBreak("29 test.pov");
+	switch (m_state) {
+	case dsInit:
+		setState(dsStartup);
+		m_mainWindow->onStartDebugger();
+		break;
+	case dsReady:
+		sendContinue();
+		break;
+	default:
+		sendPause();
+		break;
+	}
+
+	//handleBreak("29 test.pov");
 }
 void DebuggerMan::onDebuggerStop()
 {
@@ -175,7 +194,7 @@ void DebuggerMan::sendBreakpoints()
 	for (Breakpoint* bp : m_breakpoints) {
 		if (bp->m_enabled) {
 			QFileInfo f(bp->m_fileName);
-			s = QString("%1b %2 %3").arg(s_dbg).arg(bp->m_lineNumber).arg(f.fileName());
+			s = QString("%1%2 %3 %4").arg(s_dbg).arg(s_b).arg(bp->m_lineNumber).arg(f.fileName());
 			m_mainWindow->sendPovrayMessage(s);			
 		}
 	}
@@ -184,7 +203,15 @@ void DebuggerMan::sendBreakpoints()
 void DebuggerMan::sendContinue()
 {
 	QString s = s_dbg;
-	s += "cont";
+	s += s_cont;
+	setState(dsParsing);
+	m_mainWindow->sendPovrayMessage(s);
+}
+
+void DebuggerMan::sendPause()
+{
+	QString s = s_dbg;
+	s += s_pause;
 	setState(dsParsing);
 	m_mainWindow->sendPovrayMessage(s);
 }
@@ -198,6 +225,9 @@ void DebuggerMan::handleBreak(const QString& data)
 	}
 	int line = data.left(i).toInt();
 	QString fileName = data.mid(i+1);
-	
+	m_currentParserLocation.m_fileName = fileName;
+	m_currentParserLocation.m_lineNumber = line;
+	m_currentParserLocation.m_valid = true;
 	setState(dsReady);
+	emit(emitMoveToEditor(fileName, line, 0));
 }

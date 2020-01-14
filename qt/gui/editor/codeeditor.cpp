@@ -766,6 +766,7 @@ void CodeEditor::updateHighlights()
 {
 	QList<QTextEdit::ExtraSelection> es;
 	highlightCurrentLine(es);
+	highlightDebuggerLine(es);
 	highlightMatchingTokens(es);
 	BraceMatcher bm(this);
 	if (bm.valid) {
@@ -829,7 +830,27 @@ void CodeEditor::highlightCurrentLine(QList<QTextEdit::ExtraSelection>& es)
 
 void CodeEditor::highlightDebuggerLine(QList<QTextEdit::ExtraSelection>& es)
 {
-	
+	const ParserLocation& pl = m_mainWindow->getDebuggerMan()->getParserLocation();
+	if (!pl.m_valid)
+		return;
+	if (pl.m_fileName == this->m_fileName) {
+		QTextEdit::ExtraSelection selection;
+		QTextCursor tc = this->textCursor();
+		int curLine = tc.blockNumber()+1;
+		int dist = pl.m_lineNumber - curLine;
+		if (dist > 0)
+			tc.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, dist);
+		else if (dist < 0)
+			tc.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, -dist);
+		//this->setTextCursor(tc);
+
+		QColor lineColor = QColor(Qt::red).lighter(190);
+		selection.format.setBackground(lineColor);
+		selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+		selection.cursor = tc;
+		selection.cursor.clearSelection();
+		es.append(selection);
+	}
 }
 
 void CodeEditor::handleHover(const QPoint& globalPos, QPoint& , QTextCursor& tc)

@@ -2,7 +2,7 @@
  * debuggerman.h - Manage the gui side of the debugger for qtpovray
  *
  * qtpovray - A Qt IDE frontend for POV-Ray
- * Copyright(c) 2019 - Dick Balaska, and BuckoSoft.
+ * Copyright(c) 2020 - Dick Balaska, and BuckoSoft.
  *
  * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -73,8 +73,11 @@ public:
 
 	void		messageFromPovray(const QString& msg);
 	void		setState(DbgState newState = dsInit);
-	ParserLocation	getParserLocation();
+	const ParserLocation&	getParserLocation() {return(m_currentParserLocation); }
 
+Q_SIGNALS:
+	void emitMoveToEditor(const QString& file, int line, int col);
+	
 public slots:
 	void	onBreakpointToggle(int lineNumber = 0);
 	void	onUpdateBreakpoints(const QList<int>& list);
@@ -85,6 +88,7 @@ public slots:
 private:
 	void	sendBreakpoints();
 	void	sendContinue();
+	void	sendPause();
 	void	handleBreak(const QString& data);
 
 	MainWindow*			m_mainWindow;
