@@ -188,8 +188,8 @@ void Parser::Run()
                          SourcePosition(-1,-1,-1));
 
 	if (mDebugger) {
-		mDebugger->send("Init\n");
-		mDebugger->debuggerPaused();
+		mDebugger->init();
+		mDebugger->debuggerPaused();	// wait here for the debugger to setup
 	}
     // Outer try/catch block to handle out-of-memory conditions
     // occurring during regular error handling.

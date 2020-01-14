@@ -249,7 +249,7 @@ bool Scene::Failed()
     return parserTasks.Failed();
 }
 
-void Scene::RecvDebuggerCommand(const char *msg)
+void Scene::RecvDebuggerCommand(const char* msg)
 {
 	if (mDebugger) {
 		mDebugger->messageFromGui(msg);

@@ -18,17 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
+
+#include <QFileInfo>
+
 #include "editor/codeeditor.h"
 #include "mainwindow.h"
 #include "debuggerman.h"
 #include "debuggerpanel.h"
 #include "debuggerconsole.h"
 
-static const QString	s_dbg("dbg ");
+static const QString	s_dbg("dbg ");		// note the space
 
 DebuggerMan::DebuggerMan(MainWindow* mainWindow)
 	: m_mainWindow(mainWindow)
 {	
+	m_currentParserLocation.m_valid = false;
 }
 
 DebuggerMan::~DebuggerMan()
@@ -47,7 +51,7 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 	QString filePath = ce->getFilePath();
 	bool found = false;
 	for (Breakpoint* bp : m_breakpoints) {
-		if (bp->m_pathName == filePath && bp->m_lineNumber == lineNumber) {
+		if (bp->m_fileName == filePath && bp->m_lineNumber == lineNumber) {
 			found = true;
 			m_breakpoints.removeOne(bp);
 			m_debuggerConsole->m_breakpointsWidget->removeBreakpoint(bp);
@@ -56,7 +60,7 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 	}
 	if (!found) {
 		Breakpoint* bp = new Breakpoint;
-		bp->m_pathName = filePath;
+		bp->m_fileName = filePath;
 		bp->m_lineNumber = lineNumber;
 		m_breakpoints.append(bp);
 		m_debuggerConsole->m_breakpointsWidget->addBreakpoint(bp);
@@ -85,7 +89,7 @@ QList<int>	DebuggerMan::gatherBreakpoints(CodeEditor* ce)
 {
 	QList<int> ql;
 	for(Breakpoint* bp : m_breakpoints) {
-		if (ce->getFilePath() == bp->m_pathName)
+		if (ce->getFilePath() == bp->m_fileName)
 			ql.append(bp->m_lineNumber);
 	}
 	return(ql);
@@ -97,7 +101,7 @@ void DebuggerMan::onUpdateBreakpoints(const QList<int>& list)
 	QList<Breakpoint*>::iterator iter = m_breakpoints.begin();
 	while (iter != m_breakpoints.end()) {
 		Breakpoint* bm = *iter;
-		if (bm->m_pathName == ce->getFilePath()) {
+		if (bm->m_fileName == ce->getFilePath()) {
 			iter = m_breakpoints.erase(iter);
 			delete bm;
 		} else
@@ -106,7 +110,7 @@ void DebuggerMan::onUpdateBreakpoints(const QList<int>& list)
 	QList<int>::const_iterator liter;
 	for (liter = list.begin(); liter != list.end(); ++liter) {
 		Breakpoint* bp = new Breakpoint();
-		bp->m_pathName = ce->getFilePath();
+		bp->m_fileName = ce->getFilePath();
 		bp->m_lineNumber = *liter;
 		addBreakpoint(bp);
 	}
@@ -130,24 +134,70 @@ void DebuggerMan::setState(DbgState ns)
 	m_debuggerConsole->m_debuggerPanel->setButtonStates(playPause, runEnabled, stopEnabled, stepEnabled);
 }
 
-void DebuggerMan::messageFromPovray(const QString& msg)
-{
-	QString s = s_dbg;
-	if (msg == "Init") {
-		s += "cont";
-		m_mainWindow->sendPovrayMessage(s);
-	}
-}
-
 void DebuggerMan::onDebuggerStart()
 {
-	m_mainWindow->onStartDebugger();
+//	setState(dsStartup);
+//	m_mainWindow->onStartDebugger();
+	handleBreak("29 test.pov");
 }
 void DebuggerMan::onDebuggerStop()
 {
 	
 }
 void DebuggerMan::onDebuggerStep()
+{	
+}
+
+void DebuggerMan::messageFromPovray(const QString& msg)
 {
+	QString command;
+	QString data;
+	int i = msg.indexOf(' ');
+	if (i == -1)
+		command = msg;
+	else {
+		command = msg.left(i);
+		data = msg.mid(i+1);
+	}
+	if (command == "Init") {
+		sendBreakpoints();
+		sendContinue();
+	} else if (command == "break") {
+		handleBreak(data);
+	} else {
+		qCritical() << "DebuggerMan:unknown msg" << msg;
+	}
+}
+
+void DebuggerMan::sendBreakpoints()
+{
+	QString s;
+	for (Breakpoint* bp : m_breakpoints) {
+		if (bp->m_enabled) {
+			QFileInfo f(bp->m_fileName);
+			s = QString("%1b %2 %3").arg(s_dbg).arg(bp->m_lineNumber).arg(f.fileName());
+			m_mainWindow->sendPovrayMessage(s);			
+		}
+	}
+}
+
+void DebuggerMan::sendContinue()
+{
+	QString s = s_dbg;
+	s += "cont";
+	setState(dsParsing);
+	m_mainWindow->sendPovrayMessage(s);
+}
+
+void DebuggerMan::handleBreak(const QString& data)
+{
+	int i = data.indexOf(' ');
+	if (i == -1) {
+		qCritical() << "DebuggerMan:handleBreak bad data" << data;
+		return;
+	}
+	int line = data.left(i).toInt();
+	QString fileName = data.mid(i+1);
 	
+	setState(dsReady);
 }

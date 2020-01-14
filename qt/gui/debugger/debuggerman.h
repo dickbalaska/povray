@@ -31,7 +31,7 @@ class MainWindow;
 class DebuggerLocation
 {
 public:
-	QString	m_pathName;
+	QString	m_fileName;
 	int		m_lineNumber;
 };
 
@@ -39,6 +39,13 @@ class Breakpoint : public DebuggerLocation
 {
 public:
 	bool	m_enabled;
+};
+
+/// Where the parser last stopped
+class ParserLocation : public DebuggerLocation
+{
+public:
+	bool	m_valid = false;
 };
 
 enum DbgState {
@@ -58,7 +65,7 @@ public:
 	DebuggerMan(MainWindow* mainWindow);
 	virtual ~DebuggerMan();
 
-	void	setDebuggerConsole(DebuggerConsole* debuggerConsole) { m_debuggerConsole = debuggerConsole; setState(); }
+	void	setDebuggerConsole(DebuggerConsole* debuggerConsole) { m_debuggerConsole = debuggerConsole; setState(dsInit); }
 	DebuggerConsole*	getDebuggerConsole() { return(m_debuggerConsole); }
 
 	QList<int>	gatherBreakpoints(CodeEditor* ce);
@@ -66,6 +73,7 @@ public:
 
 	void		messageFromPovray(const QString& msg);
 	void		setState(DbgState newState = dsInit);
+	ParserLocation	getParserLocation();
 
 public slots:
 	void	onBreakpointToggle(int lineNumber = 0);
@@ -75,9 +83,13 @@ public slots:
 	void	onDebuggerStep();
 	
 private:
+	void	sendBreakpoints();
+	void	sendContinue();
+	void	handleBreak(const QString& data);
+
 	MainWindow*			m_mainWindow;
 	DebuggerConsole*	m_debuggerConsole;
-	DebuggerLocation	m_currentLocation;
+	ParserLocation		m_currentParserLocation;
 	QList<Breakpoint*>	m_breakpoints;
 	DbgState			m_state;
 };

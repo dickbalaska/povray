@@ -32,6 +32,7 @@ class Debugger
 {
 public:
 	Debugger();
+	void init();
 	
 	void send(const char* text);
 	void debuggerPaused();
@@ -39,7 +40,7 @@ public:
 	void setParser(Parser* parser) { mParser = parser; }
 	void setParserTask(ParserTask* task) { mParserTask = task; }
 	
-	void messageFromGui(const std::string& msg);
+	void messageFromGui(const char* msg);
 
 private:
 	Parser*	mParser;
