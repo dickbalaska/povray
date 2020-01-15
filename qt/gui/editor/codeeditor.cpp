@@ -817,8 +817,12 @@ void CodeEditor::highlightCurrentLine(QList<QTextEdit::ExtraSelection>& es)
 	if (!bHighlightCurrentLine)
 		return;
 	if (!isReadOnly()) {
+		const ParserLocation& pl = m_mainWindow->getDebuggerMan()->getParserLocation();
+		if (pl.m_valid) {	// check if we should display the debugger instead
+			if (pl.m_fileName == this->m_fileName && pl.m_lineNumber == textCursor().blockNumber()+1)
+				return;
+		}
 		QTextEdit::ExtraSelection selection;
-
 		QColor lineColor = QColor(Qt::yellow).lighter(160);
 		selection.format.setBackground(lineColor);
 		selection.format.setProperty(QTextFormat::FullWidthSelection, true);

@@ -20,6 +20,7 @@
  *****************************************************************************/
 #include <QDebug>
 #include "base/stringutilities.h"
+#include "debuggermessages.h"
 #include "scanner.h"
 
 #include "debugger.h"
@@ -31,7 +32,6 @@ struct Breakpoint
 {
 	std::string	filePath;
 	POV_LONG line;
-	
 };
 
 static QList<Breakpoint> breakpoints;
@@ -44,7 +44,7 @@ Debugger::Debugger()
 void Debugger::init()
 {
 	breakpoints.clear();
-	send("Init\n");
+	send(s_init);
 }
 
 void Debugger::send(const char* text)
@@ -98,11 +98,11 @@ void Debugger::messageFromGui(const char* msg)
 		command = s.left(i);
 		data = s.mid(i+1);
 	}
-	if (command == "cont") {
+	if (command == s_cont) {
 		mParserTask->ResumeFromDebugger();
 		return;
 	}
-	if (command == "b") {
+	if (command == s_b) {
 		i = data.indexOf(' ');
 		if (i == -1) {
 			qCritical() << "Debugger: Bad breakpoint msg" << msg;
@@ -116,9 +116,21 @@ void Debugger::messageFromGui(const char* msg)
 		breakpoints.append(bp);
 		return;
 	}
-	if (command == "break") {
+	if (command == s_pause) {
 		
 	}
+	if (command == s_w) {
+		commandWatchSymbol(data.toUtf8().toStdString().c_str());
+	}
+}
+
+void Debugger::commandWatchSymbol(const char* name)
+{
+	SYM_ENTRY* se = mParser->mSymbolStack.Find_Symbol(name);
+	if (!se) {
+		
+	}
+		
 }
 
 }

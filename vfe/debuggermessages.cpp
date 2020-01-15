@@ -1,5 +1,5 @@
 /******************************************************************************
- * debugger.h - The POV-Ray parser filter object
+ * debuggermessages.cpp - Define the message interface between the gui and the parser
  *
  * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2020 - Dick Balaska, and BuckoSoft.
@@ -18,38 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
-#ifndef DEBUGGER_H
-#define DEBUGGER_H
 
-#include "rawtokenizer.h"
-#include "backend/control/parsertask.h"
-#include "parser.h"
+#include "debuggermessages.h"
 
-namespace pov_parser
-{
+// commands from gui
+const char* s_cont("cont");		// continue
+const char* s_b("b");			// set breakpoint
+const char* s_pause("pause");	// break at next available
+const char* s_step("step");		// step to next line
+const char* s_w("w");			// watch symbol
 
-class Debugger
-{
-public:
-	Debugger();
-	void init();
-	
-	void send(const char* text);
-	void debuggerPaused();
-	void checkForBreakpoint(const RawToken& rawToken);
-	void setParser(Parser* parser) { mParser = parser; }
-	void setParserTask(ParserTask* task) { mParserTask = task; }
-	
-	void messageFromGui(const char* msg);
+// commands to gui
 
-private:
-	void	commandWatchSymbol(const char* name);
-
-	Parser*	mParser;
-	ParserTask* mParserTask;
-};
-
-
-}	// namespace pov_parser
-
-#endif // DEBUGGER_H
+const char* s_sym("sym");
+const char* s_init("init");
+const char* s_break("break");

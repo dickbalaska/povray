@@ -1,5 +1,5 @@
 /******************************************************************************
- * debugger.h - The POV-Ray parser filter object
+ * debuggermessages.h - Define the message interface between the gui and the parser
  *
  * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2020 - Dick Balaska, and BuckoSoft.
@@ -18,38 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
-#ifndef DEBUGGER_H
-#define DEBUGGER_H
+#include <QString>
 
-#include "rawtokenizer.h"
-#include "backend/control/parsertask.h"
-#include "parser.h"
+// messages from gui to debugger
+extern const char* s_cont;		// continue
+extern const char* s_b;			// set breakpoint
+extern const char* s_pause;		// break at next available
+extern const char* s_step;		// step to next line
+extern const char* s_w;			// watch symbol
 
-namespace pov_parser
+
+///////////////////////////////////////////////////////////////////////////////
+// messages from debugger to gui
+
+/** "init"
+ * Sent as soon as the parser starts.
+ * Gui responds with wanted breakpoints, then watched symbols, followed by cont
+ */
+extern const char* s_init;
+
+/** "break line file"
+ */
+extern const char* s_break;
+
+/** "sym name type value"
+ * if name == "-1" then symbol not found
+ * type = 
+ */
+extern const char* s_sym;
+
+enum DbgSymbolType
 {
-
-class Debugger
-{
-public:
-	Debugger();
-	void init();
-	
-	void send(const char* text);
-	void debuggerPaused();
-	void checkForBreakpoint(const RawToken& rawToken);
-	void setParser(Parser* parser) { mParser = parser; }
-	void setParserTask(ParserTask* task) { mParserTask = task; }
-	
-	void messageFromGui(const char* msg);
-
-private:
-	void	commandWatchSymbol(const char* name);
-
-	Parser*	mParser;
-	ParserTask* mParserTask;
+	dbgFloat,
+	dbgVector,
+	dbgUnknown = -1
 };
-
-
-}	// namespace pov_parser
-
-#endif // DEBUGGER_H

@@ -26,13 +26,19 @@
 #include "debuggerman.h"
 #include "debuggerpanel.h"
 #include "debuggerconsole.h"
+#include "debuggermessages.h"
 
 static const QString	s_dbg("dbg ");		// note the space
 
 // The commands that we send to the debugger
-static const QString s_cont("cont");		// continue
-static const QString s_pause("pause");
-static const QString s_b("b");
+//static const QString s_cont("cont");		// continue
+//static const QString s_pause("pause");
+//static const QString s_b("b");
+
+//// The commands we receive from the debugger
+//static const QString s_init("init");
+//static const QString s_break("break");
+
 
 DebuggerMan::DebuggerMan(MainWindow* mainWindow)
 	: m_mainWindow(mainWindow)
@@ -178,10 +184,10 @@ void DebuggerMan::messageFromPovray(const QString& msg)
 		command = msg.left(i);
 		data = msg.mid(i+1);
 	}
-	if (command == "Init") {
+	if (command == s_init) {
 		sendBreakpoints();
 		sendContinue();
-	} else if (command == "break") {
+	} else if (command == s_break) {
 		handleBreak(data);
 	} else {
 		qCritical() << "DebuggerMan:unknown msg" << msg;
