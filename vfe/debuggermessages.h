@@ -37,13 +37,15 @@ extern const char* s_w;			// watch symbol
  */
 extern const char* s_init;
 
-/** "break line file"
+/** "break lineNumber fileName"
  */
 extern const char* s_break;
 
-/** "sym name type value"
- * if name == "-1" then symbol not found
- * type = 
+/** "sym name typeString value"
+ * typeString = from Reserved_Words[] minus any trailing " identifier".
+ * if typeString == "--" then symbol not found
+ * value = convert the supported value types to a string
+ * 
  */
 extern const char* s_sym;
 

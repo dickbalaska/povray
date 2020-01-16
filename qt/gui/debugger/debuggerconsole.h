@@ -63,6 +63,24 @@ private:
 	MainWindow*	m_mainWindow;
 };
 
+class SymbolsWidget : public QWidget
+{
+	Q_OBJECT
+public:
+	explicit SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow);
+	void	addSymbol(const QString& name, const QString& type, const QString& value);
+	
+signals:
+	void	userSymbolAdded(const QString& text);
+	
+private slots:
+	void	onReturnPressed();
+	
+private:
+	QTableWidget*	m_table;
+	QLineEdit*		m_lineEdit;
+	MainWindow*		m_mainWindow;
+};
 
 /// The DebuggerConsole is the entire Tab, left and right sides
 class DebuggerConsole : public QSplitter
@@ -80,6 +98,7 @@ private:
 	DebuggerOptions*	m_debuggerOptions;
 	IncludeStack*		m_includeStack;
 	BreakpointsWidget*	m_breakpointsWidget;
+	SymbolsWidget*		m_symbolsWidget;
 	
 	MainWindow*	m_mainWindow;
 	

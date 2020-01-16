@@ -39,6 +39,7 @@ static const QString	s_dbg("dbg ");		// note the space
 //static const QString s_init("init");
 //static const QString s_break("break");
 
+static QRegularExpression symRegExp("(\\w+) (\\w+) (.*)");
 
 DebuggerMan::DebuggerMan(MainWindow* mainWindow)
 	: m_mainWindow(mainWindow)
@@ -173,6 +174,12 @@ void DebuggerMan::onDebuggerStep()
 {	
 }
 
+void DebuggerMan::onUserAddedSymbol(const QString& text)
+{
+	QString s = QString("%1%2 %3").arg(s_dbg, s_w, text);
+	m_mainWindow->sendPovrayMessage(s);	
+}
+
 void DebuggerMan::messageFromPovray(const QString& msg)
 {
 	QString command;
@@ -189,6 +196,8 @@ void DebuggerMan::messageFromPovray(const QString& msg)
 		sendContinue();
 	} else if (command == s_break) {
 		handleBreak(data);
+	} else if (command == s_sym) {
+		handleSym(data);
 	} else {
 		qCritical() << "DebuggerMan:unknown msg" << msg;
 	}
@@ -236,4 +245,15 @@ void DebuggerMan::handleBreak(const QString& data)
 	m_currentParserLocation.m_valid = true;
 	setState(dsReady);
 	emit(emitMoveToEditor(fileName, line, 0));
+}
+
+void DebuggerMan::handleSym(const QString& data)
+{
+	QRegularExpressionMatch match = symRegExp.match(data);
+	QStringList captured = match.capturedTexts();
+	if (captured.length() != 4) {
+		qCritical() << "Bad Sym command:" << data;
+		return;
+	}
+	m_debuggerConsole->m_symbolsWidget->addSymbol(captured[1], captured[2], captured[3]);
 }

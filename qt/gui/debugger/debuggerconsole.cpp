@@ -18,14 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
+#include <QVBoxLayout>
 #include <QLabel>
 #include <QToolBar>
 #include <QHeaderView>
+#include <QLineEdit>
 #include <QDebug>
 
 #include "debuggerpanel.h"
 #include "debuggerconsole.h"
 #include "debuggerman.h"
+#include "mainwindow.h"
 
 DebuggerConsole::DebuggerConsole(QTabWidget* parent, QStackedWidget* consoleBar, MainWindow* mainWindow)
 	: QSplitter(Qt::Horizontal, parent),
@@ -40,6 +43,8 @@ DebuggerConsole::DebuggerConsole(QTabWidget* parent, QStackedWidget* consoleBar,
 	m_debuggerTabs->addTab(m_includeStack, "IncStack");
 	m_breakpointsWidget = new BreakpointsWidget(m_debuggerTabs, mainWindow);
 	m_debuggerTabs->addTab(m_breakpointsWidget, "Breakpoints");
+	m_symbolsWidget = new SymbolsWidget(m_debuggerTabs, mainWindow);
+	m_debuggerTabs->addTab(m_symbolsWidget, "Symbols");
 	
 	this->addWidget(m_debuggerTabs);
 	consoleBar->addWidget(new QLabel());	// just a dummy to blank the bar
@@ -98,4 +103,43 @@ void BreakpointsWidget::removeBreakpoint(Breakpoint* bp)
 		}
 	}
 	qWarning() << "BreakpointsWidget: failed to remove Breakpoint" << bp->m_fileName << bp->m_lineNumber;
+}
+
+SymbolsWidget::SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow)
+	: QWidget(parent),
+	  m_mainWindow(mainWindow)
+{
+	QVBoxLayout* mainLayout = new QVBoxLayout();
+	m_table = new QTableWidget(this);
+	m_table->setColumnCount(3);
+	m_table->setHorizontalHeaderLabels(QStringList({"Name", "Type", "Value"}));
+	m_table->horizontalHeader()->setStretchLastSection(true);
+	mainLayout->addWidget(m_table);
+	mainLayout->setStretchFactor(m_table, 100);
+	m_lineEdit = new QLineEdit(this);
+	connect(m_lineEdit, SIGNAL(returnPressed()),this, SLOT(onReturnPressed()));
+	connect(this, SIGNAL(userSymbolAdded(const QString&)), m_mainWindow->getDebuggerMan(), SLOT(onUserAddedSymbol(const QString&)));
+	mainLayout->addWidget(m_lineEdit);
+	this->setLayout(mainLayout);
+}
+
+void SymbolsWidget::onReturnPressed()
+{
+	emit(userSymbolAdded(m_lineEdit->text()));
+}
+
+void SymbolsWidget::addSymbol(const QString& name, const QString& type, const QString& value)
+{
+	QTableWidgetItem* twi;
+	QList<QTableWidgetItem*> items = m_table->findItems(name, Qt::MatchFixedString | Qt::MatchCaseSensitive);
+
+	int row = m_table->rowCount();
+	m_table->setRowCount(row+1);
+	twi = new QTableWidgetItem(name);
+	m_table->setItem(row, 0, twi);
+	twi = new QTableWidgetItem(type);
+	m_table->setItem(row, 1, twi);
+	twi = new QTableWidgetItem(value);
+	m_table->setItem(row, 2, twi);
+	
 }

@@ -84,12 +84,14 @@ public slots:
 	void	onDebuggerStart();
 	void	onDebuggerStop();
 	void	onDebuggerStep();
+	void	onUserAddedSymbol(const QString& text);
 	
 private:
 	void	sendBreakpoints();
 	void	sendContinue();
 	void	sendPause();
 	void	handleBreak(const QString& data);
+	void	handleSym(const QString& data);
 
 	MainWindow*			m_mainWindow;
 	DebuggerConsole*	m_debuggerConsole;

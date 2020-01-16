@@ -126,11 +126,35 @@ void Debugger::messageFromGui(const char* msg)
 
 void Debugger::commandWatchSymbol(const char* name)
 {
+	QString typeString;
+	QString value;
 	SYM_ENTRY* se = mParser->mSymbolStack.Find_Symbol(name);
 	if (!se) {
-		
+		typeString = "--";
+		value = "<undefined>";
+	} else {
+		TokenId type = GetCategorizedTokenId(se->Token_Number);
+		typeString = mParser->Get_Token_String(se->Token_Number);
+		if (typeString.endsWith("identifier"))
+			typeString = typeString.left(typeString.length()-11);
+		switch (type) {
+		case FLOAT_TOKEN_CATEGORY: {
+			DBL* pd = reinterpret_cast<DBL *>(se->Data);
+			value = QString("%1").arg(*pd);
+			break;
+		}
+		case VECTOR_TOKEN_CATEGORY: {
+			Vector3d* pv = reinterpret_cast<Vector3d*>(se->Data);
+			value = QString("%1,%2,%3").arg(pv->x()).arg(pv->y()).arg(pv->z());
+			break;
+		}
+		default:
+			value = "<unhandled type>";
+			break;
+		}
 	}
-		
+	QString msg = QString("%1 %2 %3 %4").arg(s_sym, name, typeString, value);	
+	send(msg.toUtf8().toStdString().c_str());
 }
 
 }
