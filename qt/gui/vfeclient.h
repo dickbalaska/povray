@@ -19,8 +19,8 @@
  *
  *****************************************************************************/
 
-#ifndef _VFECLIENT_H_
-#define _VFECLIENT_H_
+#ifndef VFECLIENT_H_
+#define VFECLIENT_H_
 
 #include <QObject>
 
@@ -57,7 +57,7 @@ public:
 //	void setPovrayProcess(QProcess* p) { povrayProcess = p; }
 	virtual void connectToPovray() {}
 //	bool isConnected() { return(m_connected); }
-	void close();
+//	void close();
 	void sendMessage(const QString& msg);
 
 Q_SIGNALS:
@@ -82,4 +82,4 @@ private:
 	QtVfe*	m_qtVfe;
 };
 
-#endif // _VFECLIENT_H_
+#endif // VFECLIENT_H_

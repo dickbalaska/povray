@@ -51,15 +51,14 @@ VfeClient::~VfeClient()
 	delete m_qtVfe;
 }
 
-void VfeClient::close()
-{
-	if (m_qtVfe) {
-		sendMessage("quit");
-		delete m_qtVfe;
-		m_qtVfe = nullptr;
-	}
-
-}
+//void VfeClient::close()
+//{
+//	if (m_qtVfe) {
+//		sendMessage("quit");
+//		delete m_qtVfe;
+//		m_qtVfe = nullptr;
+//	}
+//}
 void VfeClient::onTextMessageReceived(const QString &msg)
 {
 	if (m_debug)
