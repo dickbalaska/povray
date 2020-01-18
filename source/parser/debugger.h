@@ -28,6 +28,12 @@
 namespace pov_parser
 {
 
+/**
+ * @brief The qtpovray SDL debugger.
+ * Monitor the Parser and control its execution.
+ * 
+ * This class' lifetime is per-scene.
+ */
 class Debugger
 {
 public:
@@ -50,6 +56,8 @@ private:
 
 	Parser*	mParser;
 	ParserTask* mParserTask;
+	bool	mStepping = false;
+	int		mParseLine = -1;
 };
 
 

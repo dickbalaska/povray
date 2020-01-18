@@ -165,14 +165,20 @@ void SymbolsWidget::addSymbol(const QString& name, const QString& type, const QS
 {
 	QTableWidgetItem* twi;
 	QList<QTableWidgetItem*> items = m_table->findItems(name, Qt::MatchFixedString | Qt::MatchCaseSensitive);
-
-	int row = m_table->rowCount();
-	m_table->setRowCount(row+1);
-	twi = new QTableWidgetItem(name);
-	m_table->setItem(row, 0, twi);
-	twi = new QTableWidgetItem(type);
-	m_table->setItem(row, 1, twi);
-	twi = new QTableWidgetItem(value);
-	m_table->setItem(row, 2, twi);
-	
+	if (!items.isEmpty()) {
+		int row = items.first()->row();
+		twi = new QTableWidgetItem(type);
+		m_table->setItem(row, 1, twi);
+		twi = new QTableWidgetItem(value);
+		m_table->setItem(row, 2, twi);
+	} else {
+		int row = m_table->rowCount();
+		m_table->setRowCount(row+1);
+		twi = new QTableWidgetItem(name);
+		m_table->setItem(row, 0, twi);
+		twi = new QTableWidgetItem(type);
+		m_table->setItem(row, 1, twi);
+		twi = new QTableWidgetItem(value);
+		m_table->setItem(row, 2, twi);
+	}
 }

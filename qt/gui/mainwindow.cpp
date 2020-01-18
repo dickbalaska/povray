@@ -416,7 +416,6 @@ void MainWindow::breakpointsChanged(const QString& filename)
 {
 	for (int i=0; i<m_editorTabs->count(); i++) {
 		CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
-		//QFileInfo fi(ce->getFilePath());
 		if (ce->getFilePath() == filename) {
 			ce->setBreakpoints(m_debuggerMan->gatherBreakpoints(ce));			
 			return;

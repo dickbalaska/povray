@@ -95,6 +95,7 @@ private:
 	void	sendBreakpoints();
 	void	sendWatches();
 	void	sendContinue();
+	void	sendStep();
 	void	sendPause();
 	void	handleBreak(const QString& data);
 	void	handleSym(const QString& data);

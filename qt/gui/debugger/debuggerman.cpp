@@ -202,7 +202,8 @@ void DebuggerMan::onDebuggerStop()
 }
 
 void DebuggerMan::onDebuggerStep()
-{	
+{
+	sendStep();
 }
 
 void DebuggerMan::onUserAddedSymbol(const QString& text)
@@ -262,6 +263,15 @@ void DebuggerMan::sendContinue()
 {
 	QString s = s_dbg;
 	s += s_cont;
+	setState(dsParsing);
+	m_mainWindow->sendPovrayMessage(s);
+	m_currentParserLocation.m_valid  = false;
+}
+
+void DebuggerMan::sendStep()
+{
+	QString s = s_dbg;
+	s += s_step;
 	setState(dsParsing);
 	m_mainWindow->sendPovrayMessage(s);
 	m_currentParserLocation.m_valid  = false;

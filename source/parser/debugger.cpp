@@ -64,20 +64,25 @@ void Debugger::debuggerPaused()
 void Debugger::checkForBreakpoint(const RawToken& rawToken)
 {
 	bool doBreak = false;
-	POV_LONG col = rawToken.lexeme.position.column;
+	//POV_LONG col = rawToken.lexeme.position.column;
 	POV_LONG line = rawToken.lexeme.position.line;
 	std::string filePath;
-	if (col == 1) {
+	//if (col == 1) {
+	if (line != mParseLine) {
 		qDebug() << "col1" << line;
-		
-		for (const Breakpoint& bp : breakpoints) {
-			if (bp.line == line) {
-				if (filePath.empty()) {
-					filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
-					UCS2String s;
+		mParseLine = (int)line;
+		if (mStepping) {
+			doBreak = true;
+			filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
+		} else {
+			for (const Breakpoint& bp : breakpoints) {
+				if (bp.line == line) {
+					if (filePath.empty()) {
+						filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
+					}
+					if (bp.filePath == filePath)
+						doBreak = true;
 				}
-				if (bp.filePath == filePath)
-					doBreak = true;
 			}
 		}
 	}
@@ -116,6 +121,12 @@ void Debugger::messageFromGui(const char* msg)
 		return;
 	}
 	if (command == s_cont) {
+		
+		mParserTask->ResumeFromDebugger();
+		return;
+	}
+	if (command == s_step) {
+		mStepping = true;
 		mParserTask->ResumeFromDebugger();
 		return;
 	}
