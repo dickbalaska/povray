@@ -412,6 +412,18 @@ void MainWindow::focused()
 	}	
 }
 
+void MainWindow::breakpointsChanged(const QString& filename)
+{
+	for (int i=0; i<m_editorTabs->count(); i++) {
+		CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
+		//QFileInfo fi(ce->getFilePath());
+		if (ce->getFilePath() == filename) {
+			ce->setBreakpoints(m_debuggerMan->gatherBreakpoints(ce));			
+			return;
+		}
+	}	
+}
+
 bool MainWindow::maybeSaveEditor(CodeEditor* ce)
 {
 	if (ce->isModified()) {
@@ -1046,12 +1058,16 @@ void MainWindow::onStartDebugger()
 void MainWindow::onRenderAction()
 {
 	qDebug() << "onRenderAction";
-	if (!m_mainToolbar->isRenderButtonStart()) {
-		this->m_statusBar->showMessage(tr("Canceling render"));
-		sendPovrayMessage("cancel");
-		return;
-	}
-	startRender(false);
+	if (m_mainToolbar->isRenderButtonStart())
+		startRender(false);
+	else
+		stopRendering();
+}
+
+void MainWindow::stopRendering()
+{
+	this->m_statusBar->showMessage(tr("Canceling render"));
+	sendPovrayMessage("cancel");	
 }
 
 void MainWindow::startRender(bool useDebugger)

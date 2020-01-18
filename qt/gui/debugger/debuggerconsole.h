@@ -59,8 +59,19 @@ public:
 	explicit BreakpointsWidget(QTabWidget* parent, MainWindow* mainWindow);
 	void	addBreakpoint(Breakpoint* bp);
 	void	removeBreakpoint(Breakpoint* bp);
+	bool	isActive(int row);
+	int		getLineNumber(int row);
+	QString	getFilename(int row);
+
+signals:
+	void	breakpointChanged(int row, int col);
+
+public	slots:
+	void	onBreakpointWidgetChanged(int row, int col);
+
 private:
 	MainWindow*	m_mainWindow;
+	bool		m_initializing = true;
 };
 
 class SymbolsWidget : public QWidget

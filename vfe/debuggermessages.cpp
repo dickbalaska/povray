@@ -27,6 +27,8 @@ const char* s_b("b");			// set breakpoint
 const char* s_pause("pause");	// break at next available
 const char* s_step("step");		// step to next line
 const char* s_w("w");			// watch symbol
+const char* s_resetBreakpoints("resetBreakpoints");
+const char* s_resetWatches("resetWatches");
 
 // commands to gui
 

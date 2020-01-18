@@ -112,9 +112,6 @@ public:
 	QWidget*	getEditor(int which = -1);
 	QString		getCurrentEditorPath();
 	CodeEditor*	getCodeEditor(int which = -1);
-	DockMan*	getDockMan();
-	HelpMan*	getHelpMan();
-	DebuggerMan* getDebuggerMan();
 	void		deleteAllEditorTabs();	// delete all CodeEditors. Ask before deleting changed editors.
 	bool		isSoftSelect();			// Check if there is a render selected
 
@@ -124,6 +121,9 @@ public:
 	void		sendPovrayMessage(const QString& msg);
 	void		setPrefVersionWidget(QTextEdit* w) { prefVersionWidget = w; }
 
+	DockMan*			getDockMan();
+	HelpMan*			getHelpMan();
+	DebuggerMan*		getDebuggerMan();
 	const PreferenceData& getPreferenceData() const { return(preferenceData); }
 	const BookmarkMan*	getBookmarkMan() { return(m_bookmarkMan); }
 	const FindMan*		getFindMan() { return(m_findMan); }
@@ -131,6 +131,9 @@ public:
 	MainToolbar*		getToolbar() { return(m_mainToolbar); }
 	InsertMenuMan*		getInsertMenuMan() { return(m_insertMenuMan); }
 
+	void	stopRendering();
+	void	breakpointsChanged(const QString& filename);
+	
 Q_SIGNALS:
 	//void	povrayStatusChanged();
 	void	emitStatusMessage(int stream, const QString& msg);

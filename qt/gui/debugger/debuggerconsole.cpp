@@ -71,10 +71,19 @@ BreakpointsWidget::BreakpointsWidget(QTabWidget* parent, MainWindow* mainWindow)
 	this->setColumnCount(3);
 	setHorizontalHeaderLabels(QStringList({"Enabled", "#", "File"}));
 	this->horizontalHeader()->setStretchLastSection(true);
+	connect(this, SIGNAL(cellChanged(int, int)), this, SLOT(onBreakpointWidgetChanged(int, int)));
+	connect(this, SIGNAL(breakpointChanged(int, int)), m_mainWindow->getDebuggerMan(), SLOT(onBreakpointWidgetChanged(int, int)));
+}
+
+void BreakpointsWidget::onBreakpointWidgetChanged(int row, int col) {
+	if (m_initializing)
+		return;
+	emit(breakpointChanged(row, col));
 }
 
 void BreakpointsWidget::addBreakpoint(Breakpoint* bp)
 {
+	m_initializing = true;
 	int row = this->rowCount();
 	this->setRowCount(row+1);
 	QTableWidgetItem* twi;
@@ -87,6 +96,7 @@ void BreakpointsWidget::addBreakpoint(Breakpoint* bp)
 	twi  = new QTableWidgetItem(bp->m_fileName);
 	twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	this->setItem(row, 2, twi);
+	m_initializing = false;
 }
 
 void BreakpointsWidget::removeBreakpoint(Breakpoint* bp)
@@ -103,6 +113,28 @@ void BreakpointsWidget::removeBreakpoint(Breakpoint* bp)
 		}
 	}
 	qWarning() << "BreakpointsWidget: failed to remove Breakpoint" << bp->m_fileName << bp->m_lineNumber;
+}
+
+bool BreakpointsWidget::isActive(int row)
+{
+	QTableWidgetItem* twi = item(row, 0);
+	return(twi->checkState() == Qt::Checked);
+}
+
+int BreakpointsWidget::getLineNumber(int row)
+{
+	QTableWidgetItem* twi = item(row, 1);
+	if (!twi)
+		return(-1);
+	int l = twi->data(Qt::DisplayRole).toInt();
+	return(l);
+}
+
+QString BreakpointsWidget::getFilename(int row)
+{
+	QTableWidgetItem* twi = item(row, 2);
+	QString s = twi->data(Qt::DisplayRole).toString();
+	return(s);
 }
 
 SymbolsWidget::SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow)

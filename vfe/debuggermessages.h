@@ -26,6 +26,8 @@ extern const char* s_b;			// set breakpoint
 extern const char* s_pause;		// break at next available
 extern const char* s_step;		// step to next line
 extern const char* s_w;			// watch symbol
+extern const char* s_resetBreakpoints;
+extern const char* s_resetWatches;
 
 
 ///////////////////////////////////////////////////////////////////////////////

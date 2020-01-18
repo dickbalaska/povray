@@ -101,10 +101,6 @@ void Debugger::messageFromGui(const char* msg)
 		command = s.left(i);
 		data = s.mid(i+1);
 	}
-	if (command == s_cont) {
-		mParserTask->ResumeFromDebugger();
-		return;
-	}
 	if (command == s_b) {
 		i = data.indexOf(' ');
 		if (i == -1) {
@@ -119,8 +115,20 @@ void Debugger::messageFromGui(const char* msg)
 		breakpoints.append(bp);
 		return;
 	}
+	if (command == s_cont) {
+		mParserTask->ResumeFromDebugger();
+		return;
+	}
 	if (command == s_pause) {
 		
+	}
+	if (command == s_resetBreakpoints) {
+		breakpoints.clear();
+		return;
+	}
+	if (command == s_resetWatches) {
+		watches.clear();
+		return;
 	}
 	if (command == s_w) {
 		commandWatchSymbol(data.toUtf8().toStdString().c_str());

@@ -44,6 +44,12 @@ class LineNumberArea;
 class MainWindow;
 class PreferenceData;
 
+struct LineNumberBreakpoint {
+	int		mLineNumber;
+	bool	mEnabled;
+};
+
+
 class CodeEditor :  public QPlainTextEdit
 {
 	Q_OBJECT
@@ -77,7 +83,7 @@ public:
 	bool	isRedoAvailable() { return(m_hasRedo); }
 
 	void	setBookmarks(QList<int> newBookmarks);
-	void	setBreakpoints(QList<int> newBreakpoints);
+	void	setBreakpoints(QList<LineNumberBreakpoint> newBreakpoints);
 
 	void	handleEditIndent();
 	void	handleEditUnindent();
@@ -96,7 +102,7 @@ signals:
 	void	bookmarkPrevious(int lineNumber);
 	void	updateBookmarks(const QList<int> marks);
 	void	breakpointToggle(int lineNumber);
-	void	updateBreakpoints(const QList<int> marks);
+	void	updateBreakpoints(const QList<LineNumberBreakpoint> marks);
 
 public slots:
 	void	gotoMatchingBrace();
@@ -176,6 +182,9 @@ inline const QDateTime& CodeEditor::getFileTime() { return(m_fileTime); }
 
 
 ///////////////////////////////////////////////////////////////////////////////
+/// \brief LineNumberArea - The left column widget that shows the line numbers
+/// \param editor The parent editor we belong to
+///
 class LineNumberArea : public QWidget
 {
 	Q_OBJECT
@@ -190,9 +199,8 @@ public:
 	bool hasBookmark(int lineNumber) {
 		return(m_bookmarks.contains(lineNumber));
 	}
-	bool hasBreakpoint(int lineNumber) {
-		return(m_breakpoints.contains(lineNumber));
-	}
+	const LineNumberBreakpoint*	getBreakpoint(int lineNumber);
+
 protected:
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 	void paintEvent(QPaintEvent *event) override {
@@ -205,10 +213,10 @@ protected slots:
 	void	onBreakpointToggle();
 
 private:
-	CodeEditor*	m_codeEditor;
-	QList<int>	m_bookmarks;
-	QList<int>	m_breakpoints;
-	int			m_contextLine;
+	CodeEditor*					m_codeEditor;
+	QList<int>					m_bookmarks;
+	QList<LineNumberBreakpoint>	m_breakpoints;
+	int							m_contextLine;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -53,6 +53,7 @@ DebuggerMan::~DebuggerMan()
 {
 }
 
+/// CodeEditor's LineNumberArea has toggled a breakpoint on/off
 void DebuggerMan::onBreakpointToggle(int lineNumber)
 {
 	CodeEditor* ce = dynamic_cast<CodeEditor*>(sender());
@@ -79,7 +80,7 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 		m_breakpoints.append(bp);
 		m_debuggerConsole->m_breakpointsWidget->addBreakpoint(bp);
 	}
-	QList<int> ql = gatherBreakpoints(ce);
+	QList<LineNumberBreakpoint> ql = gatherBreakpoints(ce);
 	ce->setBreakpoints(ql);
 }
 
@@ -98,18 +99,31 @@ void DebuggerMan::addBreakpoint(Breakpoint* bp)
 	m_debuggerConsole->m_breakpointsWidget->addBreakpoint(bp);
 }
 
-/// Return a list of the line numbers of the breakpoints for this file
-QList<int>	DebuggerMan::gatherBreakpoints(CodeEditor* ce)
+/// Return a list of the line numbers of the breakpoints for this CodeEditor
+QList<LineNumberBreakpoint>	DebuggerMan::gatherBreakpoints(CodeEditor* ce)
 {
-	QList<int> ql;
+	QList<LineNumberBreakpoint> ql;
+	LineNumberBreakpoint lnb;
 	for(Breakpoint* bp : m_breakpoints) {
-		if (ce->getFilePath() == bp->m_fileName)
-			ql.append(bp->m_lineNumber);
+		if (ce->getFilePath() == bp->m_fileName) {
+			lnb.mLineNumber = bp->m_lineNumber;
+			lnb.mEnabled = bp->m_enabled;
+			ql.append(lnb);
+		}
 	}
 	return(ql);
 }
 
-void DebuggerMan::onUpdateBreakpoints(const QList<int>& list)
+Breakpoint* DebuggerMan::getBreakpoint(const QString& filename, int lineNumber)
+{
+	for (Breakpoint* bp : m_breakpoints) {
+		if (bp->m_fileName == filename && bp->m_lineNumber == lineNumber)
+			return(bp);
+	}
+	return(nullptr);
+}
+
+void DebuggerMan::onUpdateBreakpoints(const QList<LineNumberBreakpoint>& list)
 {
 	CodeEditor* ce = (CodeEditor*)sender();
 	QList<Breakpoint*>::iterator iter = m_breakpoints.begin();
@@ -121,14 +135,29 @@ void DebuggerMan::onUpdateBreakpoints(const QList<int>& list)
 		} else
 			++iter;
 	}
-	QList<int>::const_iterator liter;
-	for (liter = list.begin(); liter != list.end(); ++liter) {
+	for (const LineNumberBreakpoint& lnb : list) {
 		Breakpoint* bp = new Breakpoint();
 		bp->m_fileName = ce->getFilePath();
-		bp->m_lineNumber = *liter;
-		bp->m_enabled = true;
-		addBreakpoint(bp);
+		bp->m_lineNumber = lnb.mLineNumber;
+		bp->m_enabled = lnb.mEnabled;
+		addBreakpoint(bp);		
 	}
+}
+
+void DebuggerMan::onBreakpointWidgetChanged(int row, int col)
+{
+	if (col != 0)
+		return;
+	bool b = m_debuggerConsole->m_breakpointsWidget->isActive(row);
+	Breakpoint* bp = getBreakpoint(m_debuggerConsole->m_breakpointsWidget->getFilename(row), 
+								   m_debuggerConsole->m_breakpointsWidget->getLineNumber(row));
+	if (!bp) {
+		qCritical() << "onBreakpointWidgeetChanged panic: row/col" << row << "/" << col 
+					<< m_debuggerConsole->m_breakpointsWidget->getFilename(row) << ":" << m_debuggerConsole->m_breakpointsWidget->getLineNumber(row);
+		return;
+	}
+	bp->m_enabled = b;
+	m_mainWindow->breakpointsChanged(m_debuggerConsole->m_breakpointsWidget->getFilename(row));
 }
 
 void DebuggerMan::setState(DbgState ns)
@@ -168,8 +197,10 @@ void DebuggerMan::onDebuggerStart()
 }
 void DebuggerMan::onDebuggerStop()
 {
-	
+	m_mainWindow->stopRendering();
+	m_currentParserLocation.m_valid = false;
 }
+
 void DebuggerMan::onDebuggerStep()
 {	
 }
@@ -207,6 +238,7 @@ void DebuggerMan::messageFromPovray(const QString& msg)
 void DebuggerMan::sendBreakpoints()
 {
 	QString s;
+	m_mainWindow->sendPovrayMessage(QString("%1%2").arg(s_dbg, s_resetBreakpoints));
 	for (Breakpoint* bp : m_breakpoints) {
 		if (bp->m_enabled) {
 			QFileInfo f(bp->m_fileName);
@@ -219,8 +251,10 @@ void DebuggerMan::sendBreakpoints()
 void DebuggerMan::sendWatches()
 {
 	QString s;
+	m_mainWindow->sendPovrayMessage(QString("%1%2").arg(s_dbg, s_resetWatches));
 	for (const QString& w : m_watches) {
-		
+		QString s = QString("%1%2 %3").arg(s_dbg, s_w, w);
+		m_mainWindow->sendPovrayMessage(s);	
 	}
 }
 
@@ -230,6 +264,7 @@ void DebuggerMan::sendContinue()
 	s += s_cont;
 	setState(dsParsing);
 	m_mainWindow->sendPovrayMessage(s);
+	m_currentParserLocation.m_valid  = false;
 }
 
 void DebuggerMan::sendPause()

@@ -22,6 +22,7 @@
 #define DEBUGGERMAN_H
 
 #include <QObject>
+#include "editor/codeeditor.h"
 
 class CodeEditor;
 class DebuggerConsole;
@@ -69,12 +70,13 @@ public:
 	void	setDebuggerConsole(DebuggerConsole* debuggerConsole) { m_debuggerConsole = debuggerConsole; setState(dsInit); }
 	DebuggerConsole*	getDebuggerConsole() { return(m_debuggerConsole); }
 
-	QList<int>	gatherBreakpoints(CodeEditor* ce);
+	QList<LineNumberBreakpoint>	gatherBreakpoints(CodeEditor* ce);
 	void		addBreakpoint(Breakpoint* bm);
 
 	void		messageFromPovray(const QString& msg);
 	void		setState(DbgState newState = dsInit);
 	const ParserLocation&	getParserLocation() {return(m_currentParserLocation); }
+	Breakpoint*	getBreakpoint(const QString& filename, int lineNumber);
 
 Q_SIGNALS:
 	void	emitMoveToEditor(const QString& file, int line, int col);
@@ -82,7 +84,8 @@ Q_SIGNALS:
 	
 public slots:
 	void	onBreakpointToggle(int lineNumber = 0);
-	void	onUpdateBreakpoints(const QList<int>& list);
+	void	onUpdateBreakpoints(const QList<LineNumberBreakpoint>& list);
+	void	onBreakpointWidgetChanged(int row, int col);
 	void	onDebuggerStart();
 	void	onDebuggerStop();
 	void	onDebuggerStep();
