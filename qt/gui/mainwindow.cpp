@@ -905,6 +905,7 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 		m_mainToolbar->renderButtonToStart();
 		this->m_statusBar->showMessage("Done");
 		this->m_statusBar->renderDone();
+		m_debuggerMan->setState(dsDone);
 		m_dockMan->getRenderDock()->repaint();
 		return;
 	} else if (command == "fatal") {
@@ -956,6 +957,11 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 		return;
 	}
 	qWarning() << "unhandled message: command:" << command << "text:" << text;
+}
+
+void MainWindow::showStatusBarMessage(const QString& msg)
+{
+	m_statusBar->showMessage(msg);
 }
 
 void MainWindow::sendPovrayMessage(const QString& msg)

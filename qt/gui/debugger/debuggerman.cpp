@@ -39,14 +39,14 @@ static const QString	s_dbg("dbg ");		// note the space
 //static const QString s_init("init");
 //static const QString s_break("break");
 
-static QRegularExpression symRegExp("(\\w+) (\\w+) (.*)");
+static QRegularExpression symRegExp("(\\S+) (\\S+) (.*)");
 
 DebuggerMan::DebuggerMan(MainWindow* mainWindow)
 	: m_mainWindow(mainWindow)
 {	
 	m_currentParserLocation.m_valid = false;
 	connect(this, SIGNAL(emitMoveToEditor(QString,int,int)), m_mainWindow, SLOT(moveToEditor(QString,int,int)));
-	
+	connect(this, SIGNAL(emitShowStatusBarMessage(QString)), m_mainWindow, SLOT(showStatusBarMessage(QString)));	
 }
 
 DebuggerMan::~DebuggerMan()
@@ -193,6 +193,7 @@ void DebuggerMan::messageFromPovray(const QString& msg)
 	}
 	if (command == s_init) {
 		sendBreakpoints();
+		sendWatches();
 		sendContinue();
 	} else if (command == s_break) {
 		handleBreak(data);
@@ -212,6 +213,14 @@ void DebuggerMan::sendBreakpoints()
 			s = QString("%1%2 %3 %4").arg(s_dbg).arg(s_b).arg(bp->m_lineNumber).arg(f.fileName());
 			m_mainWindow->sendPovrayMessage(s);			
 		}
+	}
+}
+
+void DebuggerMan::sendWatches()
+{
+	QString s;
+	for (const QString& w : m_watches) {
+		
 	}
 }
 
@@ -245,6 +254,8 @@ void DebuggerMan::handleBreak(const QString& data)
 	m_currentParserLocation.m_valid = true;
 	setState(dsReady);
 	emit(emitMoveToEditor(fileName, line, 0));
+	QString s = QString("Break at %1:%2").arg(fileName).arg(line);
+	emit(emitShowStatusBarMessage(s));
 }
 
 void DebuggerMan::handleSym(const QString& data)

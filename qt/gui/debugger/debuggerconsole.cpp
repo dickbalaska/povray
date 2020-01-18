@@ -126,6 +126,7 @@ SymbolsWidget::SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow)
 void SymbolsWidget::onReturnPressed()
 {
 	emit(userSymbolAdded(m_lineEdit->text()));
+	m_lineEdit->clear();
 }
 
 void SymbolsWidget::addSymbol(const QString& name, const QString& type, const QString& value)

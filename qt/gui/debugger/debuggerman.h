@@ -50,6 +50,7 @@ public:
 
 enum DbgState {
 	dsInit,
+	dsDone = dsInit,
 	dsStartup,
 	dsReady,
 	dsParsing,
@@ -76,7 +77,8 @@ public:
 	const ParserLocation&	getParserLocation() {return(m_currentParserLocation); }
 
 Q_SIGNALS:
-	void emitMoveToEditor(const QString& file, int line, int col);
+	void	emitMoveToEditor(const QString& file, int line, int col);
+	void	emitShowStatusBarMessage(const QString& msg);
 	
 public slots:
 	void	onBreakpointToggle(int lineNumber = 0);
@@ -88,6 +90,7 @@ public slots:
 	
 private:
 	void	sendBreakpoints();
+	void	sendWatches();
 	void	sendContinue();
 	void	sendPause();
 	void	handleBreak(const QString& data);
@@ -97,6 +100,7 @@ private:
 	DebuggerConsole*	m_debuggerConsole;
 	ParserLocation		m_currentParserLocation;
 	QList<Breakpoint*>	m_breakpoints;
+	QList<QString>		m_watches;
 	DbgState			m_state;
 };
 

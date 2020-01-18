@@ -89,7 +89,7 @@ class DebuggerConsole : public QSplitter
 	Q_OBJECT
 public:
 	explicit DebuggerConsole(QTabWidget* parent, QStackedWidget* consoleBar, MainWindow* mainWindow);
-	
+	QTabWidget*		getDebuggerTabs() { return(m_debuggerTabs); }
 signals:
 
 private:

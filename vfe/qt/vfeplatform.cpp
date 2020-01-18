@@ -103,6 +103,8 @@ namespace vfePlatform
 	vfeQtSession::~vfeQtSession()
 	{
 		if (m_renderOptions) delete m_renderOptions;
+		if (m_qtVfe) delete m_qtVfe;
+		m_qtVfe = nullptr;
 	}
 
     /////////////////////////////////////////////////////////////////////////

@@ -152,6 +152,7 @@ public:
 
 	PovrayConsole* getPovrayConsole() { return(m_povrayConsole); }
 	SearchConsole*	getSearchConsole() { return(m_searchConsole); }
+	DebuggerConsole* getDebuggerConsole() { return(m_debuggerConsole); }
 
 	void	configure(const PreferenceData* prefs);
 	int		getActiveConsole();

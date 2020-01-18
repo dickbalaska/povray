@@ -147,7 +147,6 @@ public slots:
 	void	editIndentBlock();
 	void	editUnindentBlock();
 	void	editToggleComments();
-	//void	onFilterDialog();
 	void	povrayWsStateChanged(bool connected);
 	void	wsMessageReceived(const QString& command, const QString& text);
 	void	onRenderAction();
@@ -156,7 +155,8 @@ public slots:
 	void	needWorkspace();
 	void	moveToEditor(const QString& file, int line, int col);
 	void	focused();
-
+	void	showStatusBarMessage(const QString& msg);
+	
 protected:
 	void closeEvent(QCloseEvent* event) override;
 

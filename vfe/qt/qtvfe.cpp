@@ -150,11 +150,12 @@ void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp)
 //        retval = gCancelRender ? RETURN_USER_ABORT : RETURN_ERROR;
 	session->Shutdown();
 	qtVfe->printStatus(session);
-//    delete sigthread;
-	delete session;
-	sessionp = nullptr;
-	//wsSend(hdl, "done");
 	qtVfe->sendPovrayTextMessage("done");
+//    delete sigthread;
+//	delete session;
+	qtVfe->m_session = nullptr;
+	
+	sessionp = nullptr;
 
 }
 
@@ -256,8 +257,10 @@ void  QtVfe::commandCancel()
 
 void QtVfe::commandDebugger(const QString &data)
 {
-	std::string s = data.toStdString();
-	m_session->sendMessageToDebugger(s.c_str());
+	if (m_session) {
+		std::string s = data.toStdString();
+		m_session->sendMessageToDebugger(s.c_str());
+	}
 }
 
 void QtVfe::parseCommandLine(const QString& cl, int& argc, char**& argv)

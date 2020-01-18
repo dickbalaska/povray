@@ -1,5 +1,5 @@
 /******************************************************************************
- * debugger.h - The POV-Ray parser filter object
+ * debugger.h - The qtpovray SDL debugger
  *
  * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2020 - Dick Balaska, and BuckoSoft.
@@ -44,6 +44,9 @@ public:
 
 private:
 	void	commandWatchSymbol(const char* name);
+	
+	void	sendWatches();
+	void	sendWatch(const char* name);
 
 	Parser*	mParser;
 	ParserTask* mParserTask;

@@ -1,5 +1,5 @@
 /******************************************************************************
- * debugger.cpp - The POV-Ray parser filter object
+ * debugger.cpp - The qtpovray SDL debugger
  *
  * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2020 - Dick Balaska, and BuckoSoft.
@@ -35,6 +35,7 @@ struct Breakpoint
 };
 
 static QList<Breakpoint> breakpoints;
+static QList<QString>	 watches;
 
 Debugger::Debugger()
 {
@@ -44,6 +45,7 @@ Debugger::Debugger()
 void Debugger::init()
 {
 	breakpoints.clear();
+	watches.clear();
 	send(s_init);
 }
 
@@ -54,6 +56,7 @@ void Debugger::send(const char* text)
 
 void Debugger::debuggerPaused()
 {
+	sendWatches();
 	mParserTask->PauseForDebugger();
 	mParserTask->DebuggerPaused();
 }
@@ -81,7 +84,7 @@ void Debugger::checkForBreakpoint(const RawToken& rawToken)
 	if (doBreak) {
 		QString s = QString("break %1 %2").arg(line).arg(filePath.c_str());
 		send(s.toUtf8().toStdString().c_str());
-		debuggerPaused();
+		debuggerPaused();	// must be last
 	}
 }
 
@@ -125,6 +128,18 @@ void Debugger::messageFromGui(const char* msg)
 }
 
 void Debugger::commandWatchSymbol(const char* name)
+{
+	watches.append(name);
+	sendWatch(name);
+}
+
+void Debugger::sendWatches()
+{
+	for (const QString& s : watches) {
+		sendWatch(s.toUtf8().toStdString().c_str());
+	}
+}
+void Debugger::sendWatch(const char* name)
 {
 	QString typeString;
 	QString value;
