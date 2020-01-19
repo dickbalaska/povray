@@ -231,7 +231,7 @@ void Workspace::load(const QString& filename)
 		Breakpoint* bp = new Breakpoint;
 		bp->m_enabled = captured[1] == "T" ? true : false;
 		bp->m_lineNumber = captured[2].toInt();
-		bp->m_fileName = captured[3];
+		bp->m_filePath = captured[3];
 		m_mainWindow->m_debuggerMan->addBreakpoint(bp);
 	}
 	settings.endGroup();
@@ -326,7 +326,7 @@ void Workspace::save()
 	i=0;
 	for (Breakpoint* bp : m_mainWindow->m_debuggerMan->m_breakpoints) {
 		index.setNum(i);
-		s = QString("%1 %2 %3").arg(bp->m_enabled ? "T" : "F").arg(bp->m_lineNumber).arg(bp->m_fileName);
+		s = QString("%1 %2 %3").arg(bp->m_enabled ? "T" : "F").arg(bp->m_lineNumber).arg(bp->m_filePath);
 		settings.setValue(index, s);
 		++i;
 	}

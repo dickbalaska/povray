@@ -93,7 +93,7 @@ void BreakpointsWidget::addBreakpoint(Breakpoint* bp)
 	twi = new QTableWidgetItem(QString("%1").arg(bp->m_lineNumber));
 	twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	this->setItem(row, 1, twi);
-	twi  = new QTableWidgetItem(bp->m_fileName);
+	twi  = new QTableWidgetItem(bp->m_filePath);
 	twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	this->setItem(row, 2, twi);
 	m_initializing = false;
@@ -103,7 +103,7 @@ void BreakpointsWidget::removeBreakpoint(Breakpoint* bp)
 {
 	for (int row = 0; row < this->rowCount(); row++) {
 		QTableWidgetItem* twi = this->item(row, 2);
-		if (twi->text() == bp->m_fileName) {
+		if (twi->text() == bp->m_filePath) {
 			twi = this->item(row, 1);
 			int line = twi->text().toInt();
 			if (line == bp->m_lineNumber) {
@@ -112,7 +112,7 @@ void BreakpointsWidget::removeBreakpoint(Breakpoint* bp)
 			}
 		}
 	}
-	qWarning() << "BreakpointsWidget: failed to remove Breakpoint" << bp->m_fileName << bp->m_lineNumber;
+	qWarning() << "BreakpointsWidget: failed to remove Breakpoint" << bp->m_filePath << bp->m_lineNumber;
 }
 
 bool BreakpointsWidget::isActive(int row)
@@ -130,7 +130,7 @@ int BreakpointsWidget::getLineNumber(int row)
 	return(l);
 }
 
-QString BreakpointsWidget::getFilename(int row)
+QString BreakpointsWidget::getFilePath(int row)
 {
 	QTableWidgetItem* twi = item(row, 2);
 	QString s = twi->data(Qt::DisplayRole).toString();

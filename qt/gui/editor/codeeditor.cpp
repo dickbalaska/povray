@@ -821,7 +821,7 @@ void CodeEditor::highlightCurrentLine(QList<QTextEdit::ExtraSelection>& es)
 	if (!isReadOnly()) {
 		const ParserLocation& pl = m_mainWindow->getDebuggerMan()->getParserLocation();
 		if (pl.m_valid) {	// check if we should display the debugger instead
-			if (pl.m_fileName == this->m_fileName && pl.m_lineNumber == textCursor().blockNumber()+1) {
+			if (pl.m_filePath == this->m_fileName && pl.m_lineNumber == textCursor().blockNumber()+1) {
 				qDebug() << "highlightCurrentLine don't override DebuggerLine";
 				return;
 			}
@@ -841,7 +841,7 @@ void CodeEditor::highlightDebuggerLine(QList<QTextEdit::ExtraSelection>& es)
 	const ParserLocation& pl = m_mainWindow->getDebuggerMan()->getParserLocation();
 	if (!pl.m_valid)
 		return;
-	if (pl.m_fileName == this->m_fileName) {
+	if (pl.m_filePath == this->m_fileName) {
 		QTextEdit::ExtraSelection selection;
 		QTextCursor tc = this->textCursor();
 		int curLine = tc.blockNumber()+1;

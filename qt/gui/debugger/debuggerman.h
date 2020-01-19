@@ -32,7 +32,12 @@ class MainWindow;
 class DebuggerLocation
 {
 public:
-	QString	m_fileName;
+	/// This is the filename given to the debugger.  Relative to the render startup directory.
+	QString	m_povrayFileName;
+	
+	/// This is the full path to file, like what CodeEditor uses.
+	QString	m_filePath;
+	
 	int		m_lineNumber;
 };
 
@@ -76,7 +81,15 @@ public:
 	void		messageFromPovray(const QString& msg);
 	void		setState(DbgState newState = dsInit);
 	const ParserLocation&	getParserLocation() {return(m_currentParserLocation); }
-	Breakpoint*	getBreakpoint(const QString& filename, int lineNumber);
+	Breakpoint*	getBreakpoint(const QString& filePath, int lineNumber);
+	/// qtpovray works in full file paths.  POV-Ray works in file names relative to the root directory.
+	void		setRenderRootDirectory(const QString& dir);
+
+	// Given a file's full path, determine the fileName relative to the render root
+	QString		getFileName(const QString& filePath);
+	
+	// Given a file name which may include a subdirectory, determine the full path with the render root
+	QString		getFilePath(const QString& fileName);
 
 Q_SIGNALS:
 	void	emitMoveToEditor(const QString& file, int line, int col);
@@ -85,6 +98,8 @@ Q_SIGNALS:
 public slots:
 	void	onBreakpointToggle(int lineNumber = 0);
 	void	onUpdateBreakpoints(const QList<LineNumberBreakpoint>& list);
+
+	/// Here when a user acts on the BreakpointWidget. Currently only enable/disable
 	void	onBreakpointWidgetChanged(int row, int col);
 	void	onDebuggerStart();
 	void	onDebuggerStop();
@@ -106,6 +121,7 @@ private:
 	QList<Breakpoint*>	m_breakpoints;
 	QList<QString>		m_watches;
 	DbgState			m_state;
+	QString				m_renderDir;
 };
 
 #endif // DEBUGGERMAN_H

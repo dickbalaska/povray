@@ -61,7 +61,7 @@ public:
 	void	removeBreakpoint(Breakpoint* bp);
 	bool	isActive(int row);
 	int		getLineNumber(int row);
-	QString	getFilename(int row);
+	QString	getFilePath(int row);
 
 signals:
 	void	breakpointChanged(int row, int col);

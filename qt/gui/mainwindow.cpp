@@ -1099,7 +1099,8 @@ void MainWindow::startRender(bool useDebugger)
 		}
 		rdir = dir.absolutePath();
 	}
-
+	
+	m_debuggerMan->setRenderRootDirectory(rdir);
 	cl += rdir;
 
 	if (useDebugger)

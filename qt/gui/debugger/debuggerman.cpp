@@ -20,6 +20,7 @@
  *****************************************************************************/
 
 #include <QFileInfo>
+#include <QDir>
 
 #include "editor/codeeditor.h"
 #include "mainwindow.h"
@@ -66,7 +67,7 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 	QString filePath = ce->getFilePath();
 	bool found = false;
 	for (Breakpoint* bp : m_breakpoints) {
-		if (bp->m_fileName == filePath && bp->m_lineNumber == lineNumber) {
+		if (bp->m_filePath == filePath && bp->m_lineNumber == lineNumber) {
 			found = true;
 			m_breakpoints.removeOne(bp);
 			m_debuggerConsole->m_breakpointsWidget->removeBreakpoint(bp);
@@ -75,8 +76,9 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 	}
 	if (!found) {
 		Breakpoint* bp = new Breakpoint;
-		bp->m_fileName = filePath;
+		bp->m_filePath = filePath;
 		bp->m_lineNumber = lineNumber;
+		bp->m_enabled = true;
 		m_breakpoints.append(bp);
 		m_debuggerConsole->m_breakpointsWidget->addBreakpoint(bp);
 	}
@@ -105,7 +107,7 @@ QList<LineNumberBreakpoint>	DebuggerMan::gatherBreakpoints(CodeEditor* ce)
 	QList<LineNumberBreakpoint> ql;
 	LineNumberBreakpoint lnb;
 	for(Breakpoint* bp : m_breakpoints) {
-		if (ce->getFilePath() == bp->m_fileName) {
+		if (ce->getFilePath() == bp->m_filePath) {
 			lnb.mLineNumber = bp->m_lineNumber;
 			lnb.mEnabled = bp->m_enabled;
 			ql.append(lnb);
@@ -114,30 +116,22 @@ QList<LineNumberBreakpoint>	DebuggerMan::gatherBreakpoints(CodeEditor* ce)
 	return(ql);
 }
 
-Breakpoint* DebuggerMan::getBreakpoint(const QString& filename, int lineNumber)
-{
-	for (Breakpoint* bp : m_breakpoints) {
-		if (bp->m_fileName == filename && bp->m_lineNumber == lineNumber)
-			return(bp);
-	}
-	return(nullptr);
-}
-
 void DebuggerMan::onUpdateBreakpoints(const QList<LineNumberBreakpoint>& list)
 {
 	CodeEditor* ce = (CodeEditor*)sender();
 	QList<Breakpoint*>::iterator iter = m_breakpoints.begin();
 	while (iter != m_breakpoints.end()) {
 		Breakpoint* bm = *iter;
-		if (bm->m_fileName == ce->getFilePath()) {
+		if (bm->m_filePath == ce->getFilePath()) {
 			iter = m_breakpoints.erase(iter);
 			delete bm;
 		} else
 			++iter;
 	}
+
 	for (const LineNumberBreakpoint& lnb : list) {
 		Breakpoint* bp = new Breakpoint();
-		bp->m_fileName = ce->getFilePath();
+		bp->m_filePath = ce->getFilePath();
 		bp->m_lineNumber = lnb.mLineNumber;
 		bp->m_enabled = lnb.mEnabled;
 		addBreakpoint(bp);		
@@ -149,15 +143,24 @@ void DebuggerMan::onBreakpointWidgetChanged(int row, int col)
 	if (col != 0)
 		return;
 	bool b = m_debuggerConsole->m_breakpointsWidget->isActive(row);
-	Breakpoint* bp = getBreakpoint(m_debuggerConsole->m_breakpointsWidget->getFilename(row), 
+	Breakpoint* bp = getBreakpoint(m_debuggerConsole->m_breakpointsWidget->getFilePath(row), 
 								   m_debuggerConsole->m_breakpointsWidget->getLineNumber(row));
 	if (!bp) {
 		qCritical() << "onBreakpointWidgeetChanged panic: row/col" << row << "/" << col 
-					<< m_debuggerConsole->m_breakpointsWidget->getFilename(row) << ":" << m_debuggerConsole->m_breakpointsWidget->getLineNumber(row);
+					<< m_debuggerConsole->m_breakpointsWidget->getFilePath(row) << ":" << m_debuggerConsole->m_breakpointsWidget->getLineNumber(row);
 		return;
 	}
 	bp->m_enabled = b;
-	m_mainWindow->breakpointsChanged(m_debuggerConsole->m_breakpointsWidget->getFilename(row));
+	m_mainWindow->breakpointsChanged(m_debuggerConsole->m_breakpointsWidget->getFilePath(row));
+}
+
+Breakpoint* DebuggerMan::getBreakpoint(const QString& filePath, int lineNumber)
+{
+	for (Breakpoint* bp : m_breakpoints) {
+		if (bp->m_filePath == filePath && bp->m_lineNumber == lineNumber)
+			return(bp);
+	}
+	return(nullptr);
 }
 
 void DebuggerMan::setState(DbgState ns)
@@ -176,6 +179,38 @@ void DebuggerMan::setState(DbgState ns)
 	if (ns == dsReady)
 		stepEnabled = true;
 	m_debuggerConsole->m_debuggerPanel->setButtonStates(playPause, runEnabled, stopEnabled, stepEnabled);
+}
+
+void DebuggerMan::setRenderRootDirectory(const QString& dir)
+{
+	m_renderDir = dir;
+	for (Breakpoint* bp : m_breakpoints) {
+		bp->m_povrayFileName = getFileName(bp->m_filePath);
+	}
+}
+
+QString DebuggerMan::getFileName(const QString& filePath)
+{
+	if (filePath.startsWith(m_renderDir)) {			// easy case. File is a straight up child of m_renderDir
+		QString s = filePath.mid(m_renderDir.length()+1);
+		return(s);
+	}
+	QFileInfo fi(filePath);
+	if (fi.isAbsolute())
+		return(filePath);
+	qCritical() << "DebuggerMan:getFileName can't deal with" << filePath;
+	qCritical() << "DebuggerMan:getFileName render root was" << m_renderDir;
+	return(filePath);
+}
+
+QString DebuggerMan::getFilePath(const QString& fileName)
+{
+	QFileInfo fi(fileName);
+	if (fi.isAbsolute())
+		return(fileName);
+	QDir dir(m_renderDir);
+	QFileInfo fir(dir, fileName);
+	return(fir.absolutePath());
 }
 
 void DebuggerMan::onDebuggerStart()
@@ -242,8 +277,7 @@ void DebuggerMan::sendBreakpoints()
 	m_mainWindow->sendPovrayMessage(QString("%1%2").arg(s_dbg, s_resetBreakpoints));
 	for (Breakpoint* bp : m_breakpoints) {
 		if (bp->m_enabled) {
-			QFileInfo f(bp->m_fileName);
-			s = QString("%1%2 %3 %4").arg(s_dbg).arg(s_b).arg(bp->m_lineNumber).arg(f.fileName());
+			s = QString("%1%2 %3 %4").arg(s_dbg).arg(s_b).arg(bp->m_lineNumber).arg(bp->m_povrayFileName);
 			m_mainWindow->sendPovrayMessage(s);			
 		}
 	}
@@ -294,7 +328,8 @@ void DebuggerMan::handleBreak(const QString& data)
 	}
 	int line = data.left(i).toInt();
 	QString fileName = data.mid(i+1);
-	m_currentParserLocation.m_fileName = fileName;
+	m_currentParserLocation.m_povrayFileName = fileName;
+	m_currentParserLocation.m_filePath = getFilePath(fileName);
 	m_currentParserLocation.m_lineNumber = line;
 	m_currentParserLocation.m_valid = true;
 	setState(dsReady);

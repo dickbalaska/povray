@@ -73,13 +73,14 @@ void Debugger::checkForBreakpoint(const RawToken& rawToken)
 		mParseLine = (int)line;
 		if (mStepping) {
 			doBreak = true;
+			mStepping = false;
 			filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
 		} else {
 			for (const Breakpoint& bp : breakpoints) {
 				if (bp.line == line) {
-					if (filePath.empty()) {
+					//if (filePath.empty()) {
 						filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
-					}
+					//}
 					if (bp.filePath == filePath)
 						doBreak = true;
 				}
