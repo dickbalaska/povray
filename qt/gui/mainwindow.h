@@ -196,6 +196,7 @@ private:
 	QShortcut		m_shortcutEditToggleComments;
 	QShortcut		m_shortcutEditGotoLineNumber;
 	QShortcut		m_shortcutEditGotoMatchingBrace;
+	QShortcut		m_shortcutStep;
 
 	Ui::MainWindow* ui;
 	VfeClient*		m_vfeClient;

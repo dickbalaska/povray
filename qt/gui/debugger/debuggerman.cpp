@@ -57,9 +57,9 @@ DebuggerMan::~DebuggerMan()
 /// CodeEditor's LineNumberArea has toggled a breakpoint on/off
 void DebuggerMan::onBreakpointToggle(int lineNumber)
 {
-	CodeEditor* ce = dynamic_cast<CodeEditor*>(sender());
+	CodeEditor* ce = dynamic_cast<CodeEditor*>(m_mainWindow->getEditor());
 	if (!ce) {
-		qCritical() << "onBreakpointToggle from not a CodeEditor";
+//		qCritical() << "onBreakpointToggle from not a CodeEditor";
 		return;
 	}
 	if (lineNumber == 0)

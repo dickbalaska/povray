@@ -700,17 +700,20 @@ KeyTab::KeyTab(Preferences* parent)
 	m_newKeyGroupBox->setLayout(blayout);
 
 	QGridLayout* layout = new QGridLayout(this);
-	addKey(layout, 0, tr("Start/Stop Render"), &prefData->getGlobalKeys()->keyStartRender);
-	addKey(layout, 1, tr("Open configure dialog"), &prefData->getGlobalKeys()->keyOpenPreferences);
-	addKey(layout, 2, tr("Toggle bookmark"), &prefData->getGlobalKeys()->keyBookmarkToggle);
-	addKey(layout, 3, tr("Move to next bookmark"), &prefData->getGlobalKeys()->keyBookmarkNext);
-	addKey(layout, 4, tr("Move to previous bookmark"), &prefData->getGlobalKeys()->keyBookmarkPrevious);
-	addKey(layout, 5, tr("Move to next error"), &prefData->getGlobalKeys()->keyErrorNext);
-	addKey(layout, 6, tr("Move to previous error"), &prefData->getGlobalKeys()->keyErrorPrevious);
-	addKey(layout, 7, tr("Move to next find"), &prefData->getGlobalKeys()->keyFindNext);
-	addKey(layout, 8, tr("Move to previous find"), &prefData->getGlobalKeys()->keyFindPrevious);
-	layout->setRowStretch(9, 1);
-	layout->addWidget(m_newKeyGroupBox, 10, 0, 1, 2);
+	int row=0;
+	addKey(layout, row++, tr("Start/Stop Render"), &prefData->getGlobalKeys()->keyStartRender);
+	addKey(layout, row++, tr("Open configure dialog"), &prefData->getGlobalKeys()->keyOpenPreferences);
+	addKey(layout, row++, tr("Toggle bookmark"), &prefData->getGlobalKeys()->keyBookmarkToggle);
+	addKey(layout, row++, tr("Move to next bookmark"), &prefData->getGlobalKeys()->keyBookmarkNext);
+	addKey(layout, row++, tr("Move to previous bookmark"), &prefData->getGlobalKeys()->keyBookmarkPrevious);
+	addKey(layout, row++, tr("Move to next error"), &prefData->getGlobalKeys()->keyErrorNext);
+	addKey(layout, row++, tr("Move to previous error"), &prefData->getGlobalKeys()->keyErrorPrevious);
+	addKey(layout, row++, tr("Move to next find"), &prefData->getGlobalKeys()->keyFindNext);
+	addKey(layout, row++, tr("Move to previous find"), &prefData->getGlobalKeys()->keyFindPrevious);
+	addKey(layout, row++, tr("Toggle breakpoint"), &prefData->getGlobalKeys()->keyBreakpointToggle);
+	addKey(layout, row++, tr("Debugger Step"), &prefData->getGlobalKeys()->keyDebuggerStep);
+	layout->setRowStretch(row++, 1);
+	layout->addWidget(m_newKeyGroupBox, row++, 0, 1, 2);
 	m_newKeyGroupBox->hide();
 }
 

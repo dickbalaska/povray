@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_shortcutEditShiftLeft(this),	m_shortcutEditShiftRight(this),
 	m_shortcutEditToggleComments(this),
 	m_shortcutEditGotoLineNumber(this),	m_shortcutEditGotoMatchingBrace(this),
+	m_shortcutStep(this),
 	ui(new Ui::MainWindow)
 {
 
@@ -136,6 +137,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_shortcutToggleBreakpoint.setContext(Qt::ApplicationShortcut);
 	connect(&m_shortcutToggleBreakpoint, SIGNAL(activated()),
 			m_debuggerMan, SLOT(onBreakpointToggle()));
+	m_shortcutStep.setContext(Qt::ApplicationShortcut);
+	connect(&m_shortcutStep, SIGNAL(activated()),
+			m_debuggerMan, SLOT(onDebuggerStep()));
 	m_shortcutSaveAllEditors.setContext(Qt::ApplicationShortcut);
 	connect(&m_shortcutSaveAllEditors, SIGNAL(activated()),
 			this, SLOT(saveAllEditors()));
@@ -179,6 +183,8 @@ void MainWindow::setShortcutKeys()
 	shortcutBookmarkToggle.setKey(gk->keyBookmarkToggle);
 	shortcutBookmarkNext.setKey(gk->keyBookmarkNext);
 	shortcutBookmarkPrevious.setKey(gk->keyBookmarkPrevious);
+	m_shortcutToggleBreakpoint.setKey(gk->keyBreakpointToggle);
+	m_shortcutStep.setKey(gk->keyDebuggerStep);
 	shortcutFindNext.setKey(gk->keyFindNext);
 	shortcutFindPrevious.setKey(gk->keyFindPrevious);
 	m_shortcutSaveAllEditors.setKey(gk->keySaveAll);
@@ -742,11 +748,13 @@ void MainWindow::savePreferences() {
 	writeKey(keyBookmarkToggle);
 	writeKey(keyBookmarkNext);
 	writeKey(keyBookmarkPrevious);
+	writeKey(keyBreakpointToggle);
 	writeKey(keyFindNext);
 	writeKey(keyFindPrevious);
 	writeKey(keyStartRender);
 	writeKey(keyErrorNext);
 	writeKey(keyErrorPrevious);
+	writeKey(keyDebuggerStep);
 	settings.endGroup();
 }
 
@@ -843,11 +851,13 @@ void MainWindow::loadPreferences() {
 	readKey(keyBookmarkToggle)
 	readKey(keyBookmarkNext)
 	readKey(keyBookmarkPrevious)
+	readKey(keyBreakpointToggle)
 	readKey(keyFindNext)
 	readKey(keyFindPrevious)
 	readKey(keyStartRender)
 	readKey(keyErrorNext)
 	readKey(keyErrorPrevious)
+	readKey(keyDebuggerStep)
 	settings.endGroup();
 	setShortcutKeys();
 
