@@ -29,6 +29,7 @@
 
 using vfe::QtVfe;
 
+// VfeClient is a child of, and persistent through, the life of MainWindow
 VfeClient::VfeClient(bool debug, QObject *parent) :
 	QObject(parent)
 	,m_debug(debug)
