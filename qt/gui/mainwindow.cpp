@@ -501,6 +501,20 @@ CodeEditor* MainWindow::getCodeEditor(int which)
 		return(ce);
 	return(nullptr);
 }
+
+CodeEditor* MainWindow::getCodeEditor(const QString& filePath)
+{
+	for (int i=0; i<m_editorTabs->count(); i++) {
+		QWidget* w = m_editorTabs->widget(i);
+		CodeEditor* ce = qobject_cast<CodeEditor*>(w);
+		if (ce) {
+			if (ce->getFilePath() == filePath)
+				return(ce);
+		}
+	}
+	return(nullptr);
+}
+
 EditorType MainWindow::determineEditorType(const QString& filePath, const QString& )
 {
 	QImageReader qir(filePath);

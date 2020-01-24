@@ -70,7 +70,7 @@ class MyFileSystemModel : public QFileSystemModel
 	Q_OBJECT
 public:
 	explicit MyFileSystemModel(ResourceDock* parent = nullptr)
-		: QFileSystemModel(NULL), m_resourceDock(parent) {}
+		: QFileSystemModel(nullptr), m_resourceDock(parent) {}
 	QVariant data(const QModelIndex &index, int role) const;
 private:
 	ResourceDock* m_resourceDock;
@@ -87,7 +87,7 @@ class ResourceDock : public QDockWidget
 	friend class FilterDialog;
 
 public:
-	explicit ResourceDock(MainWindow* parent, Qt::WindowFlags flags = 0);
+	explicit ResourceDock(MainWindow* parent, Qt::WindowFlags flags = nullptr);
 
 	void	addDirectory(const QString& path);
 	void	setRenderThis(const QString& path);

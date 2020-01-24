@@ -23,6 +23,7 @@
 #include <QToolBar>
 #include <QHeaderView>
 #include <QLineEdit>
+#include <QMenu>
 #include <QDebug>
 
 #include "debuggerpanel.h"
@@ -73,6 +74,7 @@ BreakpointsWidget::BreakpointsWidget(QTabWidget* parent, MainWindow* mainWindow)
 	this->horizontalHeader()->setStretchLastSection(true);
 	connect(this, SIGNAL(cellChanged(int, int)), this, SLOT(onBreakpointWidgetChanged(int, int)));
 	connect(this, SIGNAL(breakpointChanged(int, int)), m_mainWindow->getDebuggerMan(), SLOT(onBreakpointWidgetChanged(int, int)));
+	connect(this, SIGNAL(removeBreakpoint(QString, int)), m_mainWindow->getDebuggerMan(), SLOT(onDeleteBreakpoint(QString, int)));
 }
 
 void BreakpointsWidget::onBreakpointWidgetChanged(int row, int col) {
@@ -135,6 +137,35 @@ QString BreakpointsWidget::getFilePath(int row)
 	QTableWidgetItem* twi = item(row, 2);
 	QString s = twi->data(Qt::DisplayRole).toString();
 	return(s);
+}
+
+void BreakpointsWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+	QTableWidgetItem* twir = itemAt(event->pos());
+	if (!twir) {
+		qDebug() << "Context menu - none";
+		return;
+	}
+	m_contextRow = twir->row();
+	selectRow(m_contextRow);
+	QTableWidgetItem* twi;
+	twi = item(m_contextRow, 1);
+	int l = twi->data(Qt::DisplayRole).toInt();
+	qDebug() << "Context menu - line" << l;
+	QMenu menu(this);
+
+	menu.addAction(tr("Remove breakpoint"), this, SLOT(onDeleteBreakpoint()));
+	menu.exec(event->globalPos());
+	
+}
+
+void BreakpointsWidget::onDeleteBreakpoint()
+{
+	QString s = getFilePath(m_contextRow);
+	int l = getLineNumber(m_contextRow);
+	if (!s.isEmpty()) {
+		emit(removeBreakpoint(s, l));
+	}
 }
 
 SymbolsWidget::SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow)

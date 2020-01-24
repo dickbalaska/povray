@@ -112,6 +112,7 @@ public:
 	QWidget*	getEditor(int which = -1);
 	QString		getCurrentEditorPath();
 	CodeEditor*	getCodeEditor(int which = -1);
+	CodeEditor*	getCodeEditor(const QString& filePath);
 	void		deleteAllEditorTabs();	// delete all CodeEditors. Ask before deleting changed editors.
 	bool		isSoftSelect();			// Check if there is a render selected
 

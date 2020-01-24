@@ -98,6 +98,7 @@ Q_SIGNALS:
 public slots:
 	void	onBreakpointToggle(int lineNumber = 0);
 	void	onUpdateBreakpoints(const QList<LineNumberBreakpoint>& list);
+	void	onDeleteBreakpoint(const QString& filePath, int lineNumber);
 
 	/// Here when a user acts on the BreakpointWidget. Currently only enable/disable
 	void	onBreakpointWidgetChanged(int row, int col);

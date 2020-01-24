@@ -65,12 +65,18 @@ public:
 
 signals:
 	void	breakpointChanged(int row, int col);
+	void	removeBreakpoint(const QString& pathName, int lineNumber);
 
 public	slots:
 	void	onBreakpointWidgetChanged(int row, int col);
+	void	onDeleteBreakpoint();
 
+protected:
+	virtual void contextMenuEvent(QContextMenuEvent* event) override;
+	
 private:
 	MainWindow*	m_mainWindow;
+	int			m_contextRow;
 	bool		m_initializing = true;
 };
 

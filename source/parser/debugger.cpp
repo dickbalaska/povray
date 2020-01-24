@@ -69,18 +69,15 @@ void Debugger::checkForBreakpoint(const RawToken& rawToken)
 	std::string filePath;
 	//if (col == 1) {
 	if (line != mParseLine) {
-		qDebug() << "col1" << line;
+		//qDebug() << "col1" << line;
+		filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
 		mParseLine = (int)line;
 		if (mStepping) {
 			doBreak = true;
 			mStepping = false;
-			filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
 		} else {
 			for (const Breakpoint& bp : breakpoints) {
 				if (bp.line == line) {
-					//if (filePath.empty()) {
-						filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
-					//}
 					if (bp.filePath == filePath)
 						doBreak = true;
 				}

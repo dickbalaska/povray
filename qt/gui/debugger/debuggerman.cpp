@@ -101,6 +101,23 @@ void DebuggerMan::addBreakpoint(Breakpoint* bp)
 	m_debuggerConsole->m_breakpointsWidget->addBreakpoint(bp);
 }
 
+void DebuggerMan::onDeleteBreakpoint(const QString& filePath, int lineNumber)
+{
+	for (Breakpoint* bp : m_breakpoints) {
+		if (bp->m_filePath == filePath && bp->m_lineNumber == lineNumber) {
+			m_breakpoints.removeOne(bp);
+			m_debuggerConsole->m_breakpointsWidget->removeBreakpoint(bp);
+			CodeEditor* ce = m_mainWindow->getCodeEditor(filePath);
+			if (ce) {
+				QList<LineNumberBreakpoint> ql = gatherBreakpoints(ce);
+				ce->setBreakpoints(ql);
+			}
+			break;
+		}
+	}
+	
+}
+
 /// Return a list of the line numbers of the breakpoints for this CodeEditor
 QList<LineNumberBreakpoint>	DebuggerMan::gatherBreakpoints(CodeEditor* ce)
 {
