@@ -100,11 +100,6 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef USE_WEBSOCKETS
 	m_mainToolbar->enableRender((validateExe(preferenceData.getPovrayExecutable())));
 #endif
-	QStringList files = settings.value(s_recentWsList).toStringList();
-	if (!files.isEmpty())
-		m_dockMan->activateWorkspace(files.first());
-	else
-		emit(this->emitNeedWorkspace());
 	m_searchMan = new SearchMan(this);
 	m_searchMan->setSearchConsole(m_dockMan->getConsoleDock()->getSearchConsole());
 	
@@ -163,6 +158,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(m_vfeClient, SIGNAL(messageReceived(QString,QString)), this, SLOT(wsMessageReceived(QString,QString)));
 	connect(m_vfeClient, SIGNAL(binaryMessageReceived(QByteArray)), m_dockMan->getRenderDock()->getRenderWidget(), SLOT(binaryMessageReceived(QByteArray)));
 	qApp->installEventFilter(this);
+	
+	QStringList files = settings.value(s_recentWsList).toStringList();
+	if (!files.isEmpty())
+		m_dockMan->activateWorkspace(files.first());
+	else
+		emit(this->emitNeedWorkspace());
+	
 }
 
 MainWindow::~MainWindow() {

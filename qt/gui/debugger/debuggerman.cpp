@@ -77,6 +77,7 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 	if (!found) {
 		Breakpoint* bp = new Breakpoint;
 		bp->m_filePath = filePath;
+		bp->m_povrayFileName = getFileName(bp->m_filePath);
 		bp->m_lineNumber = lineNumber;
 		bp->m_enabled = true;
 		m_breakpoints.append(bp);
@@ -84,6 +85,7 @@ void DebuggerMan::onBreakpointToggle(int lineNumber)
 	}
 	QList<LineNumberBreakpoint> ql = gatherBreakpoints(ce);
 	ce->setBreakpoints(ql);
+	sendBreakpoints();
 }
 
 void DebuggerMan::addBreakpoint(Breakpoint* bp)
@@ -114,8 +116,7 @@ void DebuggerMan::onDeleteBreakpoint(const QString& filePath, int lineNumber)
 			}
 			break;
 		}
-	}
-	
+	}	
 }
 
 /// Return a list of the line numbers of the breakpoints for this CodeEditor
@@ -133,6 +134,7 @@ QList<LineNumberBreakpoint>	DebuggerMan::gatherBreakpoints(CodeEditor* ce)
 	return(ql);
 }
 
+/// CodeEditor has updated breakpoints
 void DebuggerMan::onUpdateBreakpoints(const QList<LineNumberBreakpoint>& list)
 {
 	CodeEditor* ce = (CodeEditor*)sender();
@@ -149,10 +151,12 @@ void DebuggerMan::onUpdateBreakpoints(const QList<LineNumberBreakpoint>& list)
 	for (const LineNumberBreakpoint& lnb : list) {
 		Breakpoint* bp = new Breakpoint();
 		bp->m_filePath = ce->getFilePath();
+		bp->m_povrayFileName = getFileName(bp->m_filePath);
 		bp->m_lineNumber = lnb.mLineNumber;
 		bp->m_enabled = lnb.mEnabled;
 		addBreakpoint(bp);		
 	}
+	sendBreakpoints();
 }
 
 void DebuggerMan::onBreakpointWidgetChanged(int row, int col)
@@ -260,8 +264,11 @@ void DebuggerMan::onDebuggerStep()
 
 void DebuggerMan::onUserAddedSymbol(const QString& text)
 {
+	m_debuggerConsole->m_symbolsWidget->addSymbol(text, "", "");
 	QString s = QString("%1%2 %3").arg(s_dbg, s_w, text);
-	m_mainWindow->sendPovrayMessage(s);	
+	m_mainWindow->sendPovrayMessage(s);
+	if (!m_watches.contains(text))
+		m_watches.append(text);
 }
 
 void DebuggerMan::messageFromPovray(const QString& msg)

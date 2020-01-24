@@ -241,12 +241,12 @@ void Workspace::load(const QString& filename)
 		QString s = settings.value(index).toString();
 		if (s.isNull())
 			break;
-		int j = s.indexOf(' ');
-		if (j == -1) {
-			qCritical() << "Workspace: freaky watch" << s;
-			break;
-		}
-		m_mainWindow->m_debuggerMan->m_watches.append(s.mid(j+1));
+//		int j = s.indexOf(' ');
+//		if (j == -1) {
+//			qCritical() << "Workspace: freaky watch" << s;
+//			break;
+//		}
+		m_mainWindow->m_debuggerMan->onUserAddedSymbol(s);
 	}	
 	settings.endGroup();
 	m_mainWindow->m_debuggerMan->setState(dsInit);
@@ -338,6 +338,7 @@ void Workspace::save()
 	for (const QString& s : m_mainWindow->m_debuggerMan->m_watches) {
 		index.setNum(i);
 		settings.setValue(index, s);
+		++i;
 	}
 	settings.endGroup();
 }

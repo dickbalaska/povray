@@ -197,6 +197,8 @@ void SymbolsWidget::addSymbol(const QString& name, const QString& type, const QS
 	QTableWidgetItem* twi;
 	QList<QTableWidgetItem*> items = m_table->findItems(name, Qt::MatchFixedString | Qt::MatchCaseSensitive);
 	if (!items.isEmpty()) {
+		if (type.isEmpty() && value.isEmpty())
+			return;
 		int row = items.first()->row();
 		twi = new QTableWidgetItem(type);
 		m_table->setItem(row, 1, twi);
