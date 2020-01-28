@@ -26,6 +26,8 @@
 #include <QMenu>
 #include <QDebug>
 
+#include "symboltreemodel.h"
+#include "symboltreeview.h"
 #include "debuggerpanel.h"
 #include "debuggerconsole.h"
 #include "debuggerman.h"
@@ -173,12 +175,14 @@ SymbolsWidget::SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow)
 	  m_mainWindow(mainWindow)
 {
 	QVBoxLayout* mainLayout = new QVBoxLayout();
-	m_table = new QTableWidget(this);
-	m_table->setColumnCount(3);
-	m_table->setHorizontalHeaderLabels(QStringList({"Name", "Type", "Value"}));
-	m_table->horizontalHeader()->setStretchLastSection(true);
-	mainLayout->addWidget(m_table);
-	mainLayout->setStretchFactor(m_table, 100);
+	m_treeView = new SymbolTreeView(this);
+	
+//	m_table->setColumnCount(3);
+//	m_table->setHorizontalHeaderLabels(QStringList({"Name", "Type", "Value"}));
+//	m_table->horizontalHeader()->setStretchLastSection(true);
+	mainLayout->addWidget(m_treeView);
+	m_treeView->setModel(new SymbolTreeModel(this));
+	mainLayout->setStretchFactor(m_treeView, 100);
 	m_lineEdit = new QLineEdit(this);
 	connect(m_lineEdit, SIGNAL(returnPressed()),this, SLOT(onReturnPressed()));
 	connect(this, SIGNAL(userSymbolAdded(const QString&)), m_mainWindow->getDebuggerMan(), SLOT(onUserAddedSymbol(const QString&)));
@@ -194,24 +198,24 @@ void SymbolsWidget::onReturnPressed()
 
 void SymbolsWidget::addSymbol(const QString& name, const QString& type, const QString& value)
 {
-	QTableWidgetItem* twi;
-	QList<QTableWidgetItem*> items = m_table->findItems(name, Qt::MatchFixedString | Qt::MatchCaseSensitive);
-	if (!items.isEmpty()) {
-		if (type.isEmpty() && value.isEmpty())
-			return;
-		int row = items.first()->row();
-		twi = new QTableWidgetItem(type);
-		m_table->setItem(row, 1, twi);
-		twi = new QTableWidgetItem(value);
-		m_table->setItem(row, 2, twi);
-	} else {
-		int row = m_table->rowCount();
-		m_table->setRowCount(row+1);
-		twi = new QTableWidgetItem(name);
-		m_table->setItem(row, 0, twi);
-		twi = new QTableWidgetItem(type);
-		m_table->setItem(row, 1, twi);
-		twi = new QTableWidgetItem(value);
-		m_table->setItem(row, 2, twi);
-	}
+//	QTableWidgetItem* twi;
+//	QList<QTableWidgetItem*> items = m_table->findItems(name, Qt::MatchFixedString | Qt::MatchCaseSensitive);
+//	if (!items.isEmpty()) {
+//		if (type.isEmpty() && value.isEmpty())
+//			return;
+//		int row = items.first()->row();
+//		twi = new QTableWidgetItem(type);
+//		m_table->setItem(row, 1, twi);
+//		twi = new QTableWidgetItem(value);
+//		m_table->setItem(row, 2, twi);
+//	} else {
+//		int row = m_table->rowCount();
+//		m_table->setRowCount(row+1);
+//		twi = new QTableWidgetItem(name);
+//		m_table->setItem(row, 0, twi);
+//		twi = new QTableWidgetItem(type);
+//		m_table->setItem(row, 1, twi);
+//		twi = new QTableWidgetItem(value);
+//		m_table->setItem(row, 2, twi);
+//	}
 }

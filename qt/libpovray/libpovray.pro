@@ -215,6 +215,7 @@ SOURCES += \
     $$sDIR/parser/parsertypes.cpp \
 	$$sDIR/parser/parser_strings.cpp \
 	$$sDIR/parser/parser_tokenizer.cpp \
+	$$sDIR/parser/povdbgobject.cpp \
     $$sDIR/parser/rawtokenizer.cpp \
 	$$sDIR/parser/reservedwords.cpp \
     $$sDIR/parser/scanner.cpp \
@@ -380,6 +381,8 @@ HEADERS += \
 	$$sDIR/parser/fncode.h \
 	$$sDIR/parser/parser.h \
     $$sDIR/parser/parsertypes.h \
+	$$sDIR/parser/povdbgobject.h \
+	$$sDIR/parser/povdbgobjectnames.h \
     $$sDIR/parser/rawtokenizer.h \
     $$sDIR/parser/scanner.h \
     $$sDIR/parser/symboltable.h \

@@ -1125,6 +1125,7 @@ namespace vfe
       virtual bool BackendFailed() { return m_BackendThreadExited; }
 
 	  void	sendMessageToDebugger(const char* msg);
+	  virtual void messageFromDebugger(const std::string msg) {}
 	  
     protected:
       // All of the following are internal to vfe.

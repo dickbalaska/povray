@@ -18,6 +18,8 @@ using povray::qtpov::QtGraphics;
 namespace vfe {
 
 const char* s_stream = "stream";
+const char* s_dbg	 = "dbg";
+
 static const char* s_stream_fatal	 = "fatal";
 static const char* s_stream_warning = "warning";
 

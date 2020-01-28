@@ -19,6 +19,8 @@
  *
  *****************************************************************************/
 #include <QDebug>
+#include <QJsonDocument>
+
 #include "base/stringutilities.h"
 #include "debuggermessages.h"
 #include "scanner.h"
@@ -158,7 +160,12 @@ void Debugger::sendWatches()
 }
 void Debugger::sendWatch(const char* name)
 {
-	QString typeString;
+	QJsonDocument doc;
+	PovDbgObject  obj;
+	mDbgObjectFactory.parseDbgObject(obj, name);
+	doc.setObject(obj);
+	
+/*	QString typeString;
 	QString value;
 	SYM_ENTRY* se = mParser->mSymbolStack.Find_Symbol(name);
 	if (!se) {
@@ -185,7 +192,8 @@ void Debugger::sendWatch(const char* name)
 			break;
 		}
 	}
-	QString msg = QString("%1 %2 %3 %4").arg(s_sym, name, typeString, value);	
+	*/
+	QString msg = QString("%1 %2 %3 %4").arg(s_sym, doc.toJson().toStdString().c_str());	
 	send(msg.toUtf8().toStdString().c_str());
 }
 

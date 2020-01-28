@@ -617,6 +617,8 @@ void RenderFrontendBase::HandleMessage(POVMS_Message& msg, POVMS_Message& result
         case kPOVMsgClass_FileAccess:
             HandleFileMessage(ViewId(msg.GetSourceAddress(), msg.GetInt(kPOVAttrib_SceneId)), ident, msg, result);
             break;
+	    case kPOVMsgClass_Debugger:
+		    break;
     }
 }
 

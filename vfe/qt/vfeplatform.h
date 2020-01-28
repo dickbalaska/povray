@@ -80,12 +80,13 @@ namespace vfePlatform
             virtual int CollectCommand(void);
             virtual bool CommandPermitted(const std::string& command, const std::string& parameters);
 
-            bool m_ProcessRunning;
             std::string m_Command;
             std::string m_Params;
             unsigned long m_ExitCode;
             unsigned long m_LastError;
             unsigned long m_ProcessId;
+			bool m_ProcessRunning;
+			char dummy[7];
 
         private:
             UnixShelloutProcessing();
@@ -98,17 +99,18 @@ namespace vfePlatform
 	{
 	public:
 		vfeQtSession(QtVfe* qtVfe);
-		virtual ~vfeQtSession();
+		virtual ~vfeQtSession() override;
 
-		virtual UCS2String GetTemporaryPath(void) const;
-		virtual UCS2String CreateTemporaryFile(void) const;
-		virtual void DeleteTemporaryFile(const UCS2String& filename) const;
-		virtual POV_LONG GetTimestamp(void) const ;
-		virtual void NotifyCriticalError(const char *message, const char *file, int line);
-		virtual int RequestNewOutputPath(int CallCount, const std::string& Reason, const UCS2String& OldPath, UCS2String& NewPath);
-		virtual bool TestAccessAllowed(const Path& file, bool isWrite) const;
-		virtual ShelloutProcessing *CreateShelloutProcessing(POVMS_Object& opts, const std::string& scene, unsigned int width, unsigned int height)
+		virtual UCS2String GetTemporaryPath(void) const override;
+		virtual UCS2String CreateTemporaryFile(void) const override;
+		virtual void DeleteTemporaryFile(const UCS2String& filename) const override;
+		virtual POV_LONG GetTimestamp(void) const override;
+		virtual void NotifyCriticalError(const char *message, const char *file, int line) override;
+		virtual int RequestNewOutputPath(int CallCount, const std::string& Reason, const UCS2String& OldPath, UCS2String& NewPath) override;
+		virtual bool TestAccessAllowed(const Path& file, bool isWrite) const override;
+		virtual ShelloutProcessing *CreateShelloutProcessing(POVMS_Object& opts, const std::string& scene, unsigned int width, unsigned int height) override
 		{ return new UnixShelloutProcessing(opts, scene, width, height); }
+		virtual void messageFromDebugger(std::string msg) override;
 
 		std::shared_ptr<QtOptionsProcessor> GetUnixOptions(void) { return m_OptionsProc; }
 
@@ -117,11 +119,11 @@ namespace vfePlatform
 
 
 	protected:
-		virtual void WorkerThreadStartup();
-		virtual void WorkerThreadShutdown();
+		virtual void WorkerThreadStartup() override;
+		virtual void WorkerThreadShutdown() override;
 
-		virtual void AppendErrorMessage (const std::string& Msg);
-		virtual void AppendErrorMessage (const std::string& Msg, const UCS2String& File, int Line = 0, int Col = 0);
+		virtual void AppendErrorMessage (const std::string& Msg) override;
+		virtual void AppendErrorMessage (const std::string& Msg, const UCS2String& File, int Line = 0, int Col = 0) override;
 
 		///////////////////////////////////////////////////////////////////////
 		// return true if the path component of file is equal to the path component

@@ -97,6 +97,7 @@ vfeSession::~vfeSession()
   m_CurrentSessionTemporaryHack = nullptr;
 }
 
+
 // Clears many of the internal state information held by VFE regarding
 // a render. Typically called before starting a new render. Included in
 // the clear are the failure/success status, cancel request state,

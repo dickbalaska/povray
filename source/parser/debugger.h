@@ -24,6 +24,7 @@
 #include "rawtokenizer.h"
 #include "backend/control/parsertask.h"
 #include "parser.h"
+#include "povdbgobject.h"
 
 namespace pov_parser
 {
@@ -43,7 +44,7 @@ public:
 	void send(const char* text);
 	void debuggerPaused();
 	void checkForBreakpoint(const RawToken& rawToken);
-	void setParser(Parser* parser) { mParser = parser; }
+	void setParser(Parser* parser) { mParser = parser; mDbgObjectFactory.setParser(parser); }
 	void setParserTask(ParserTask* task) { mParserTask = task; }
 	
 	void messageFromGui(const char* msg);
@@ -54,10 +55,11 @@ private:
 	void	sendWatches();
 	void	sendWatch(const char* name);
 
+	PovDbgObjectFactory	mDbgObjectFactory;
 	Parser*	mParser;
 	ParserTask* mParserTask;
-	bool	mStepping = false;
 	int		mParseLine = -1;
+	bool	mStepping = false;
 };
 
 

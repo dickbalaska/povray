@@ -47,33 +47,39 @@ SOURCES += \
 	debugger/debuggerconsole.cpp \
 	debugger/debuggerman.cpp \
 	debugger/debuggerpanel.cpp \
-    dock/resourcedock.cpp \
-    dock/dockman.cpp \
+	debugger/symboltreeitem.cpp \
+	debugger/symboltreemodel.cpp \
+	debugger/symboltreeview.cpp \
     dock/consoledock.cpp \
+    dock/dockman.cpp \
+    dock/dropdown.cpp \
+    dock/filterdialog.cpp \
     dock/maintoolbar.cpp \
-    workspace.cpp \
-    editor/codeeditor.cpp \
-    preferences.cpp \
-    editor/highlighter.cpp \
+    dock/resourcedock.cpp \
     dock/renderdock.cpp \
     dock/statusbar.cpp \
-    dock/filterdialog.cpp \
     dock/searchman.cpp \
     editor/bookmarkman.cpp \
-    findman.cpp \
-    insertmenuman.cpp \
-    dock/dropdown.cpp \
+    editor/codeeditor.cpp \
+    editor/imagedisplayer.cpp \
+    editor/highlighter.cpp \
     editor/coloreditor.cpp \
     editor/povcolor.cpp \
     editor/colormapeditor.cpp \
-    vfeclient.cpp \
+    findman.cpp \
+    insertmenuman.cpp \
     helpman.cpp \
-    editor/imagedisplayer.cpp
+    preferences.cpp \
+    vfeclient.cpp \
+    workspace.cpp
 
 HEADERS += \
 	debugger/debuggerconsole.h \
 	debugger/debuggerman.h \
 	debugger/debuggerpanel.h \
+	debugger/symboltreeitem.h \
+	debugger/symboltreemodel.h \
+	debugger/symboltreeview.h \
     dock/consoledock.h \
     dock/dockman.h \
     dock/dropdown.h \

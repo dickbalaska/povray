@@ -220,6 +220,7 @@ struct BetaFlags final
 class Parser final
 {
 	friend class Debugger;
+	friend class PovDbgObjectFactory;
 
     public:
 

@@ -153,6 +153,7 @@ namespace vfe
       vfeSession* m_Session;
   };
 
+  
   class vfeRenderMessageHandler : public RenderMessageHandler
   {
     public:

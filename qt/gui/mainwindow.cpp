@@ -938,6 +938,9 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 			prefVersionWidget->setText(text);
 		m_helpMan->setPovrayVersion(text);
 		return;
+	} else if (command == "dbg") {
+		this->m_debuggerMan->messageFromPovray(text);		
+		return;
 	} else if (command == "done") {
 		m_mainToolbar->renderButtonToStart();
 		this->m_statusBar->showMessage("Done");

@@ -86,7 +86,7 @@ enum WarningLevel
 class MessageContext
 {
 public:
-    virtual ~MessageContext() {}
+    virtual ~MessageContext();
     virtual UCS2String GetFileName() const = 0;
     virtual POV_LONG GetLine() const = 0;
     virtual POV_LONG GetColumn() const = 0;

@@ -427,13 +427,14 @@ void vfeParserMessageHandler::DebugInfo(Console *Con, POVMS_Object& Obj, bool co
 void vfeParserMessageHandler::DebuggerInfo(Console *Con, POVMS_Object& Obj, bool conout)
 {
   string str(Obj.GetString(kPOVAttrib_EnglishText));
+  m_Session->messageFromDebugger(str);
 //  if (m_Session->m_OptimizeForConsoleOutput == true)
 //  {
 //    if (conout)
 //        Con->puts (str.c_str()) ;
 //  }
 //  else
-    m_Session->AppendStreamMessage (vfeSession::mDebugger, str.c_str()) ;
+//    m_Session->AppendStreamMessage (vfeSession::mDebugger, str.c_str()) ;
 }
 
 

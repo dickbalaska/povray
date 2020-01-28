@@ -32,6 +32,7 @@ class QToolBar;
 class Breakpoint;
 class MainWindow;
 class DebuggerPanel;
+class SymbolTreeView;
 
 class DebuggerOptions : public QWidget
 {
@@ -94,7 +95,7 @@ private slots:
 	void	onReturnPressed();
 	
 private:
-	QTableWidget*	m_table;
+	SymbolTreeView*		m_treeView;
 	QLineEdit*		m_lineEdit;
 	MainWindow*		m_mainWindow;
 };

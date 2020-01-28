@@ -231,8 +231,8 @@ enum
     kPOVMsgIdent_Error               = 'ErrW',
     kPOVMsgIdent_FatalError          = 'ErrF',
     kPOVMsgIdent_Debug               = 'Dbug',
-	kPOVMsgIdent_Debugger			 = 'Dbgr',
-	kPOVMsgIdent_DebuggerCmd		 = 'DbgC',
+	kPOVMsgIdent_Debugger			 = 'Dbgr',	// from debugger->backend->frontend->gui
+	kPOVMsgIdent_DebuggerCmd		 = 'DbgC',	// from gui->frontend->backend->debugger
 
     kPOVMsgIdent_Progress            = 'Prog',
 

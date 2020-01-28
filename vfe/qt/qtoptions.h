@@ -72,6 +72,8 @@ using boost::to_lower_copy;
 
 namespace vfe {
 	extern const char* s_stream;
+	extern const char* s_dbg;
+
 	class QtVfe;
 }
 //extern const char* s_stream_fatal;

@@ -303,6 +303,12 @@ namespace vfePlatform
 		m_qtVfe->sendPovrayTextMessage(s_stream, qs);
 		//povray::websockets::wsSend(m_hdl, ss.str());
     }
+
+	void vfeQtSession::messageFromDebugger(const string msg)
+	{
+		m_qtVfe->sendPovrayTextMessage(s_dbg, msg.c_str());		
+	}
+
     /////////////////////////////////////////////////////////////////////////
     // The following methods support the I/O permissions feature
     /////////////////////////////////////////////////////////////////////////

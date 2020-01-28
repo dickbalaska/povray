@@ -53,6 +53,9 @@
 namespace pov_base
 {
 
+MessageContext::~MessageContext()
+{}
+
 GenericMessenger::GenericMessenger(unsigned int wl, const char *sn) :
     warningLevel(wl),
     stageName(sn)
