@@ -86,7 +86,7 @@ class SymbolsWidget : public QWidget
 	Q_OBJECT
 public:
 	explicit SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow);
-	void	addSymbol(const QString& name, const QString& type, const QString& value);
+	void	addSymbol(const QJsonObject& obj);
 	
 signals:
 	void	userSymbolAdded(const QString& text);

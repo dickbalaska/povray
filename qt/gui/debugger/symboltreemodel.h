@@ -54,8 +54,7 @@ public:
 	int				columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
 	bool		isEmpty();
-	SymbolTreeItem*	addModelData(QJsonObject* root, const QString& label, bool noInsert = false);
-//	TreeItem*	addRegionModelData(RegionFile* file, bool noInsert = false);
+	void		addWatch(const QJsonObject& obj);
 
 	SymbolTreeItem*	getTreeItem(const QModelIndex& index);
 	SymbolTreeItem*	getTreeItem(const QString& path, SymbolTreeItem* node);
@@ -72,7 +71,7 @@ signals:
 private:
 	void setupModelData(QJsonObject* root, SymbolTreeItem* parent);
 	void setupTree(QJsonObject* obj, SymbolTreeItem* parent);
-
+	SymbolTreeItem* buildTreeNode(SymbolTreeItem* parent, const QJsonObject& obj, bool isRoot);
 
 	SymbolTreeItem*	m_rootItem;
 	QObject*	m_parent;

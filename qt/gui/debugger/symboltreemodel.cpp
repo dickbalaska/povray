@@ -21,10 +21,8 @@
 #include <QJsonObject>
 #include <QDebug>
 
-//#include "world.h"
-//#include "nbtobject.h"
-//#include "nbtfile.h"
-//#include "regionfile.h"
+#include "../source/parser/povdbgobjectnames.h"
+
 #include "symboltreeitem.h"
 #include "symboltreemodel.h"
 
@@ -44,8 +42,7 @@ SymbolTreeModel::~SymbolTreeModel()
 	delete m_rootItem;
 }
 
-QModelIndex SymbolTreeModel::index(int row, int column, const QModelIndex &parent)
-			const
+QModelIndex SymbolTreeModel::index(int row, int column, const QModelIndex& parent) const
 {
 	if (!hasIndex(row, column, parent))
 		return QModelIndex();
@@ -199,34 +196,59 @@ void SymbolTreeModel::insertRow(QModelIndex &parent, int row, SymbolTreeItem* tr
 	endInsertRows();
 }
 
-SymbolTreeItem* SymbolTreeModel::addModelData(QJsonObject* root, const QString& label, bool noInsert)
+void SymbolTreeModel::addWatch(const QJsonObject& obj)
 {
 //	if (root && root->type != TAG_Compound) {
 //		qCritical() << "TreeModel expected root to be a compound";
 //		return(nullptr);
 //	}
 	QList<QVariant> columnData;
-	if (!root) {
-		QString s = QString("--%1").arg(label);
-		columnData << QVariant(s);
-	} else {
-		columnData << QVariant(label);
+	QString symName = obj[s_name].toString();
+	SymbolTreeItem* sti = buildTreeNode(m_rootItem, obj, true);
+	for (int i=0; i<this->rowCount(); i++) {
+		QModelIndex qmi = this->index(i, 0);
+		QVariant data = this->data(qmi);
+		QString s = data.toString();
+		if (symName == s) {
+			QModelIndex parent;
+			qDebug() << "SymbolTreeModel::addWatch" << symName;
+			this->replaceRow(parent, i, sti);
+			return;
+		} 
 	}
-	SymbolTreeItem* ti = new SymbolTreeItem(columnData, root, m_rootItem);
-	if (!noInsert)
-		m_rootItem->appendChild(ti);
-	if (!root)
-		return(ti);
-//	foreach(NBTObject* nobj, *root->d_compound) {
-//		setupTree(nobj, ti);
+	qDebug() << "SymbolTreeModel::addWatch" << symName;
+	m_rootItem->appendChild(sti);
+//	if (!root) {
+//		QString s = QString("--%1").arg(label);
+//		columnData << QVariant(s);
+//	} else {
+//		columnData << QVariant(label);
 //	}
-	return(ti);
+//	SymbolTreeItem* ti = new SymbolTreeItem(columnData, root, m_rootItem);
+//	if (!noInsert)
+//		m_rootItem->appendChild(ti);
+//	if (!root)
+//		return(ti);
+////	foreach(NBTObject* nobj, *root->d_compound) {
+////		setupTree(nobj, ti);
+////	}
+//	return(ti);
 }
 
 
-void SymbolTreeModel::setupTree(QJsonObject* obj, SymbolTreeItem* parent)
+SymbolTreeItem* SymbolTreeModel::buildTreeNode(SymbolTreeItem* parent, const QJsonObject& obj, bool isRoot)
 {
-//	QList<QVariant> columnData;
+	QList<QVariant> columnData;
+	QString symName = obj[s_name].toString();
+	QString typeS = obj[s_typeS].toString();
+	QString value = obj[s_value].toString();
+	columnData << symName;
+	columnData << typeS;
+	columnData << value;
+	SymbolTreeItem* sti = new SymbolTreeItem(columnData, parent);
+	if (!isRoot && parent)
+		parent->appendChild(sti);
+	return(sti);
 //	columnData << obj->name;
 //	columnData << nbtTypeNames[obj->type];
 //	switch (obj->type) {

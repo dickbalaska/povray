@@ -20,10 +20,9 @@
  *****************************************************************************/
 #include "symboltreeitem.h"
 
-SymbolTreeItem::SymbolTreeItem(const QList<QVariant>& data, QJsonObject* obj, SymbolTreeItem* parent)
+SymbolTreeItem::SymbolTreeItem(const QList<QVariant>& data, SymbolTreeItem* parent)
 {
 	m_itemData = data;
-	m_jsonObject = obj;
 	m_parentItem = parent;
 }
 

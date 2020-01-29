@@ -32,7 +32,7 @@
 #include "debuggermessages.h"
 #include "../source/parser/povdbgobjectnames.h"
 
-static const QString	s_dbg("dbg ");		// note the space
+static const QString	s_dbg("dbg");
 
 // The commands that we send to the debugger
 //static const QString s_cont("cont");		// continue
@@ -267,8 +267,10 @@ void DebuggerMan::onDebuggerStep()
 
 void DebuggerMan::onUserAddedSymbol(const QString& text)
 {
-	m_debuggerConsole->m_symbolsWidget->addSymbol(text, "", "");
-	QString s = QString("%1%2 %3").arg(s_dbg, s_w, text);
+	QJsonObject obj;
+	obj[s_name] = text;
+	m_debuggerConsole->m_symbolsWidget->addSymbol(obj);
+	QString s = QString("%1 %2 %3").arg(s_dbg, s_w, text);
 	m_mainWindow->sendPovrayMessage(s);
 	if (!m_watches.contains(text))
 		m_watches.append(text);
@@ -301,10 +303,10 @@ void DebuggerMan::messageFromPovray(const QString& msg)
 void DebuggerMan::sendBreakpoints()
 {
 	QString s;
-	m_mainWindow->sendPovrayMessage(QString("%1%2").arg(s_dbg, s_resetBreakpoints));
+	m_mainWindow->sendPovrayMessage(QString("%1 %2").arg(s_dbg, s_resetBreakpoints));
 	for (Breakpoint* bp : m_breakpoints) {
 		if (bp->m_enabled) {
-			s = QString("%1%2 %3 %4").arg(s_dbg).arg(s_b).arg(bp->m_lineNumber).arg(bp->m_povrayFileName);
+			s = QString("%1 %2 %3 %4").arg(s_dbg).arg(s_b).arg(bp->m_lineNumber).arg(bp->m_povrayFileName);
 			m_mainWindow->sendPovrayMessage(s);			
 		}
 	}
@@ -313,17 +315,16 @@ void DebuggerMan::sendBreakpoints()
 void DebuggerMan::sendWatches()
 {
 	QString s;
-	m_mainWindow->sendPovrayMessage(QString("%1%2").arg(s_dbg, s_resetWatches));
+	m_mainWindow->sendPovrayMessage(QString("%1 %2").arg(s_dbg, s_resetWatches));
 	for (const QString& w : m_watches) {
-		QString s = QString("%1%2 %3").arg(s_dbg, s_w, w);
+		QString s = QString("%1 %2 %3").arg(s_dbg, s_w, w);
 		m_mainWindow->sendPovrayMessage(s);	
 	}
 }
 
 void DebuggerMan::sendContinue()
 {
-	QString s = s_dbg;
-	s += s_cont;
+	QString s = QString("%1 %2").arg(s_dbg, s_cont);
 	setState(dsParsing);
 	m_mainWindow->sendPovrayMessage(s);
 	m_currentParserLocation.m_valid  = false;
@@ -331,8 +332,7 @@ void DebuggerMan::sendContinue()
 
 void DebuggerMan::sendStep()
 {
-	QString s = s_dbg;
-	s += s_step;
+	QString s = QString("%1 %2").arg(s_dbg, s_step);
 	setState(dsParsing);
 	m_mainWindow->sendPovrayMessage(s);
 	m_currentParserLocation.m_valid  = false;
@@ -340,8 +340,7 @@ void DebuggerMan::sendStep()
 
 void DebuggerMan::sendPause()
 {
-	QString s = s_dbg;
-	s += s_pause;
+	QString s = QString("%1 %2").arg(s_dbg, s_pause);
 	setState(dsParsing);
 	m_mainWindow->sendPovrayMessage(s);
 }
@@ -372,7 +371,7 @@ void DebuggerMan::handleSym(const QString& data)
 	QString name = obj["name"].toString();
 	QString type = obj[s_typeS].toString();
 	QString value = obj[s_value].toString();
-	m_debuggerConsole->m_symbolsWidget->addSymbol(name, type, value);
+	m_debuggerConsole->m_symbolsWidget->addSymbol(obj);
 //	QRegularExpressionMatch match = symRegExp.match(data);
 //	QStringList captured = match.capturedTexts();
 //	if (captured.length() != 4) {

@@ -196,8 +196,10 @@ void SymbolsWidget::onReturnPressed()
 	m_lineEdit->clear();
 }
 
-void SymbolsWidget::addSymbol(const QString& name, const QString& type, const QString& value)
+void SymbolsWidget::addSymbol(const QJsonObject& obj)
 {
+	SymbolTreeModel* stm = static_cast<SymbolTreeModel*>(m_treeView->model());
+	stm->addWatch(obj);
 //	QTableWidgetItem* twi;
 //	QList<QTableWidgetItem*> items = m_table->findItems(name, Qt::MatchFixedString | Qt::MatchCaseSensitive);
 //	if (!items.isEmpty()) {

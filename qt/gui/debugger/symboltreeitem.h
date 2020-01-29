@@ -33,7 +33,7 @@ class QJsonObject;
 class SymbolTreeItem
 {
 public:
-	explicit SymbolTreeItem(const QList<QVariant>& data, QJsonObject* obj, SymbolTreeItem* parentItem = nullptr);
+	explicit SymbolTreeItem(const QList<QVariant>& data, SymbolTreeItem* parentItem = nullptr);
 	~SymbolTreeItem();
 
 	void		appendChild(SymbolTreeItem* child);
@@ -62,7 +62,7 @@ private:
 	QList<SymbolTreeItem*> m_childItems;
 	QList<QVariant> m_itemData;
 	SymbolTreeItem*		m_parentItem;
-	QJsonObject*	m_jsonObject;	// pointer to original object.  We don't own this object.
+	//const QJsonObject&	m_jsonObject;	// pointer to original object.  We don't own this object.
 
 	friend class TreeView;
 };
