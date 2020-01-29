@@ -141,6 +141,11 @@ void ParserMessageHandler::HandleMessage(const SceneData& sd, POVMSType ident, P
             if (sd.streams[ALL_STREAM].get() != nullptr)
                 Message2Console::DebugInfo(obj, sd.streams[ALL_STREAM].get());
             break;
+	    case kPOVMsgIdent_Debugger:
+		    DebuggerInfo(sd.console.get(), obj, false);
+//		if (sd.streams[DEBUGGER_STREAM].get() != nullptr)
+//			Message2Console::DebugInfo(obj, sd.streams[DEBUGGER_STREAM].get());
+		    break;
 	}
 }
 

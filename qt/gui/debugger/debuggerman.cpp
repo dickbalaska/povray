@@ -21,6 +21,8 @@
 
 #include <QFileInfo>
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include "editor/codeeditor.h"
 #include "mainwindow.h"
@@ -28,6 +30,7 @@
 #include "debuggerpanel.h"
 #include "debuggerconsole.h"
 #include "debuggermessages.h"
+#include "../source/parser/povdbgobjectnames.h"
 
 static const QString	s_dbg("dbg ");		// note the space
 
@@ -364,11 +367,17 @@ void DebuggerMan::handleBreak(const QString& data)
 
 void DebuggerMan::handleSym(const QString& data)
 {
-	QRegularExpressionMatch match = symRegExp.match(data);
-	QStringList captured = match.capturedTexts();
-	if (captured.length() != 4) {
-		qCritical() << "Bad Sym command:" << data;
-		return;
-	}
-	m_debuggerConsole->m_symbolsWidget->addSymbol(captured[1], captured[2], captured[3]);
+	QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
+	QJsonObject obj = doc.object();
+	QString name = obj["name"].toString();
+	QString type = obj[s_typeS].toString();
+	QString value = obj[s_value].toString();
+	m_debuggerConsole->m_symbolsWidget->addSymbol(name, type, value);
+//	QRegularExpressionMatch match = symRegExp.match(data);
+//	QStringList captured = match.capturedTexts();
+//	if (captured.length() != 4) {
+//		qCritical() << "Bad Sym command:" << data;
+//		return;
+//	}
+//	m_debuggerConsole->m_symbolsWidget->addSymbol(captured[1], captured[2], captured[3]);
 }

@@ -193,7 +193,7 @@ void Debugger::sendWatch(const char* name)
 		}
 	}
 	*/
-	QString msg = QString("%1 %2 %3 %4").arg(s_sym, doc.toJson().toStdString().c_str());	
+	QString msg = QString("%1 %2").arg(s_sym, doc.toJson().toStdString().c_str());	
 	send(msg.toUtf8().toStdString().c_str());
 }
 
