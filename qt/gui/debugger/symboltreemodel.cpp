@@ -18,8 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
-#include <QJsonObject>
 #include <QDebug>
+
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include "../source/parser/povdbgobjectnames.h"
 
@@ -198,10 +200,6 @@ void SymbolTreeModel::insertRow(QModelIndex &parent, int row, SymbolTreeItem* tr
 
 void SymbolTreeModel::addWatch(const QJsonObject& obj)
 {
-//	if (root && root->type != TAG_Compound) {
-//		qCritical() << "TreeModel expected root to be a compound";
-//		return(nullptr);
-//	}
 	QList<QVariant> columnData;
 	QString symName = obj[s_name].toString();
 	SymbolTreeItem* sti = buildTreeNode(m_rootItem, obj, true);
@@ -211,7 +209,7 @@ void SymbolTreeModel::addWatch(const QJsonObject& obj)
 		QString s = data.toString();
 		if (symName == s) {
 			QModelIndex parent;
-			qDebug() << "SymbolTreeModel::addWatch" << symName;
+			qDebug() << "SymbolTreeModel::replaceWatch" << symName;
 			this->replaceRow(parent, i, sti);
 			return;
 		} 
@@ -246,6 +244,12 @@ SymbolTreeItem* SymbolTreeModel::buildTreeNode(SymbolTreeItem* parent, const QJs
 	columnData << typeS;
 	columnData << value;
 	SymbolTreeItem* sti = new SymbolTreeItem(columnData, parent);
+	if (obj.contains(s_attrs)) {
+		QJsonArray ja = obj[s_attrs].toArray();
+		for (int i=0; i<ja.size(); i++) {
+			buildTreeNode(sti, ja[i].toObject(), false);
+		}
+	}
 	if (!isRoot && parent)
 		parent->appendChild(sti);
 	return(sti);

@@ -23,3 +23,14 @@ extern const char* s_name;
 extern const char* s_type;
 extern const char* s_typeS;
 extern const char* s_value;
+extern const char* s_attrs;
+
+extern const char* s_Location;
+extern const char* s_Direction;
+extern const char* s_Up;
+extern const char* s_Right;
+extern const char* s_Sky;
+extern const char* s_Look_At;
+extern const char* s_Focal_Point;
+extern const char* s_Type;
+extern const char* s_Angle;

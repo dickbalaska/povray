@@ -177,9 +177,6 @@ SymbolsWidget::SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow)
 	QVBoxLayout* mainLayout = new QVBoxLayout();
 	m_treeView = new SymbolTreeView(this);
 	
-//	m_table->setColumnCount(3);
-//	m_table->setHorizontalHeaderLabels(QStringList({"Name", "Type", "Value"}));
-//	m_table->horizontalHeader()->setStretchLastSection(true);
 	mainLayout->addWidget(m_treeView);
 	m_treeView->setModel(new SymbolTreeModel(this));
 	mainLayout->setStretchFactor(m_treeView, 100);
@@ -200,24 +197,4 @@ void SymbolsWidget::addSymbol(const QJsonObject& obj)
 {
 	SymbolTreeModel* stm = static_cast<SymbolTreeModel*>(m_treeView->model());
 	stm->addWatch(obj);
-//	QTableWidgetItem* twi;
-//	QList<QTableWidgetItem*> items = m_table->findItems(name, Qt::MatchFixedString | Qt::MatchCaseSensitive);
-//	if (!items.isEmpty()) {
-//		if (type.isEmpty() && value.isEmpty())
-//			return;
-//		int row = items.first()->row();
-//		twi = new QTableWidgetItem(type);
-//		m_table->setItem(row, 1, twi);
-//		twi = new QTableWidgetItem(value);
-//		m_table->setItem(row, 2, twi);
-//	} else {
-//		int row = m_table->rowCount();
-//		m_table->setRowCount(row+1);
-//		twi = new QTableWidgetItem(name);
-//		m_table->setItem(row, 0, twi);
-//		twi = new QTableWidgetItem(type);
-//		m_table->setItem(row, 1, twi);
-//		twi = new QTableWidgetItem(value);
-//		m_table->setItem(row, 2, twi);
-//	}
 }
