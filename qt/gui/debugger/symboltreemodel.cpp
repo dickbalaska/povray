@@ -36,7 +36,7 @@ SymbolTreeModel::SymbolTreeModel(QObject* parent)
 	QList<QVariant> rootData;
 	rootData << "Name" << "Type" << "Value";
 	m_rootItem = new SymbolTreeItem(rootData, nullptr);
-	connect(this, SIGNAL(dataEdited(const QModelIndex&, const QVariant)), parent, SLOT(onDataEdited(const QModelIndex&, const QVariant)));
+	//connect(this, SIGNAL(dataEdited(const QModelIndex&, const QVariant)), parent, SLOT(onDataEdited(const QModelIndex&, const QVariant)));
 }
 
 SymbolTreeModel::~SymbolTreeModel()
@@ -168,71 +168,60 @@ void SymbolTreeModel::replaceRow(QModelIndex& parent, int row, SymbolTreeItem* t
 	endInsertRows();
 }
 
-SymbolTreeItem* SymbolTreeModel::removeRow(QModelIndex& parent, int row)
+void SymbolTreeModel::removeRow(QModelIndex& parent, int row)
 {
-	//QModelIndex qmi = index(row, 0, parent);
 	beginRemoveRows(parent, row, row);
-	SymbolTreeItem* item = static_cast<SymbolTreeItem*>(parent.internalPointer());
-	SymbolTreeItem* child = item->removeChild(row);
+	SymbolTreeItem* child = m_rootItem->removeChild(row);
+	delete child;
 	endRemoveRows();
-//	NBTObject* pobj = item->getObject();
-//	if (pobj && pobj->type == TAG_List) {
-//		//pobj->d_list->objcount--;
-//		int newCount = pobj->d_list->objcount;
-////		QModelIndex columnSibling = parent.siblingAtColumn(2);
-//		QModelIndex columnSibling = parent.sibling(parent.row(), 2);
-//		QMap<int, QVariant> data;
-//		data[Qt::DisplayRole] = QVariant(newCount);
-//		bool res = this->setItemData(columnSibling, data);
-//		qDebug() << "removeRow.setItemData returned" << res;
-//	}
-
-	return(child);
 }
 
 void SymbolTreeModel::insertRow(QModelIndex &parent, int row, SymbolTreeItem* treeItem)
 {
 	beginInsertRows(parent, row, row);
 	SymbolTreeItem* tip = static_cast<SymbolTreeItem*>(parent.internalPointer());
+	if (!tip)
+		tip = m_rootItem;
 	tip->insertChild(treeItem, row);
 	endInsertRows();
 }
 
 void SymbolTreeModel::addWatch(const QJsonObject& obj)
 {
-	QList<QVariant> columnData;
+	//QList<QVariant> columnData;
+	QModelIndex parent;
 	QString symName = obj[s_name].toString();
 	SymbolTreeItem* sti = buildTreeNode(m_rootItem, obj, true);
-	for (int i=0; i<this->rowCount(); i++) {
+	int i;
+	for (i=0; i<this->rowCount(); i++) {
 		QModelIndex qmi = this->index(i, 0);
 		QVariant data = this->data(qmi);
 		QString s = data.toString();
 		if (symName == s) {
-			QModelIndex parent;
 			qDebug() << "SymbolTreeModel::replaceWatch" << symName;
 			this->replaceRow(parent, i, sti);
 			return;
 		} 
 	}
 	qDebug() << "SymbolTreeModel::addWatch" << symName;
-	m_rootItem->appendChild(sti);
-//	if (!root) {
-//		QString s = QString("--%1").arg(label);
-//		columnData << QVariant(s);
-//	} else {
-//		columnData << QVariant(label);
-//	}
-//	SymbolTreeItem* ti = new SymbolTreeItem(columnData, root, m_rootItem);
-//	if (!noInsert)
-//		m_rootItem->appendChild(ti);
-//	if (!root)
-//		return(ti);
-////	foreach(NBTObject* nobj, *root->d_compound) {
-////		setupTree(nobj, ti);
-////	}
-//	return(ti);
+	this->insertRow(parent, i, sti);
+	//m_rootItem->appendChild(sti);
 }
 
+void SymbolTreeModel::removeWatch(const QString& name)
+{
+	for (int i=0; i<this->rowCount(); i++) {
+		QModelIndex qmi = this->index(i, 0);
+		QVariant data = this->data(qmi);
+		QString s = data.toString();
+		if (name == s) {
+			QModelIndex parent;
+			qDebug() << "SymbolTreeModel::removeWatch" << name;
+			this->removeRow(parent, i);
+			return;
+		} 
+	}		
+}
 
 SymbolTreeItem* SymbolTreeModel::buildTreeNode(SymbolTreeItem* parent, const QJsonObject& obj, bool isRoot)
 {

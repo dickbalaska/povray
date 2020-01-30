@@ -183,6 +183,7 @@ SymbolsWidget::SymbolsWidget(QTabWidget* parent, MainWindow* mainWindow)
 	m_lineEdit = new QLineEdit(this);
 	connect(m_lineEdit, SIGNAL(returnPressed()),this, SLOT(onReturnPressed()));
 	connect(this, SIGNAL(userSymbolAdded(const QString&)), m_mainWindow->getDebuggerMan(), SLOT(onUserAddedSymbol(const QString&)));
+	connect(m_treeView, SIGNAL(removeWatch(QString)), m_mainWindow->getDebuggerMan(), SLOT(onDeleteWatch(QString)));
 	mainLayout->addWidget(m_lineEdit);
 	this->setLayout(mainLayout);
 }
@@ -197,4 +198,10 @@ void SymbolsWidget::addSymbol(const QJsonObject& obj)
 {
 	SymbolTreeModel* stm = static_cast<SymbolTreeModel*>(m_treeView->model());
 	stm->addWatch(obj);
+}
+
+void SymbolsWidget::removeWatch(const QString& name)
+{
+	SymbolTreeModel* stm = static_cast<SymbolTreeModel*>(m_treeView->model());
+	stm->removeWatch(name);
 }

@@ -276,6 +276,12 @@ void DebuggerMan::onUserAddedSymbol(const QString& text)
 		m_watches.append(text);
 }
 
+void DebuggerMan::onDeleteWatch(const QString& name)
+{
+	m_watches.removeOne(name);
+	m_debuggerConsole->m_symbolsWidget->removeWatch(name);
+}
+
 void DebuggerMan::messageFromPovray(const QString& msg)
 {
 	QString command;

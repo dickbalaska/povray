@@ -39,6 +39,10 @@ public:
 
 	void		updateColumnSizeHints();
 	void		setupColumnWidths();
+
+signals:
+	void	removeWatch(const QString& name);
+	
 protected:
 	virtual void keyPressEvent(QKeyEvent *event);
 

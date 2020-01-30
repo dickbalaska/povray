@@ -55,6 +55,7 @@ public:
 
 	bool		isEmpty();
 	void		addWatch(const QJsonObject& obj);
+	void		removeWatch(const QString& name);
 
 	SymbolTreeItem*	getTreeItem(const QModelIndex& index);
 	SymbolTreeItem*	getTreeItem(const QString& path, SymbolTreeItem* node);
@@ -62,7 +63,7 @@ public:
 	SymbolTreeItem*	getRootNode();
 
 	void		replaceRow(QModelIndex& parent, int row, SymbolTreeItem* treeItem);
-	SymbolTreeItem*	removeRow(QModelIndex& parent, int row);
+	void		removeRow(QModelIndex& parent, int row);
 	void		insertRow(QModelIndex& parent, int row, SymbolTreeItem* treeItem);
 
 signals:

@@ -106,6 +106,7 @@ public slots:
 	void	onDebuggerStop();
 	void	onDebuggerStep();
 	void	onUserAddedSymbol(const QString& text);
+	void	onDeleteWatch(const QString& name);
 	
 private:
 	void	sendBreakpoints();

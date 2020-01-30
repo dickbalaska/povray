@@ -25,9 +25,7 @@
 #include "symboltreeitem.h"
 #include "symboltreeview.h"
 #include "mainwindow.h"
-#include "dock/resourcedock.h"
-//#include "commandman.h"
-//#include "commanddelete.h"
+//#include "dock/resourcedock.h"
 
 static const int SlcMax = 3;
 
@@ -68,25 +66,24 @@ void SymbolTreeView::updateColumnSizeHints()
 
 void SymbolTreeView::keyPressEvent(QKeyEvent *event)
 {
-//	if (event->key() == Qt::Key_Delete) {
-//		//qDebug() << "Delete!";
-//		event->accept();
-//		QModelIndexList qmil = selectedIndexes();
-//		if (qmil.isEmpty())
-//			return;
-//		QModelIndex qmi = qmil.first();
-//		TreeItem* item = static_cast<TreeItem*>(qmi.internalPointer());
-//		if (!item->parentItem() || !item->parentItem()->parentItem()) {
-//			QString s = QString("Won't delete entire file %1").arg(item->m_itemData.at(0).toString());
-//			QMessageBox::warning(this, "Warning", s, QMessageBox::NoButton);
-//		}
-//		qDebug() << "row=" << qmi.row();
-//		CommandDelete* cd = new CommandDelete();
-//		cd ->setGroup(m_resourceDock->getCurrentGroup());
-//		cd->setModelIndex(qmi);
-//		m_mainWindow->getCommandMan()->doCommand(cd);
-//		return;
-//	}
+	if (event->key() == Qt::Key_Delete) {
+		//qDebug() << "Delete!";
+		event->accept();
+		QModelIndexList qmil = selectedIndexes();
+		if (qmil.isEmpty())
+			return;
+		QModelIndex qmi = qmil.first();
+		SymbolTreeItem* item = static_cast<SymbolTreeItem*>(qmi.internalPointer());
+		if (item->parentItem() && item->parentItem()->parentItem()) {
+			QString s = QString("Can only delete top level items");
+			QMessageBox::warning(this, "Warning", s, QMessageBox::NoButton);
+			return;
+		}
+		qDebug() << "row=" << qmi.row();
+		QString name = item->getName();
+		emit(removeWatch(name));
+		return;
+	}
 	super::keyPressEvent(event);
 }
 
