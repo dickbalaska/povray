@@ -312,7 +312,7 @@ void DebuggerMan::sendBreakpoints()
 	m_mainWindow->sendPovrayMessage(QString("%1 %2").arg(s_dbg, s_resetBreakpoints));
 	for (Breakpoint* bp : m_breakpoints) {
 		if (bp->m_enabled) {
-			s = QString("%1 %2 %3 %4").arg(s_dbg).arg(s_b).arg(bp->m_lineNumber).arg(bp->m_povrayFileName);
+			s = QString("%1 %2 %3 %4").arg(s_dbg).arg(s_b).arg(bp->m_lineNumber).arg(bp->m_filePath);
 			m_mainWindow->sendPovrayMessage(s);			
 		}
 	}

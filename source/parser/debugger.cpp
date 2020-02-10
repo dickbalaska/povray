@@ -20,6 +20,7 @@
  *****************************************************************************/
 #include <QDebug>
 #include <QJsonDocument>
+#include <QDir>
 
 #include "base/stringutilities.h"
 #include "debuggermessages.h"
@@ -32,22 +33,24 @@ namespace pov_parser
 
 struct Breakpoint
 {
-	std::string	filePath;
+	QString	filePath;
 	POV_LONG line;
 };
 
+// These attributes are not in the class decl solely so that I don't have to include Qt files in the .h
 static QList<Breakpoint> breakpoints;
 static QList<QString>	 watches;
+static QString			 startPath;
 
 Debugger::Debugger()
 {
-	
 }
 
 void Debugger::init()
 {
 	breakpoints.clear();
 	watches.clear();
+	startPath = QDir::currentPath();
 	send(s_init);
 }
 
@@ -65,14 +68,19 @@ void Debugger::debuggerPaused()
 
 void Debugger::checkForBreakpoint(const RawToken& rawToken)
 {
+	QDir f;
 	bool doBreak = false;
 	//POV_LONG col = rawToken.lexeme.position.column;
 	POV_LONG line = rawToken.lexeme.position.line;
-	std::string filePath;
 	//if (col == 1) {
+	QString canonicalPath;
 	if (line != mParseLine) {
 		//qDebug() << "col1" << line;
+		std::string filePath;
 		filePath = UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str());
+		canonicalPath =  QString("%1/%2").arg(startPath, UCS2toSysString(mParser->mTokenizer.GetInputStreamName().c_str()).c_str());
+		QDir d(canonicalPath);
+		canonicalPath = d.canonicalPath();
 		mParseLine = (int)line;
 		if (mStepping) {
 			doBreak = true;
@@ -80,14 +88,14 @@ void Debugger::checkForBreakpoint(const RawToken& rawToken)
 		} else {
 			for (const Breakpoint& bp : breakpoints) {
 				if (bp.line == line) {
-					if (bp.filePath == filePath)
+					if (bp.filePath == canonicalPath)
 						doBreak = true;
 				}
 			}
 		}
 	}
 	if (doBreak) {
-		QString s = QString("break %1 %2").arg(line).arg(filePath.c_str());
+		QString s = QString("break %1 %2").arg(line).arg(canonicalPath);
 		send(s.toUtf8().toStdString().c_str());
 		debuggerPaused();	// must be last
 	}
@@ -116,7 +124,7 @@ void Debugger::messageFromGui(const char* msg)
 		int line = data.left(i).toInt();
 		QString path = data.mid(i+1);
 		bp.line = line;
-		bp.filePath = path.toStdString();
+		bp.filePath = path;
 		breakpoints.append(bp);
 		return;
 	}
