@@ -45,6 +45,8 @@ const char* s_Angle("Angle");
 namespace pov_parser
 {
 
+using POV_ARRAY = Parser::POV_ARRAY;
+
 static QJsonValue getAttribute(const char* name, const Vector3d& vector);
 static QJsonValue getAttribute(const char* name, DBL dbl);
 
@@ -62,24 +64,75 @@ void	PovDbgObjectFactory::parseDbgObject(PovDbgObject& obj, const char* name)
 		return;
 	}
 	TokenId type = GetCategorizedTokenId(se->Token_Number);
-	QString typeString = mParser->Get_Token_String(se->Token_Number);
+	QJsonObject jo = evaluateObject(name, type, se->Data);
+	QJsonObject* obj1 = &obj;
+	*obj1 = jo;
+}
+
+QJsonObject PovDbgObjectFactory::evaluateObject(const char* name, TokenId tid, void* data)
+{
+	QJsonObject obj;
+	obj[s_name] = name;
+	TokenId type = GetCategorizedTokenId(tid);
+	QString typeString = mParser->Get_Token_String(tid);
 	if (typeString.endsWith("identifier"))
 		typeString = typeString.left(typeString.length()-11);
 	obj[s_typeS] = typeString;
 	switch (type) {
 	case FLOAT_TOKEN_CATEGORY: {
-		DBL* pd = reinterpret_cast<DBL *>(se->Data);
+		DBL* pd = reinterpret_cast<DBL *>(data);
 		obj[s_value] = QString("%1").arg(*pd);
 		break;
 	}
 	case VECTOR_TOKEN_CATEGORY: {
-		Vector3d* pv = reinterpret_cast<Vector3d*>(se->Data);
+		Vector3d* pv = reinterpret_cast<Vector3d*>(data);
 		obj[s_value] = QString("%1, %2, %3").arg(pv->x()).arg(pv->y()).arg(pv->z());
+		break;
+	}
+	case ARRAY_ID_TOKEN: {
+		POV_ARRAY* a = reinterpret_cast<POV_ARRAY *>(data);
+		QString s;
+		for (int i=0; i<=a->maxDim; i++) {
+			s += QString("[%1]").arg(a->Sizes[i]);
+		}
+		obj[s_value] = s;
+		if (!a->IsInitialized())
+			break;
+		QJsonArray ja;
+		int ic[POV_ARRAY::kMaxDimensions];
+		if (a->maxDim == 0) {
+			ic[0] = 0;
+			QJsonObject qjo = processArrayDimension(a, ic, 0);
+			ja = qjo[s_attrs].toArray();
+		} else {
+			for (int i=0; i<a->maxDim; i++) {
+				ic[0] = i;
+				ja.append(processArrayDimension(a, ic, 1));
+			}
+		}
+//		for (int i=0; i<a->maxDim; i++) {
+//			for (ic[i]=0; ic[i]<a->Sizes[i]; ic[i]++) {
+//				s.clear();
+//				int k=0;
+//				for (int j=0; j<=i; j++) {
+//					s += QString("[%1]").arg(ic[j]);
+//					k += a->Sizes[j] * a->Mags[j];
+//				}
+//				QJsonObject jo;
+//				jo[s_name] = s;
+//				ja.append(jo);
+//				QJsonArray aja;
+////				for (int j=0; j<=; j++) {
+////					aja.append()
+////				}
+//			}
+//		}
+		obj[s_attrs] = ja;
 		break;
 	}
 	case CAMERA_ID_TOKEN: {
 		//qDebug() << "Got camera";
-		Camera* cam = reinterpret_cast<Camera*>(se->Data);
+		Camera* cam = reinterpret_cast<Camera*>(data);
 		QJsonArray ja;
 		ja.append(getAttribute(s_Location, cam->Location));
 		ja.append(getAttribute(s_Direction, cam->Direction));
@@ -101,6 +154,46 @@ void	PovDbgObjectFactory::parseDbgObject(PovDbgObject& obj, const char* name)
 		obj[s_value] = "<unhandled type>";
 		break;
 	}
+	return(obj);
+}
+
+QJsonObject PovDbgObjectFactory::processArrayDimension(void* v, int* ic, int dimension)
+{
+	QJsonObject obj;
+	POV_ARRAY* a = reinterpret_cast<POV_ARRAY*>(v);
+	if (a->maxDim == dimension) {
+		QJsonArray ja;
+		QString s;
+		for (int i=0; i<dimension; i++) {
+			s += QString("[%1]").arg(ic[i]);
+		}
+		obj[s_name] = s;
+		int k = 0;
+		for (int i=0; i<dimension; i++) {
+			k += ic[i] * a->Mags[i];
+		}
+		for (int i=0; i<a->Sizes[dimension]; i++) {
+			TokenId tid = a->ElementType(i);
+			void* v = a->DataPtrs.at(k+i);
+			s = QString("[%1]").arg(i);
+			ja.append(evaluateObject(s.toStdString().c_str(), tid, v));
+		}
+		obj[s_attrs] = ja;
+		
+	} else {
+		QString s;
+		for (int i=0; i<dimension; i++) {
+			s += QString("[%1]").arg(ic[i]);
+		}
+		obj[s_value] = s;
+		QJsonArray ja;
+		for (int i=0; i<a->Sizes[dimension]; i++) {
+			ic[dimension] = i;
+			ja.append(processArrayDimension(v, ic, dimension+1));
+		}
+		obj[s_attrs] = ja;
+	}
+	return(obj);
 }
 
 static QJsonValue getAttribute(const char* name, const Vector3d& vector)

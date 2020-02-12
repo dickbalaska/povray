@@ -23,15 +23,20 @@
 
 #include <QJsonObject>
 
+#include "reservedwords.h"
+#include "parser.h"
+
 namespace pov_parser
 {
 
-class Parser;
+//class Parser;
+//using POV_ARRAY = Parser::POV_ARRAY;
 
 class PovDbgObject : public QJsonObject
 {
 public:
 	PovDbgObject();
+	void operator=(const QJsonObject& other) { ((QJsonObject)*this) = other; }
 };
 
 class PovDbgObjectFactory
@@ -42,6 +47,8 @@ public:
 
 	void	parseDbgObject(PovDbgObject& object, const char* name);
 private:
+	QJsonObject	evaluateObject(const char* name, TokenId type, void* data);
+	QJsonObject	processArrayDimension(void* v, int* ic, int dimension);
 	Parser*		mParser;
 };
 
