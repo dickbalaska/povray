@@ -452,7 +452,8 @@ void RenderFrontendBase::StopParser(SceneData& shd, SceneId sid)
 void RenderFrontendBase::SendDebuggerCommand(SceneData& shd, SceneId sid, const char* command)
 {
     if(shd.state != SceneData::Scene_Parsing && shd.state != SceneData::Scene_Paused)
-        throw POV_EXCEPTION_CODE(kNotNowErr);
+		return;
+        //throw POV_EXCEPTION_CODE(kNotNowErr);
 
     POVMS_Message msg(kPOVObjectClass_ControlData, kPOVMsgClass_SceneControl, kPOVMsgIdent_DebuggerCmd);
 
