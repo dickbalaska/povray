@@ -89,6 +89,13 @@ QJsonObject PovDbgObjectFactory::evaluateObject(const char* name, TokenId tid, v
 		obj[s_value] = QString("%1, %2, %3").arg(pv->x()).arg(pv->y()).arg(pv->z());
 		break;
 	}
+	case COLOUR_ID_TOKEN: {
+		RGBFTColour* rgbft = reinterpret_cast<RGBFTColour *>(data);
+		obj[s_value] = QString("%1, %2, %3,  %4, %5")
+				.arg((double)rgbft->red()).arg((double)rgbft->green()).arg((double)rgbft->blue())
+				.arg((double)rgbft->filter()).arg((double)rgbft->transm());
+		break;
+	}
 	case ARRAY_ID_TOKEN: {
 		POV_ARRAY* a = reinterpret_cast<POV_ARRAY *>(data);
 		QString s;
