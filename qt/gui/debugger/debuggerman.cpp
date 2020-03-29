@@ -280,6 +280,8 @@ void DebuggerMan::onDeleteWatch(const QString& name)
 {
 	m_watches.removeOne(name);
 	m_debuggerConsole->m_symbolsWidget->removeWatch(name);
+	sendClearWatches();
+	sendWatches();
 }
 
 void DebuggerMan::messageFromPovray(const QString& msg)
@@ -316,6 +318,11 @@ void DebuggerMan::sendBreakpoints()
 			m_mainWindow->sendPovrayMessage(s);			
 		}
 	}
+}
+
+void DebuggerMan::sendClearWatches()
+{
+	m_mainWindow->sendPovrayMessage(s_resetWatches);
 }
 
 void DebuggerMan::sendWatches()

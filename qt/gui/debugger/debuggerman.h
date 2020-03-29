@@ -110,6 +110,7 @@ public slots:
 	
 private:
 	void	sendBreakpoints();
+	void	sendClearWatches();
 	void	sendWatches();
 	void	sendContinue();
 	void	sendStep();
