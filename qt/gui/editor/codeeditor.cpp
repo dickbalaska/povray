@@ -152,7 +152,11 @@ int CodeEditor::lineNumberAreaWidth()
 		max /= 10;
 		++digits;
 	}
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
 	int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
+#else
+	int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
+#endif
 	return space;
 }
 
@@ -214,7 +218,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent* event) {
 				QRect rect(0, top, lineNumberAreaWidth()-1, fontMetrics().height());
 				painter.fillRect(rect, Qt::cyan);
 			}
-			const LineNumberBreakpoint* l = m_lineNumberArea->getBreakpoint(blockNumber+1);;
+			const LineNumberBreakpoint* l = m_lineNumberArea->getBreakpoint(blockNumber+1);
 			if (l) {
 				QRect rect(0, top, lineNumberAreaWidth()-1, fontMetrics().height());
 				painter.drawPixmap(rect, l->mEnabled ? *stopPixmap : *stopDisabledPixmap);
