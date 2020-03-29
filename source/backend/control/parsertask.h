@@ -52,6 +52,7 @@
 // POV-Ray header files (parser module)
 #include "parser/parser_fwd.h"
 #include "parser/parsertypes.h"
+//#include "parser/debugger.h"
 
 // POV-Ray header files (backend module)
 #include "backend/support/task.h"
@@ -66,7 +67,7 @@ class ParserTask final : public SceneTask, public pov_parser::FileResolver, publ
 {
 public:
 
-    ParserTask(std::shared_ptr<BackendSceneData> sd, const pov_parser::ParserOptions& opts);
+    ParserTask(std::shared_ptr<BackendSceneData> sd, const pov_parser::ParserOptions& opts, pov_parser::Debugger* debugger);
 
     /// @name @ref SceneTask related.
     /// @{
@@ -93,12 +94,19 @@ public:
 
     /// @}
 
+	void	DebuggerPaused();
+	void	PauseForDebugger()   { mDebuggerPaused = true;  }
+	void	ResumeFromDebugger() { mDebuggerPaused = false; }
+	
+//	void	RecvDebuggerCommand(const char* command);
 private:
 
     std::unique_ptr<pov_parser::Parser> mpParser;
+	pov_parser::Debugger*				mpDebugger;
     std::shared_ptr<BackendSceneData>   mpBackendSceneData;
     pov_parser::ParserOptions           mOptions;
     POV_LONG                            mLastProgressElapsedTime;
+	bool								mDebuggerPaused = false;
 };
 
 }

@@ -21,7 +21,7 @@
 
 #include "highlighter.h"
 
-PCSTR common_list[] =  {
+static PCSTR common_list[] =  {
 	"aa_level", 			"aa_threshold",				"absorption",				"accuracy",
 	"adaptive",				"adc_bailout",				"all",						"all_intersections",
 	"altitude",				"always_sample",			"ambient",					"ambient_light",
@@ -102,9 +102,9 @@ PCSTR common_list[] =  {
 	"vturbulence",
 	"warning",				"warp",						"water_level",				"while",
 	"width",				"write",
-	NULL
+	nullptr
 };
-PCSTR math_list[] = {
+static PCSTR math_list[] = {
 	"abs",					"acos",						"acosh",				"asin",
 	"asinh",				"atan",						"atan2",				"atanh",
 	"arc_angle",
@@ -122,10 +122,10 @@ PCSTR math_list[] = {
 	"sqrt",					"strcmp",					"strlen",				"sum",
 	"tan",					"tanh",
 	"yes",
-	NULL
+	nullptr
 };
 
-PCSTR modifier_list[] = {
+static PCSTR modifier_list[] = {
 	"brightness",			"brilliance",				"bumps",
 	"conic_sweep",			"crackle",					"cylindrical",
 	"density",				"dents",
@@ -145,11 +145,11 @@ PCSTR modifier_list[] = {
 	"turb_depth",			"turbulence",
 	"variance",
 	"wrinkles",
-	NULL
+	nullptr
 
 };
 
-PCSTR object_list[] = {
+static PCSTR object_list[] = {
 	"blob",					"box",						"brick",					"checker",
 	"cone",					"cube",						"cubic",					"cubic_spline",
 	"cubic_wave",			"cylinder",
@@ -168,10 +168,10 @@ PCSTR object_list[] = {
 	"text",					"tile2",					"tiles",					"torus",
 	"triangle",				"triangle_wave",
 	"waves",
-	NULL
+	nullptr
 };
 
-PCSTR texture_list[] = {
+static PCSTR texture_list[] = {
 	"agate",				"agate_turb",
 	"color",				"color_map",				"colour",					"colour_map",
 	"cutaway_textures",
@@ -191,17 +191,17 @@ PCSTR texture_list[] = {
 	"spotted",
 	"texture",				"texture_list",				"texture_map",
 	"wood",
-	NULL
+	nullptr
 };
 
-PCSTR color_list[] = {
+static PCSTR color_list[] = {
 	"alpha",
 	"blue",
 	"gray",					"green",
 	"quick_color",			"quick_colour",
 	"red",					"rgb",						"rgbf",						"rgbft",
 	"rgbt",
-	NULL
+	nullptr
 };
 
 enum {
@@ -343,7 +343,7 @@ void Highlighter::setupType(QTextCharFormat& format, PCSTR* list, const Highligh
 	PCSTR* p = list;
 	format.setForeground(highlight.getColor());
 	format.setFontWeight(highlight.isBold() ? QFont::Bold : QFont::Normal);
-	while (*p != NULL) {
+	while (*p != nullptr) {
 		qs = "\\b"; qs.append(*p).append("\\b");
 		rule.pattern = QRegularExpression(qs);
 		rule.format = format;

@@ -54,6 +54,8 @@
 // POV-Ray header files (core module)
 #include "core/core_fwd.h"
 
+#include "parser/debugger.h"
+
 // POV-Ray header files (backend module)
 #include "backend/control/renderbackend.h"
 #include "backend/scene/backendscenedata_fwd.h"
@@ -64,6 +66,7 @@ namespace pov
 {
 
 using namespace pov_base;
+
 
 /// Class governing the rendering of a scene.
 ///
@@ -152,6 +155,7 @@ class Scene final
          */
         bool Failed();
 
+		void RecvDebuggerCommand(const char* msg);
         /**
          *  Create a new view of a parsed scene. Note that this method
          *  may only be called after a scene has been parsed successfully.
@@ -190,6 +194,7 @@ class Scene final
         /// parser control thread
         std::thread *parserControlThread;
 
+		pov_parser::Debugger*	mDebugger = nullptr;
         /**
          *  Send the parser statistics upon completion of a parsing.
          *  @param   taskq          The task queue that executed this method.

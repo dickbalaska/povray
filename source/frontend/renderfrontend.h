@@ -248,6 +248,7 @@ class RenderFrontendBase : public POVMS_MessageReceiver
         void PauseParser(SceneData&, SceneId);
         void ResumeParser(SceneData&, SceneId);
         void StopParser(SceneData&, SceneId);
+		void SendDebuggerCommand(SceneData&, SceneId, const char*);
 
         ViewId CreateView(SceneData&, ViewData&, SceneId, POVMS_Object&);
         void CloseView(ViewData&, ViewId);
@@ -263,6 +264,7 @@ class RenderFrontendBase : public POVMS_MessageReceiver
         virtual void HandleFileMessage(SceneId, POVMSType, POVMS_Object&, POVMS_Object&) = 0;
         virtual void HandleRenderMessage(ViewId, POVMSType, POVMS_Object&) = 0;
         virtual void HandleImageMessage(ViewId, POVMSType, POVMS_Object&) = 0;
+		virtual void HandleDebuggerMessage(ViewId, POVMSType, POVMS_Object&) = 0;
 
         virtual void OutputFatalError(const std::string&, int) = 0;
 
@@ -304,6 +306,7 @@ class RenderFrontend : public RenderFrontendBase
         void PauseParser(SceneId sid);
         void ResumeParser(SceneId sid);
         void StopParser(SceneId sid);
+		void SendDebuggerCommand(SceneId sid, const char* command);
 
         ViewId CreateView(SceneId sid, POVMS_Object& obj, std::shared_ptr<ImageProcessing>& imageProcessing, boost::function<Display *(unsigned int, unsigned int)> fn);
         void CloseView(ViewId vid);
@@ -323,6 +326,7 @@ class RenderFrontend : public RenderFrontendBase
         virtual void HandleFileMessage(SceneId sid, POVMSType ident, POVMS_Object& msg, POVMS_Object& result) override;
         virtual void HandleRenderMessage(ViewId vid, POVMSType ident, POVMS_Object& msg) override;
         virtual void HandleImageMessage(ViewId vid, POVMSType ident, POVMS_Object& msg) override;
+		virtual void HandleDebuggerMessage(SceneId sid, POVMSType ident, POVMS_Object& msg) override;
         virtual void OutputFatalError(const std::string& msg, int err) override;
     private:
 
@@ -451,6 +455,14 @@ void RenderFrontend<PARSER_MH, FILE_MH, RENDER_MH, IMAGE_MH>::StopParser(SceneId
     typename SceneHandlerMap::iterator shi(scenehandler.find(sid));
     if(shi != scenehandler.end())
         RenderFrontendBase::StopParser(shi->second.data, sid);
+}
+
+template<class PARSER_MH, class FILE_MH, class RENDER_MH, class IMAGE_MH>
+void RenderFrontend<PARSER_MH, FILE_MH, RENDER_MH, IMAGE_MH>::SendDebuggerCommand(SceneId sid, const char* command)
+{
+    typename SceneHandlerMap::iterator shi(scenehandler.find(sid));
+    if(shi != scenehandler.end())
+        RenderFrontendBase::SendDebuggerCommand(shi->second.data, sid, command);
 }
 
 template<class PARSER_MH, class FILE_MH, class RENDER_MH, class IMAGE_MH>
@@ -790,6 +802,12 @@ void RenderFrontend<PARSER_MH, FILE_MH, RENDER_MH, IMAGE_MH>::HandleParserMessag
         else
             shi->second.parser.HandleMessage(shi->second.data, ident, msg);
     }
+}
+
+template<class PARSER_MH, class FILE_MH, class RENDER_MH, class IMAGE_MH>
+void RenderFrontend<PARSER_MH, FILE_MH, RENDER_MH, IMAGE_MH>::HandleDebuggerMessage(SceneId sid, POVMSType ident, POVMS_Object& msg)
+{
+	
 }
 
 template<class PARSER_MH, class FILE_MH, class RENDER_MH, class IMAGE_MH>

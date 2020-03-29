@@ -34,33 +34,37 @@
 #include "preferences.h"
 #include "dock/filterdialog.h"
 #include "editor/bookmarkman.h"
+#include "debugger/debuggerman.h"
 #include "findman.h"
 #include "helpman.h"
 #include "insertmenuman.h"
 #include "qtpovrayversion.h"
 
-QString	s_companyName = "qtpovray";		// directory to put the ini file in
-QString	s_productName = "qtpovray";		// name of the ini file
-QString s_recentWsList = "recentWorkspaces";
+static QString	s_companyName = "qtpovray";		// directory to put the ini file in
+static QString	s_productName = "qtpovray";		// name of the ini file
+static QString s_recentWsList = "recentWorkspaces";
 
-bool DEBUG = false;
+//static bool DEBUG = false;
+
 QPixmap* mainPixmap;
 
-QStringList streams = {"banner", "status", "debug", "fatal", "render", "statistic", "warning", "error"};
+static QStringList streams = {"banner", "status", "debug", "fatal", "render", "statistic", "warning", "error"};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-	prefVersionWidget(NULL),
+	prefVersionWidget(nullptr),
 	m_shortcutConfigure(this),		shortcutRender(this),
 	shortcutNextError(this),		shortcutPreviousError(this),
 	shortcutBookmarkToggle(this),	shortcutBookmarkNext(this),
 	shortcutBookmarkPrevious(this),	shortcutFindNext(this),
-	shortcutFindPrevious(this),		m_shortcutSaveAllEditors(this),
+	shortcutFindPrevious(this),		
+	m_shortcutToggleBreakpoint(this), m_shortcutSaveAllEditors(this),
 	m_shortcutEditCut(this),		m_shortcutEditCopy(this),
 	m_shortcutEditPaste(this),		m_shortcutEditSelectAll(this),
 	m_shortcutEditShiftLeft(this),	m_shortcutEditShiftRight(this),
 	m_shortcutEditToggleComments(this),
 	m_shortcutEditGotoLineNumber(this),	m_shortcutEditGotoMatchingBrace(this),
+	m_shortcutStep(this),
 	ui(new Ui::MainWindow)
 {
 
@@ -68,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef USE_WEBSOCKETS
 	wsClient = NULL;
 #endif
-	m_editorTabs = NULL;
+	m_editorTabs = nullptr;
 	CodeEditor::init();
 	PovColor::init();
 	setWindowTitle("qtpovray");
@@ -77,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(this, SIGNAL(emitNeedWorkspace()), this, SLOT(needWorkspace()), Qt::QueuedConnection);
 	loadPreferences();
 	m_bookmarkMan = new BookmarkMan(this);
+	m_debuggerMan = new DebuggerMan(this);
 	m_findMan = new FindMan(this);
 	m_dockMan = new DockMan(this);
 	m_helpMan = new HelpMan(this);
@@ -95,13 +100,10 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef USE_WEBSOCKETS
 	m_mainToolbar->enableRender((validateExe(preferenceData.getPovrayExecutable())));
 #endif
-	QStringList files = settings.value(s_recentWsList).toStringList();
-	if (!files.isEmpty())
-		m_dockMan->activateWorkspace(files.first());
-	else
-		emit(this->emitNeedWorkspace());
 	m_searchMan = new SearchMan(this);
 	m_searchMan->setSearchConsole(m_dockMan->getConsoleDock()->getSearchConsole());
+	
+	
 	m_shortcutConfigure.setContext(Qt::ApplicationShortcut);
 	connect(&m_shortcutConfigure, SIGNAL(activated()), this, SLOT(onPreferences()));
 	shortcutRender.setContext(Qt::ApplicationShortcut);
@@ -127,6 +129,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	shortcutFindPrevious.setContext(Qt::ApplicationShortcut);
 	connect(&shortcutFindPrevious, SIGNAL(activated()),
 			m_findMan, SLOT(onFindPrevious()));
+	m_shortcutToggleBreakpoint.setContext(Qt::ApplicationShortcut);
+	connect(&m_shortcutToggleBreakpoint, SIGNAL(activated()),
+			m_debuggerMan, SLOT(onBreakpointToggle()));
+	m_shortcutStep.setContext(Qt::ApplicationShortcut);
+	connect(&m_shortcutStep, SIGNAL(activated()),
+			m_debuggerMan, SLOT(onDebuggerStep()));
 	m_shortcutSaveAllEditors.setContext(Qt::ApplicationShortcut);
 	connect(&m_shortcutSaveAllEditors, SIGNAL(activated()),
 			this, SLOT(saveAllEditors()));
@@ -150,6 +158,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(m_vfeClient, SIGNAL(messageReceived(QString,QString)), this, SLOT(wsMessageReceived(QString,QString)));
 	connect(m_vfeClient, SIGNAL(binaryMessageReceived(QByteArray)), m_dockMan->getRenderDock()->getRenderWidget(), SLOT(binaryMessageReceived(QByteArray)));
 	qApp->installEventFilter(this);
+	
+	QStringList files = settings.value(s_recentWsList).toStringList();
+	if (!files.isEmpty())
+		m_dockMan->activateWorkspace(files.first());
+	else
+		emit(this->emitNeedWorkspace());
+	
 }
 
 MainWindow::~MainWindow() {
@@ -170,6 +185,8 @@ void MainWindow::setShortcutKeys()
 	shortcutBookmarkToggle.setKey(gk->keyBookmarkToggle);
 	shortcutBookmarkNext.setKey(gk->keyBookmarkNext);
 	shortcutBookmarkPrevious.setKey(gk->keyBookmarkPrevious);
+	m_shortcutToggleBreakpoint.setKey(gk->keyBreakpointToggle);
+	m_shortcutStep.setKey(gk->keyDebuggerStep);
 	shortcutFindNext.setKey(gk->keyFindNext);
 	shortcutFindPrevious.setKey(gk->keyFindPrevious);
 	m_shortcutSaveAllEditors.setKey(gk->keySaveAll);
@@ -297,7 +314,9 @@ int MainWindow::openEditor(const QString& filePath)
 		connect(ce, SIGNAL(bookmarkToggle(int)), m_bookmarkMan, SLOT(onBookmarkToggle(int)));
 		connect(ce, SIGNAL(bookmarkNext(int)), m_bookmarkMan, SLOT(onBookmarkNext(int)));
 		connect(ce, SIGNAL(bookmarkPrevious(int)), m_bookmarkMan, SLOT(onBookmarkPrevious(int)));
+		connect(ce, SIGNAL(breakpointToggle(int)), m_debuggerMan, SLOT(onBreakpointToggle(int)));
 		ce->setBookmarks(m_bookmarkMan->gatherBookmarks(ce));
+		ce->setBreakpoints(m_debuggerMan->gatherBreakpoints(ce));
 		m_editorTabs->widget(m_editorTabs->currentIndex())->setFocus();
 		return(index);
 	} else if (et == EditorTypeGraphic) {
@@ -401,6 +420,17 @@ void MainWindow::focused()
 	}	
 }
 
+void MainWindow::breakpointsChanged(const QString& filename)
+{
+	for (int i=0; i<m_editorTabs->count(); i++) {
+		CodeEditor* ce = (CodeEditor*)m_editorTabs->widget(i);
+		if (ce->getFilePath() == filename) {
+			ce->setBreakpoints(m_debuggerMan->gatherBreakpoints(ce));			
+			return;
+		}
+	}	
+}
+
 bool MainWindow::maybeSaveEditor(CodeEditor* ce)
 {
 	if (ce->isModified()) {
@@ -473,6 +503,20 @@ CodeEditor* MainWindow::getCodeEditor(int which)
 		return(ce);
 	return(nullptr);
 }
+
+CodeEditor* MainWindow::getCodeEditor(const QString& filePath)
+{
+	for (int i=0; i<m_editorTabs->count(); i++) {
+		QWidget* w = m_editorTabs->widget(i);
+		CodeEditor* ce = qobject_cast<CodeEditor*>(w);
+		if (ce) {
+			if (ce->getFilePath() == filePath)
+				return(ce);
+		}
+	}
+	return(nullptr);
+}
+
 EditorType MainWindow::determineEditorType(const QString& filePath, const QString& )
 {
 	QImageReader qir(filePath);
@@ -526,7 +570,7 @@ void MainWindow::setTitle(int which)
 				fname = "***broken***";
 			}
 		}
-		QString s = QString("%1%2 - qtpovray").arg(fname).arg(mod);
+		QString s = QString("%1%2 - qtpovray").arg(fname, mod);
 		setWindowTitle(s);
 	}
 }
@@ -720,11 +764,13 @@ void MainWindow::savePreferences() {
 	writeKey(keyBookmarkToggle);
 	writeKey(keyBookmarkNext);
 	writeKey(keyBookmarkPrevious);
+	writeKey(keyBreakpointToggle);
 	writeKey(keyFindNext);
 	writeKey(keyFindPrevious);
 	writeKey(keyStartRender);
 	writeKey(keyErrorNext);
 	writeKey(keyErrorPrevious);
+	writeKey(keyDebuggerStep);
 	settings.endGroup();
 }
 
@@ -821,11 +867,13 @@ void MainWindow::loadPreferences() {
 	readKey(keyBookmarkToggle)
 	readKey(keyBookmarkNext)
 	readKey(keyBookmarkPrevious)
+	readKey(keyBreakpointToggle)
 	readKey(keyFindNext)
 	readKey(keyFindPrevious)
 	readKey(keyStartRender)
 	readKey(keyErrorNext)
 	readKey(keyErrorPrevious)
+	readKey(keyDebuggerStep)
 	settings.endGroup();
 	setShortcutKeys();
 
@@ -890,10 +938,14 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 			prefVersionWidget->setText(text);
 		m_helpMan->setPovrayVersion(text);
 		return;
+	} else if (command == "dbg") {
+		this->m_debuggerMan->messageFromPovray(text);		
+		return;
 	} else if (command == "done") {
 		m_mainToolbar->renderButtonToStart();
 		this->m_statusBar->showMessage("Done");
 		this->m_statusBar->renderDone();
+		m_debuggerMan->setState(dsDone);
 		m_dockMan->getRenderDock()->repaint();
 		return;
 	} else if (command == "fatal") {
@@ -919,18 +971,21 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 			return;
 		} else {
 			stream = streamT.toInt();
-			if (streamT == "0" || stream == 1 || stream == 8 || stream == 3) {
+			if (streamT == "0" || stream == mDebug || stream == mDivider || stream == mWarning) {
 				emit(emitStatusMessage(stream, msg));
 				return;
 			} else if (streamT == "7") {
 				// render progress
-				if (msg.contains("(100%)"))		// Hacky McHackface. Force a picture redraw when we see 100%
+				if (msg.contains("(100%)"))			// Hacky McHackface. Force a picture redraw when we see 100%
 					m_dockMan->getRenderDock()->repaint();	// (This should be handled by the render window itself)
 				this->m_statusBar->showRenderMessage(msg);
 				return;
 			} else if (streamT == "6") {
 				// animation status
 				this->m_statusBar->showAnimationMessage(msg);
+				return;
+			} else if (stream == mDebugger) {
+				this->m_debuggerMan->messageFromPovray(msg);
 				return;
 			}
 			if (stream == -1) {
@@ -942,6 +997,11 @@ void MainWindow::wsMessageReceived(const QString& command, const QString& text)
 		return;
 	}
 	qWarning() << "unhandled message: command:" << command << "text:" << text;
+}
+
+void MainWindow::showStatusBarMessage(const QString& msg)
+{
+	m_statusBar->showMessage(msg);
 }
 
 void MainWindow::sendPovrayMessage(const QString& msg)
@@ -1018,14 +1078,28 @@ void MainWindow::onRenderStartIfNotRunning()
 	onRenderAction();
 }
 
+void MainWindow::onStartDebugger()
+{
+	startRender(true);
+}
+
 void MainWindow::onRenderAction()
 {
 	qDebug() << "onRenderAction";
-	if (!m_mainToolbar->isRenderButtonStart()) {
-		this->m_statusBar->showMessage(tr("Canceling render"));
-		sendPovrayMessage("cancel");
-		return;
-	}
+	if (m_mainToolbar->isRenderButtonStart())
+		startRender(false);
+	else
+		stopRendering();
+}
+
+void MainWindow::stopRendering()
+{
+	this->m_statusBar->showMessage(tr("Canceling render"));
+	sendPovrayMessage("cancel");	
+}
+
+void MainWindow::startRender(bool useDebugger)
+{
 	saveAllEditors();
 	this->m_statusBar->showMessage(tr("Start render"));
 	m_dockMan->getConsoleDock()->getPovrayConsole()->clearMessages();
@@ -1054,8 +1128,12 @@ void MainWindow::onRenderAction()
 		}
 		rdir = dir.absolutePath();
 	}
-
+	
+	m_debuggerMan->setRenderRootDirectory(rdir);
 	cl += rdir;
+
+	if (useDebugger)
+		cl += " +ZZ";
 
 	if (!preferenceData.getPovrayIncludes().isEmpty()) {
 		cl += " +L";

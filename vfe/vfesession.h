@@ -375,6 +375,7 @@ namespace vfe
         mError,
         mAnimationStatus,
         mGenericStatus,
+		mDebugger,
         mDivider
       } MessageType ;
 
@@ -1123,6 +1124,9 @@ namespace vfe
       // returns true if the main POV-Ray backend has shut down
       virtual bool BackendFailed() { return m_BackendThreadExited; }
 
+	  void	sendMessageToDebugger(const char* msg);
+	  virtual void messageFromDebugger(const std::string msg) {}
+	  
     protected:
       // All of the following are internal to vfe.
       virtual void SetFailed();
@@ -1219,6 +1223,7 @@ namespace vfe
       // managing render shellout commands, and typically will need platform-specific implementation.
       virtual ShelloutProcessing *CreateShelloutProcessing(POVMS_Object& opts, const std::string& scene, unsigned int width, unsigned int height) { return new ShelloutProcessing(opts, scene, width, height); }
 
+	  
       struct vfeSessionWorker
       {
         vfeSessionWorker(vfeSession& Parent) : m_Parent(Parent) {}

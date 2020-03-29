@@ -68,6 +68,8 @@ class ParserMessageHandler
         virtual void Error(Console *, POVMS_Object&, bool);
         virtual void FatalError(Console *, POVMS_Object&, bool);
         virtual void DebugInfo(Console *, POVMS_Object&, bool);
+		virtual void DebuggerInfo(Console *, POVMS_Object&, bool);
+		
 };
 
 }

@@ -133,7 +133,8 @@ RenderFrontendBase::RenderFrontendBase(POVMSContext ctx) :
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Warning, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Error, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_FatalError, this, &RenderFrontendBase::HandleMessage);
-    InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Debug, this, &RenderFrontendBase::HandleMessage);
+	InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Debug, this, &RenderFrontendBase::HandleMessage);
+	InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Debugger, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Progress, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Done, this, &RenderFrontendBase::HandleMessage);
     InstallFront(kPOVMsgClass_SceneOutput, kPOVMsgIdent_Failed, this, &RenderFrontendBase::HandleMessage);
@@ -448,6 +449,23 @@ void RenderFrontendBase::StopParser(SceneData& shd, SceneId sid)
     }
 }
 
+void RenderFrontendBase::SendDebuggerCommand(SceneData& shd, SceneId sid, const char* command)
+{
+    if(shd.state != SceneData::Scene_Parsing && shd.state != SceneData::Scene_Paused)
+		return;
+        //throw POV_EXCEPTION_CODE(kNotNowErr);
+
+    POVMS_Message msg(kPOVObjectClass_ControlData, kPOVMsgClass_SceneControl, kPOVMsgIdent_DebuggerCmd);
+
+	msg.SetSourceAddress(sid.GetAddress());
+    msg.SetDestinationAddress(sid.GetAddress());
+    msg.SetInt(kPOVAttrib_SceneId, sid.GetIdentifier());
+	msg.SetString(kPOVAttrib_DebuggerCommand, command);
+
+    POVMS_SendMessage(msg);
+
+}
+
 RenderFrontendBase::ViewId RenderFrontendBase::CreateView(SceneData& shd, ViewData& vhd, SceneId sid, POVMS_Object& obj)
 {
     POVMS_Message msg(obj, kPOVMsgClass_SceneControl, kPOVMsgIdent_CreateView);
@@ -600,6 +618,8 @@ void RenderFrontendBase::HandleMessage(POVMS_Message& msg, POVMS_Message& result
         case kPOVMsgClass_FileAccess:
             HandleFileMessage(ViewId(msg.GetSourceAddress(), msg.GetInt(kPOVAttrib_SceneId)), ident, msg, result);
             break;
+	    case kPOVMsgClass_Debugger:
+		    break;
     }
 }
 
@@ -1942,6 +1962,12 @@ void RenderTime(POVMS_Object& cppmsg, TextStreamBuffer *tsb)
 void DebugInfo(POVMS_Object& cppmsg, TextStreamBuffer *tsb)
 {
     std::string str = cppmsg.TryGetString(kPOVAttrib_EnglishText, "<Error retrieving debug output>");
+    tsb->printf("%s\n", str.c_str());
+}
+
+void DebuggerInfo(POVMS_Object& cppmsg, TextStreamBuffer *tsb)
+{
+    std::string str = cppmsg.TryGetString(kPOVAttrib_EnglishText, "<Error retrieving debugger output>");
     tsb->printf("%s\n", str.c_str());
 }
 

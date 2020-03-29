@@ -38,8 +38,8 @@
 ///
 //*******************************************************************************
 
-#ifndef _OPTIONS_H
-#define _OPTIONS_H
+#ifndef OPTIONS_H_
+#define OPTIONS_H_
 
 
 #include <list>
@@ -72,6 +72,8 @@ using boost::to_lower_copy;
 
 namespace vfe {
 	extern const char* s_stream;
+	extern const char* s_dbg;
+
 	class QtVfe;
 }
 //extern const char* s_stream_fatal;
@@ -198,7 +200,7 @@ namespace vfePlatform
                                     const std::string &Cmd = "",
                                     const std::string &Env = "",
                                     const std::string &Comm = "")
-                : Section(Sect), Name(Nm), Value(Val), has_param(par), CmdOption(Cmd), EnvVariable(Env), Comment(Comm) { }
+                : Section(Sect), Name(Nm), Value(Val), CmdOption(Cmd), EnvVariable(Env), Comment(Comm), has_param(par) { }
 
             /// only checks identity of the option, not of the selected value.
             bool operator==(Option_Info const& other) const
@@ -221,12 +223,12 @@ namespace vfePlatform
 		QtOptionsProcessor(QtVfe* qtVfe, vfeQtSession* session);
 		virtual ~QtOptionsProcessor() {}
 
-        /**
-             called by the Display classes to register their custom options
+//        /**
+//             called by the Display classes to register their custom options
 
-             @param options Vector of Option_Info structs containing the options
-        */
-        void Register(const Option_Info options[]);
+//             @param options Vector of Option_Info structs containing the options
+//        */
+//        void Register(const Option_Info options[]);
 
         /**
              Converts a file path to standard form replacing
@@ -365,4 +367,4 @@ namespace vfePlatform
     };
 }
 
-#endif
+#endif	// OPTIONS_H_

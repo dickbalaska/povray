@@ -74,7 +74,7 @@ void MessageFactory::SendMessage(MessageClass mc, WarningLevel level, const char
                                  const UCS2String& filename, POV_LONG line, POV_LONG column, POV_OFF_T offset)
 {
     POVMSObject msg;
-    unsigned int msgIdent;
+    unsigned int msgIdent = 0;
 
     (void)POVMSObject_New(&msg, kPOVObjectClass_ControlData);
 
@@ -115,6 +115,11 @@ void MessageFactory::SendMessage(MessageClass mc, WarningLevel level, const char
             (void)POVMSUtil_SetInt(&msg, kPOVAttrib_Error, 0);
             break;
 
+		case kMessageClass_Debugger:
+		    msgIdent = kPOVMsgIdent_Debugger;
+		    break;
+		
+		/*NOTREACHED*/
         default:
             POV_ASSERT(false);
             break;

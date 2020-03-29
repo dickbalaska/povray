@@ -117,6 +117,7 @@ public:
 		  keyBookmarkToggle(Qt::CTRL + Qt::Key_F2),
 		  keyBookmarkNext(Qt::Key_F2),
 		  keyBookmarkPrevious(Qt::SHIFT + Qt::Key_F2),
+		  keyBreakpointToggle(Qt::Key_F9),
 		  keyFindNext(Qt::Key_F3),
 		  keyFindPrevious(Qt::SHIFT + Qt::Key_F3),
 		  keyStartRender(Qt::CTRL + Qt::ALT + Qt::Key_R),
@@ -127,7 +128,8 @@ public:
 		  keyUnindentBlock(Qt::SHIFT + Qt::Key_Tab),
 		  keyToggleComment(Qt::CTRL + Qt::Key_Slash),
 		  keyGotoLineNumber(Qt::CTRL + Qt::Key_L),
-		  keyGotoMatchingBrace(Qt::CTRL + Qt::Key_BracketRight)
+		  keyGotoMatchingBrace(Qt::CTRL + Qt::Key_BracketRight),
+		  keyDebuggerStep(Qt::Key_F10)
 	{
 		m_shortcutKeys
 				<< ShortcutKey(s_StartRender, QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_R))
@@ -140,6 +142,7 @@ public:
 	QKeySequence	keyBookmarkToggle;
 	QKeySequence	keyBookmarkNext;
 	QKeySequence	keyBookmarkPrevious;
+	QKeySequence	keyBreakpointToggle;
 	QKeySequence	keyFindNext;
 	QKeySequence	keyFindPrevious;
 	QKeySequence	keyStartRender;
@@ -151,19 +154,23 @@ public:
 	QKeySequence	keyToggleComment;
 	QKeySequence	keyGotoLineNumber;
 	QKeySequence	keyGotoMatchingBrace;
+	QKeySequence	keyDebuggerStep;
 
 	QList<ShortcutKey>	m_shortcutKeys;
 };
+
 inline void GlobalKeys::operator= (const GlobalKeys& other) {
 	this->keyOpenPreferences = other.keyOpenPreferences;
 	this->keyBookmarkToggle = other.keyBookmarkToggle;
 	this->keyBookmarkNext = other.keyBookmarkNext;
 	this->keyBookmarkPrevious = other.keyBookmarkPrevious;
+	this->keyBreakpointToggle = other.keyBreakpointToggle;
 	this->keyFindNext = other.keyFindNext;
 	this->keyFindPrevious = other.keyFindPrevious;
 	this->keyStartRender = other.keyStartRender;
 	this->keyErrorNext = other.keyErrorNext;
 	this->keyErrorPrevious = other.keyErrorPrevious;
+	this->keyDebuggerStep = other.keyDebuggerStep;
 	this->m_shortcutKeys = other.m_shortcutKeys;
 }
 

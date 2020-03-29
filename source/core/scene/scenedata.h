@@ -170,6 +170,8 @@ class SceneData
 
         /// set if real-time raytracing is enabled.
         bool realTimeRaytracing;
+		
+		bool debuggerEnabled;
 
         // ********************************************************************************
         // Old globals from v3.6 and earlier are temporarily kept below. Please carefully

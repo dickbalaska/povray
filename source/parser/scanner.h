@@ -137,7 +137,7 @@ public:
         Bookmark(const LexemePosition& lp, CharacterEncodingPtr se, Character neol, bool anbc) :
             LexemePosition(lp), characterEncoding(se), nominalEndOfLine(neol), allowNestedBlockComments(anbc)
         {}
-        virtual POV_LONG GetLine() const override { return line; };
+        virtual POV_LONG GetLine() const override { return line; }
         virtual POV_LONG GetColumn() const override { return column; }
         virtual POV_OFF_T GetOffset() const override { return offset; }
     };

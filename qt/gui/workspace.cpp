@@ -33,12 +33,15 @@
 #include "editor/codeeditor.h"
 #include "editor/imagedisplayer.h"
 #include "findman.h"
+#include "debugger/debuggerman.h"
+#include "debugger/debuggerconsole.h"
 
 #include "workspace.h"
 
 static QString s_aboutRect			("aboutRect");
 static QString s_activeEditor		("activeEditor");
 static QString s_bookmarks			("bookmarks");
+static QString s_breakpoints		("breakpoints");
 static QString s_bmP				("bmP");
 static QString s_bmL				("bmL");
 static QString s_CL					("CL");
@@ -62,6 +65,10 @@ static QString s_renderPos			("renderPos");
 static QString s_resourceFilters	("resourceFilters");
 static QString s_resourceFilterType	("resourceFilterType");
 static QString s_state				("state");
+static QString s_dbgSplitterState	("dbgSplitterState");
+static QString s_currentConsole		("currentConsole");
+static QString s_debuggerTab		("debuggerTab");
+static QString s_watches			("watches");
 
 Workspace::Workspace(MainWindow* mainWindow)
 	: m_mainWindow(mainWindow)
@@ -95,6 +102,7 @@ void Workspace::load(const QString& filename)
 
 	m_mainWindow->restoreGeometry(settings.value(s_geometry).toByteArray());
 	m_mainWindow->restoreState(settings.value(s_state).toByteArray());
+	m_mainWindow->getDebuggerMan()->getDebuggerConsole()->restoreState(settings.value(s_dbgSplitterState).toByteArray());
 
 	RenderWidget* w = m_mainWindow->getDockMan()->getRenderWidget();
 	qDebug() << "loading renderDockable" << renderDockable;
@@ -116,6 +124,12 @@ void Workspace::load(const QString& filename)
 		bool curDockable = m_mainWindow->getDockMan()->getRenderWidget()->isDockable();
 		qDebug() << "***Unhandled dockable: cur =" << curDockable;
 	}
+	int i = settings.value(s_currentConsole, -1).toInt();
+	if (i != -1)
+		m_mainWindow->getDockMan()->getConsoleDock()->showConsole(i);
+	i = settings.value(s_debuggerTab, -1).toInt();
+	if (1 != -1)
+		m_mainWindow->getDockMan()->getConsoleDock()->getDebuggerConsole()->getDebuggerTabs()->setCurrentIndex(i);
 	settings.endGroup();
 
 	QStringList slist = settings.value(s_dirRoots).toStringList();
@@ -197,6 +211,45 @@ void Workspace::load(const QString& filename)
 		m_mainWindow->m_bookmarkMan->addBookmark(bm);
 	}
 	settings.endGroup();
+
+	settings.beginGroup(s_breakpoints);
+	m_mainWindow->m_debuggerMan->m_breakpoints.clear();
+	for (int i=0;; i++) {
+		index.setNum(i);
+		QString s = settings.value(index).toString();
+		if (s.isNull())
+			break;
+		QRegularExpression re("(\\w+) (\\w+) (.*)");
+		QRegularExpressionMatch match = re.match(s);
+		QStringList captured = match.capturedTexts();
+		//if (parseDebug)
+		//qDebug() << "captured" << captured;
+		if (captured.size() != 4) {
+			qCritical() << QString("workspace: Failed to parse line: \"%1\"").arg(s);
+			continue;
+		}
+		Breakpoint* bp = new Breakpoint;
+		bp->m_enabled = captured[1] == "T" ? true : false;
+		bp->m_lineNumber = captured[2].toInt();
+		bp->m_filePath = captured[3];
+		m_mainWindow->m_debuggerMan->addBreakpoint(bp);
+	}
+	settings.endGroup();
+	settings.beginGroup(s_watches);
+	for (int i=0;; i++) {
+		index.setNum(i);
+		QString s = settings.value(index).toString();
+		if (s.isNull())
+			break;
+//		int j = s.indexOf(' ');
+//		if (j == -1) {
+//			qCritical() << "Workspace: freaky watch" << s;
+//			break;
+//		}
+		m_mainWindow->m_debuggerMan->onUserAddedSymbol(s);
+	}	
+	settings.endGroup();
+	m_mainWindow->m_debuggerMan->setState(dsInit);
 }
 
 void Workspace::save()
@@ -206,6 +259,7 @@ void Workspace::save()
 	settings.beginGroup(s_MainWindow);
 	settings.setValue(s_geometry, m_mainWindow->saveGeometry());
 	settings.setValue(s_state, m_mainWindow->saveState());
+	settings.setValue(s_dbgSplitterState, m_mainWindow->getDebuggerMan()->getDebuggerConsole()->saveState());
 	bool renderDockable = m_mainWindow->getDockMan()->getRenderWidget()->isDockable();
 	settings.setValue(s_renderDockable, renderDockable);
 	qDebug() << "saving renderDockable" << renderDockable;
@@ -213,6 +267,8 @@ void Workspace::save()
 	if (!renderDockable)
 		p = m_mainWindow->getDockMan()->getRenderWidget()->getRenderWindow()->pos();
 	settings.setValue(s_renderPos, p);
+	settings.setValue(s_currentConsole, m_mainWindow->getDockMan()->getConsoleDock()->getActiveConsole());
+	settings.setValue(s_debuggerTab, m_mainWindow->getDockMan()->getConsoleDock()->getDebuggerConsole()->getDebuggerTabs()->currentIndex());
 	settings.endGroup();
 
 	QStringList slist(m_dirRoots);
@@ -243,7 +299,10 @@ void Workspace::save()
 	settings.setValue(index, _text);
 
 	writeCL(-1, cb->currentText());
-	for (int i=0; i<cb->count(); i++) {
+	int count = cb->count();
+	if (count > 100)
+		count = 100;
+	for (int i=0; i<count; i++) {
 		writeCL(i, cb->itemText(i));
 	}
 	settings.endGroup();
@@ -252,11 +311,32 @@ void Workspace::save()
 	settings.remove("");
 	int i=0;
 	QString s;
-	foreach(Bookmark* bm, m_mainWindow->m_bookmarkMan->m_bookmarks) {
+	for (Bookmark* bm : m_mainWindow->m_bookmarkMan->m_bookmarks) {
 		index.setNum(i);
 		s.setNum(bm->m_lineNumber);
 		s += ' ';
 		s += bm->m_pathName;
+		settings.setValue(index, s);
+		++i;
+	}
+	settings.endGroup();
+	
+	settings.beginGroup(s_breakpoints);
+	settings.remove("");
+	i=0;
+	for (Breakpoint* bp : m_mainWindow->m_debuggerMan->m_breakpoints) {
+		index.setNum(i);
+		s = QString("%1 %2 %3").arg(bp->m_enabled ? "T" : "F").arg(bp->m_lineNumber).arg(bp->m_filePath);
+		settings.setValue(index, s);
+		++i;
+	}
+	settings.endGroup();
+	
+	settings.beginGroup(s_watches);
+	settings.remove("");
+	i = 0;
+	for (const QString& s : m_mainWindow->m_debuggerMan->m_watches) {
+		index.setNum(i);
 		settings.setValue(index, s);
 		++i;
 	}

@@ -19,8 +19,8 @@
  *
  *****************************************************************************/
 
-#ifndef _BOOKMARKMAN_H_
-#define _BOOKMARKMAN_H_
+#ifndef BOOKMARKMAN_H_
+#define BOOKMARKMAN_H_
 
 #include <QObject>
 
@@ -71,4 +71,4 @@ private:
 	QList<Bookmark*>	m_bookmarks;
 };
 
-#endif // _BOOKMARKMAN_H_
+#endif // BOOKMARKMAN_H_

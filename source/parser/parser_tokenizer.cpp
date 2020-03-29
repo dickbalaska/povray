@@ -392,11 +392,11 @@ void Parser::Unget_Token ()
 
 void Parser::Read_Symbol(const RawToken& rawToken)
 {
-    int Local_Index, i;
+    int Local_Index = 0;
     size_t j;
-    int k;
+    int i, k;
     POV_ARRAY *a;
-    SYM_ENTRY *Temp_Entry;
+    SYM_ENTRY *Temp_Entry = nullptr;
     POV_PARAM *Par;
     DBL val;
     SymbolTable* table = nullptr;
@@ -888,6 +888,9 @@ const char *Parser::Get_Token_String (TokenId Token_Id)
 
 bool Parser::GetRawToken(RawToken& rawToken, bool fastForwardToDirective)
 {
+	if (mDebugger) {
+		mDebugger->checkForBreakpoint(rawToken);
+	}
     if (mHavePendingRawToken)
     {
         rawToken = mPendingRawToken;
@@ -1975,7 +1978,8 @@ void Parser::Invoke_Macro()
 {
     Macro *PMac = CurrentTokenDataPtr<Macro*>();
     SYM_ENTRY **Table_Entries = nullptr;
-    int i,Local_Index;
+    unsigned int i;
+	int Local_Index;
 
     Inc_CS_Index();
 
@@ -2133,7 +2137,7 @@ Parser::Macro::Macro(const char *s) :
 
 Parser::Macro::~Macro()
 {
-    int i;
+    uint i;
 
     POV_FREE(Macro_Name);
 
@@ -2169,7 +2173,7 @@ Parser::POV_ARRAY *Parser::Parse_Array_Declare (void)
             Error("Too many array dimensions");
         }
         New->Sizes[i]=(int)(Parse_Float() + EPSILON);
-        j *= New->Sizes[i];
+        j *= (uint)New->Sizes[i];
         if ( j <= 0) {
             Error("Invalid dimension size for an array");
         }
@@ -2201,7 +2205,7 @@ Parser::POV_ARRAY *Parser::Parse_Array_Declare (void)
     for(i = New->maxDim; i>=0; i--)
     {
         New->Mags[i] = j;
-        j *= New->Sizes[i];
+        j *= (uint)New->Sizes[i];
     }
 
     for (i=0; i<New->DataPtrs.size(); i++)

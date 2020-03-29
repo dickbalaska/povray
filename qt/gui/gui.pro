@@ -42,57 +42,69 @@ QMAKE_CXXFLAGS -= -Wdate-time -Wsign-conversion
 INCLUDEPATH += "../../vfe"
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    dock/resourcedock.cpp \
-    dock/dockman.cpp \
+    main.cpp \
+    mainwindow.cpp \
+	debugger/debuggerconsole.cpp \
+	debugger/debuggerman.cpp \
+	debugger/debuggerpanel.cpp \
+	debugger/symboltreeitem.cpp \
+	debugger/symboltreemodel.cpp \
+	debugger/symboltreeview.cpp \
     dock/consoledock.cpp \
+    dock/dockman.cpp \
+    dock/dropdown.cpp \
+    dock/filterdialog.cpp \
     dock/maintoolbar.cpp \
-    workspace.cpp \
-    editor/codeeditor.cpp \
-    preferences.cpp \
-    editor/highlighter.cpp \
+    dock/resourcedock.cpp \
     dock/renderdock.cpp \
     dock/statusbar.cpp \
-    dock/filterdialog.cpp \
     dock/searchman.cpp \
     editor/bookmarkman.cpp \
-    findman.cpp \
-    insertmenuman.cpp \
-    dock/dropdown.cpp \
+    editor/codeeditor.cpp \
+    editor/imagedisplayer.cpp \
+    editor/highlighter.cpp \
     editor/coloreditor.cpp \
     editor/povcolor.cpp \
     editor/colormapeditor.cpp \
-    vfeclient.cpp \
+    findman.cpp \
+    insertmenuman.cpp \
     helpman.cpp \
-    editor/imagedisplayer.cpp
+    preferences.cpp \
+    vfeclient.cpp \
+    workspace.cpp
 
 HEADERS += \
-        mainwindow.h \
-    dock/resourcedock.h \
-    dock/dockman.h \
+	debugger/debuggerconsole.h \
+	debugger/debuggerman.h \
+	debugger/debuggerpanel.h \
+	debugger/symboltreeitem.h \
+	debugger/symboltreemodel.h \
+	debugger/symboltreeview.h \
     dock/consoledock.h \
-    dock/maintoolbar.h \
-    workspace.h \
-    editor/codeeditor.h \
-    preferences.h \
-    preferencedata.h \
-    editor/highlighter.h \
-    dock/renderdock.h \
-    dock/statusbar.h \
+    dock/dockman.h \
+    dock/dropdown.h \
     dock/filterdialog.h \
+    dock/maintoolbar.h \
+    dock/renderdock.h \
+    dock/resourcedock.h \
+    dock/statusbar.h \
     dock/searchman.h \
     editor/bookmarkman.h \
-    findman.h \
-    insertmenuman.h \
-    dock/dropdown.h \
+    editor/codeeditor.h \
     editor/coloreditor.h \
-    editor/povcolor.h \
     editor/colormapeditor.h \
-    vfeclient.h \
-    qtpovrayversion.h \
+    editor/highlighter.h \
+    editor/imagedisplayer.h \
+    editor/povcolor.h \
+    findman.h \
     helpman.h \
-    editor/imagedisplayer.h
+    insertmenuman.h \
+    mainwindow.h \
+    preferences.h \
+    preferencedata.h \
+    qtpovrayversion.h \
+    vfeclient.h \
+    workspace.h 
 
 FORMS += \
         mainwindow.ui

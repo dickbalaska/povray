@@ -68,6 +68,7 @@ enum MessageClass
     kMessageClass_Warning,          ///< Information about a potentially undesired and/or unexpected situation.
     kMessageClass_PossibleError,    ///< Information about a presumably erroneous but recoverable situation.
     kMessageClass_Error,            ///< Information about an erroneous unrecoverable situation.
+	kMessageClass_Debugger,			///< Messages to the qtpovray debugger.
 };
 
 /// @relates GenericMessenger
@@ -85,7 +86,7 @@ enum WarningLevel
 class MessageContext
 {
 public:
-    virtual ~MessageContext() {}
+    virtual ~MessageContext();
     virtual UCS2String GetFileName() const = 0;
     virtual POV_LONG GetLine() const = 0;
     virtual POV_LONG GetColumn() const = 0;
@@ -125,6 +126,8 @@ class GenericMessenger
         void ErrorAt(Exception& ex, const UCS2String& filename, POV_LONG line, POV_LONG column, POV_OFF_T offset, const char *format, ...);
 
         void SetWarningLevel(unsigned int Val) { warningLevel = Val ; } // TODO FIXME - not here, not this way
+
+		void Debugger(const char* text);
 
     protected:
 

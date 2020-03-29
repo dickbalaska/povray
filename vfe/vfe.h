@@ -147,11 +147,13 @@ namespace vfe
       virtual void Warning(Console *, POVMS_Object&, bool) override;
       virtual void Error(Console *, POVMS_Object&, bool) override;
       virtual void FatalError(Console *, POVMS_Object&, bool) override;
-      virtual void DebugInfo(Console *, POVMS_Object&, bool) override;
+	  virtual void DebugInfo(Console *, POVMS_Object&, bool) override;
+	  virtual void DebuggerInfo(Console *, POVMS_Object&, bool) override;
 
       vfeSession* m_Session;
   };
 
+  
   class vfeRenderMessageHandler : public RenderMessageHandler
   {
     public:
@@ -233,6 +235,10 @@ namespace vfe
       // TODO: take care of any pending messages (e.g. a thread waiting on a blocking send)
       virtual void InvalidateBackend() { backendAddress = POVMSInvalidAddress; }
 
+	  void	SendDebuggerCommand(const char* command);
+	  
+	  //RenderFrontendBase::SceneId getSceneId() const { return(sceneId); }
+	  //POVMSAddress				  getBackendAddress() const { return(backendAddress); }
     protected:
       virtual Console *CreateConsole()
         { return new vfeConsole(m_Session, m_Session->GetConsoleWidth()); }

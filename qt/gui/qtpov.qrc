@@ -53,5 +53,12 @@
         <file>resources/icons/text_italic.png</file>
         <file>resources/icons/text_comments.png</file>
         <file>resources/icons/povray_16x16_ssel.png</file>
+        <file>resources/icons/Debug_24x24.png</file>
+        <file>resources/icons/Debug_32x32.png</file>
+        <file>resources/icons/stop.png</file>
+        <file>resources/icons/debugStepOver_24x24.png</file>
+        <file>resources/icons/Pause_24x24.png</file>
+        <file>resources/icons/Pause_32x32.png</file>
+        <file>resources/icons/stopDisabled.png</file>
     </qresource>
 </RCC>

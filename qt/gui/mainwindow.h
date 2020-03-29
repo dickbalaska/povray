@@ -1,15 +1,15 @@
 /******************************************************************************
- * mainwindow.h - The Qt QMainWindow for qtpov
+ * mainwindow.h - The Qt QMainWindow for qtpovray
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -41,6 +41,7 @@ QT_END_NAMESPACE
 
 class BookmarkMan;
 class CodeEditor;
+class DebuggerMan;
 class DockMan;
 class FindMan;
 class HelpMan;
@@ -111,8 +112,7 @@ public:
 	QWidget*	getEditor(int which = -1);
 	QString		getCurrentEditorPath();
 	CodeEditor*	getCodeEditor(int which = -1);
-	DockMan*	getDockMan();
-	HelpMan*	getHelpMan();
+	CodeEditor*	getCodeEditor(const QString& filePath);
 	void		deleteAllEditorTabs();	// delete all CodeEditors. Ask before deleting changed editors.
 	bool		isSoftSelect();			// Check if there is a render selected
 
@@ -122,6 +122,9 @@ public:
 	void		sendPovrayMessage(const QString& msg);
 	void		setPrefVersionWidget(QTextEdit* w) { prefVersionWidget = w; }
 
+	DockMan*			getDockMan();
+	HelpMan*			getHelpMan();
+	DebuggerMan*		getDebuggerMan();
 	const PreferenceData& getPreferenceData() const { return(preferenceData); }
 	const BookmarkMan*	getBookmarkMan() { return(m_bookmarkMan); }
 	const FindMan*		getFindMan() { return(m_findMan); }
@@ -129,6 +132,9 @@ public:
 	MainToolbar*		getToolbar() { return(m_mainToolbar); }
 	InsertMenuMan*		getInsertMenuMan() { return(m_insertMenuMan); }
 
+	void	stopRendering();
+	void	breakpointsChanged(const QString& filename);
+	
 Q_SIGNALS:
 	//void	povrayStatusChanged();
 	void	emitStatusMessage(int stream, const QString& msg);
@@ -145,15 +151,16 @@ public slots:
 	void	editIndentBlock();
 	void	editUnindentBlock();
 	void	editToggleComments();
-	//void	onFilterDialog();
 	void	povrayWsStateChanged(bool connected);
 	void	wsMessageReceived(const QString& command, const QString& text);
 	void	onRenderAction();
 	void	onRenderStartIfNotRunning();
+	void	onStartDebugger();
 	void	needWorkspace();
 	void	moveToEditor(const QString& file, int line, int col);
 	void	focused();
-
+	void	showStatusBarMessage(const QString& msg);
+	
 protected:
 	void closeEvent(QCloseEvent* event) override;
 
@@ -167,7 +174,7 @@ private:
 	void	setTitle(int which);
 	bool	eventFilter(QObject*, QEvent* e) override;
 	EditorType determineEditorType(const QString &filePath, const QString&);
-
+	void	startRender(bool useDebugger);
 
 	QTextEdit*		prefVersionWidget;		// If prefs are open, this points to where the version is displayed
 	QShortcut		m_shortcutConfigure;
@@ -179,6 +186,7 @@ private:
 	QShortcut		shortcutBookmarkPrevious;
 	QShortcut		shortcutFindNext;
 	QShortcut		shortcutFindPrevious;
+	QShortcut		m_shortcutToggleBreakpoint;
 	QShortcut		m_shortcutSaveAllEditors;
 	QShortcut		m_shortcutEditCut;
 	QShortcut		m_shortcutEditCopy;
@@ -189,11 +197,13 @@ private:
 	QShortcut		m_shortcutEditToggleComments;
 	QShortcut		m_shortcutEditGotoLineNumber;
 	QShortcut		m_shortcutEditGotoMatchingBrace;
+	QShortcut		m_shortcutStep;
 
 	Ui::MainWindow* ui;
 	VfeClient*		m_vfeClient;
 	QTabWidget*		m_editorTabs;
 	QSize			editorTabsCloseSize;
+	DebuggerMan*	m_debuggerMan;
 	DockMan*		m_dockMan;
 	SearchMan*		m_searchMan;
 	BookmarkMan*	m_bookmarkMan;
@@ -209,4 +219,6 @@ private:
 inline QTabWidget* MainWindow::getEditorTabs() { return(m_editorTabs); }
 inline DockMan* MainWindow::getDockMan() { return(m_dockMan); }
 inline HelpMan* MainWindow::getHelpMan() { return(m_helpMan); }
+inline DebuggerMan* MainWindow::getDebuggerMan() { return(m_debuggerMan); }
+
 #endif // MAINWINDOW_H_

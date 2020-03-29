@@ -141,7 +141,12 @@ void ParserMessageHandler::HandleMessage(const SceneData& sd, POVMSType ident, P
             if (sd.streams[ALL_STREAM].get() != nullptr)
                 Message2Console::DebugInfo(obj, sd.streams[ALL_STREAM].get());
             break;
-    }
+	    case kPOVMsgIdent_Debugger:
+		    DebuggerInfo(sd.console.get(), obj, false);
+//		if (sd.streams[DEBUGGER_STREAM].get() != nullptr)
+//			Message2Console::DebugInfo(obj, sd.streams[DEBUGGER_STREAM].get());
+		    break;
+	}
 }
 
 void ParserMessageHandler::Options(Console *console, POVMS_Object& obj, bool conout)
@@ -211,6 +216,15 @@ void ParserMessageHandler::DebugInfo(Console *console, POVMS_Object& obj, bool c
         std::string str(obj.GetString(kPOVAttrib_EnglishText));
         console->Output(str);
     }
+}
+void ParserMessageHandler::DebuggerInfo(Console *console, POVMS_Object& obj, bool conout)
+{
+//    if(conout == true)
+//    {
+//        // TODO FIXME HACK
+//        std::string str(obj.GetString(kPOVAttrib_EnglishText));
+//        console->Output(str);
+//    }
 }
 
 }

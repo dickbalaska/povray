@@ -172,6 +172,8 @@ enum
     kPOVObjectClass_PhotonProgress      = 'PhoP',
     kPOVObjectClass_RadiosityProgress   = 'RadP',
     kPOVObjectClass_RenderProgress      = 'RenP',
+
+	kPOVObjectClass_DebuggerCommand     = 'DbgC',
 };
 
 // POV-Ray Message Classes
@@ -183,7 +185,8 @@ enum
     kPOVMsgClass_SceneOutput         = 'SOut',
     kPOVMsgClass_ViewOutput          = 'VOut',
     kPOVMsgClass_ViewImage           = 'VImg',
-    kPOVMsgClass_FileAccess          = 'FAcc',
+	kPOVMsgClass_FileAccess          = 'FAcc',
+	kPOVMsgClass_Debugger            = 'Dbgr',
 };
 
 // POV-Ray Message Identifiers
@@ -228,6 +231,8 @@ enum
     kPOVMsgIdent_Error               = 'ErrW',
     kPOVMsgIdent_FatalError          = 'ErrF',
     kPOVMsgIdent_Debug               = 'Dbug',
+	kPOVMsgIdent_Debugger			 = 'Dbgr',	// from debugger->backend->frontend->gui
+	kPOVMsgIdent_DebuggerCmd		 = 'DbgC',	// from gui->frontend->backend->debugger
 
     kPOVMsgIdent_Progress            = 'Prog',
 
@@ -650,7 +655,12 @@ enum
     kPOVAttrib_StartColumn           = kPOVAttrib_Left,
     kPOVAttrib_EndColumn             = kPOVAttrib_Right,
     kPOVAttrib_StartRow              = kPOVAttrib_Top,
-    kPOVAttrib_EndRow                = kPOVAttrib_Bottom
+    kPOVAttrib_EndRow                = kPOVAttrib_Bottom,
+	
+	kPOVAttrib_EnableDebugger		 = 'EnDB',
+	kPOVAttrib_DebuggerCommand		 = 'DbgC',
+	
+	
 };
 
 enum

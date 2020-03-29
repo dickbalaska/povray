@@ -116,7 +116,8 @@ class RenderBackend final : public POVMS_MessageReceiver
         void PauseRender(POVMS_Message& msg, POVMS_Message& result, int mode);
         void ResumeRender(POVMS_Message& msg, POVMS_Message& result, int mode);
 
-        void ReadFile(POVMS_Message& msg, POVMS_Message& result, int mode);
+		void ReadFile(POVMS_Message& msg, POVMS_Message& result, int mode);
+		void DebuggerMessage(POVMS_Message& msg, POVMS_Message& result, int mode);
     private:
         static POVMSContext context;
 

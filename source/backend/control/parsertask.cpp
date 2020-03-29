@@ -50,6 +50,7 @@
 
 // POV-Ray header files (parser module)
 #include "parser/parser.h"
+#include "parser/debugger.h"
 
 // POV-Ray header files (POVMS module)
 #include "povms/povmscpp.h"
@@ -67,9 +68,10 @@ namespace pov
 
 using namespace pov_parser;
 
-ParserTask::ParserTask(std::shared_ptr<BackendSceneData> sd, const ParserOptions& opts) :
+ParserTask::ParserTask(std::shared_ptr<BackendSceneData> sd, const ParserOptions& opts, Debugger* debugger) :
     SceneTask(new TraceThreadData(sd, opts.randomSeed), boost::bind(&ParserTask::SendFatalError, this, _1), "Parse", sd),
     mpParser(nullptr),
+	mpDebugger(debugger),
     mpBackendSceneData(sd),
     mOptions(opts),
     mLastProgressElapsedTime(0)
@@ -77,7 +79,11 @@ ParserTask::ParserTask(std::shared_ptr<BackendSceneData> sd, const ParserOptions
 
 void ParserTask::Run()
 {
-    mpParser.reset(new Parser(mpBackendSceneData, mOptions, *mpMessageFactory, *this, *this, *reinterpret_cast<TraceThreadData *>(GetDataPtr())));
+    mpParser.reset(new Parser(mpBackendSceneData, mOptions, *mpMessageFactory, *this, *this, *reinterpret_cast<TraceThreadData *>(GetDataPtr()), mpDebugger));
+	if (mpDebugger) {
+		mpDebugger->setParser(mpParser.get());
+		mpDebugger->setParserTask(this);
+	}
     mpParser->Run();
 }
 
@@ -134,5 +140,21 @@ void ParserTask::ReportProgress(POV_LONG tokenCount)
     }
 }
 
+void ParserTask::DebuggerPaused()
+{
+	if (IsStopRequested() == true)
+		throw StopThreadException();
+	else if (mDebuggerPaused == true)
+	{
+		while (mDebuggerPaused == true)
+		{
+			std::this_thread::yield();
+			Delay(100);
+			if (IsStopRequested() == true)
+				throw StopThreadException();
+		}
+	}
+
+}
 }
 // end of namespace pov

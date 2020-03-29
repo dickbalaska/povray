@@ -81,7 +81,7 @@ class POVMSMessageDetails
 {
   public:
     POVMSMessageDetails (POVMS_Object &Obj);
-    virtual ~POVMSMessageDetails () {} ;
+    virtual ~POVMSMessageDetails ();
     string GetContext (int NumLines) ;
 
   protected:
@@ -125,7 +125,7 @@ POVMSMessageDetails::POVMSMessageDetails (POVMS_Object& Obj)
   POVMSObject_Delete(msg);
 }
 
-string POVMSMessageDetails::GetContext (int NumLines)
+string POVMSMessageDetails::GetContext (int /*NumLines*/)
 {
   return ("") ;
 }
@@ -139,8 +139,8 @@ string POVMSMessageDetails::GetContext (int NumLines)
 class ParseWarningDetails : public POVMSMessageDetails
 {
   public:
-    ParseWarningDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {} ;
-    virtual ~ParseWarningDetails () override {} ;
+    ParseWarningDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {}
+    virtual ~ParseWarningDetails () override;
 
   public:
     using POVMSMessageDetails::File ;
@@ -154,8 +154,8 @@ class ParseWarningDetails : public POVMSMessageDetails
 class ParseErrorDetails : public POVMSMessageDetails
 {
   public:
-    ParseErrorDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {} ;
-    virtual ~ParseErrorDetails () override {} ;
+    ParseErrorDetails (POVMS_Object &Obj) : POVMSMessageDetails (Obj) {}
+    virtual ~ParseErrorDetails () override;
 
   public:
     using POVMSMessageDetails::File ;
@@ -165,6 +165,11 @@ class ParseErrorDetails : public POVMSMessageDetails
     using POVMSMessageDetails::Col ;
     using POVMSMessageDetails::Offset ;
 } ;
+
+// Move one class virtual out of line to give the vtable an anchor
+POVMSMessageDetails::~POVMSMessageDetails() {}
+ParseWarningDetails::~ParseWarningDetails() {}
+ParseErrorDetails::~ParseErrorDetails() {}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -239,7 +244,7 @@ void vfeConsole::Output(const string& str)
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
-vfePlatformBase::vfePlatformBase(vfeSession& session) : m_Session(&session), PlatformBase()
+vfePlatformBase::vfePlatformBase(vfeSession& session) : PlatformBase(), m_Session(&session)
 {
 }
 
@@ -262,7 +267,7 @@ void vfePlatformBase::DeleteTemporaryFile(const UCS2String& filename)
   m_Session->DeleteTemporaryFile(filename);
 }
 
-bool vfePlatformBase::ReadFileFromURL(OStream *file, const UCS2String& url, const UCS2String& referrer)
+bool vfePlatformBase::ReadFileFromURL(OStream* /*file*/, const UCS2String& /*url*/, const UCS2String& /*referrer*/)
 {
   return false;
 }
@@ -418,6 +423,20 @@ void vfeParserMessageHandler::DebugInfo(Console *Con, POVMS_Object& Obj, bool co
   else
     m_Session->AppendStreamMessage (vfeSession::mDebug, str.c_str()) ;
 }
+
+void vfeParserMessageHandler::DebuggerInfo(Console *Con, POVMS_Object& Obj, bool conout)
+{
+  string str(Obj.GetString(kPOVAttrib_EnglishText));
+  m_Session->messageFromDebugger(str);
+//  if (m_Session->m_OptimizeForConsoleOutput == true)
+//  {
+//    if (conout)
+//        Con->puts (str.c_str()) ;
+//  }
+//  else
+//    m_Session->AppendStreamMessage (vfeSession::mDebugger, str.c_str()) ;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -601,7 +620,7 @@ void vfeProcessRenderOptions::WriteError(const char *format, ...)
 ////////////////////////////////////////////////////////////////////////////////////////
 
 VirtualFrontEnd::VirtualFrontEnd(vfeSession& session, POVMSContext ctx, POVMSAddress addr, POVMS_Object& msg, POVMS_Object *result, shared_ptr<Console>& console) :
-  m_Session(&session), m_PlatformBase(session), renderFrontend (ctx)
+ renderFrontend (ctx), m_Session(&session), m_PlatformBase(session)
 {
   backendAddress = addr ;
   state = kReady ;
@@ -905,6 +924,11 @@ bool VirtualFrontEnd::Resume()
   return false;
 }
 
+void VirtualFrontEnd::SendDebuggerCommand(const char* command)
+{
+	renderFrontend.SendDebuggerCommand(sceneId, command);
+}
+
 bool VirtualFrontEnd::HandleShelloutCancel()
 {
   if (!shelloutProcessing->RenderCancelled())
@@ -927,8 +951,8 @@ bool VirtualFrontEnd::HandleShelloutCancel()
   return true;
 }
 
-State VirtualFrontEnd::Process()
-{
+State VirtualFrontEnd::Process()	// dik: Sometimes returns a bool.
+{									// Only called from vfesession which ignores the result anyway.
   if (state == kReady)
     return kReady;
 

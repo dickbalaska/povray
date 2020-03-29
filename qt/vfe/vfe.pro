@@ -67,6 +67,7 @@ INCLUDEPATH += $$vqDIR
 
 
 SOURCES += \
+	$$vDIR/debuggermessages.cpp \
 	$$vDIR/vfe.cpp \
 	$$vDIR/vfecontrol.cpp \
 	$$vDIR/vfedisplay.cpp \
@@ -79,6 +80,7 @@ SOURCES += \
 
 
 HEADERS += \
+    $$vDIR/debuggermessages.h \
     $$vDIR/vfe.h \
     $$vDIR/vfesession.h \
     $$vDIR/vfepovms.h \

@@ -11,17 +11,19 @@
 #include "qtvfe.h"
 #include "base/version_info.h"
 #include "backend/povray.h"
-#include "config.h"
+//#include "config.h"
 
 using povray::qtpov::QtGraphics;
 
 namespace vfe {
 
 const char* s_stream = "stream";
-const char* s_stream_fatal	 = "fatal";
-const char* s_stream_warning = "warning";
+const char* s_dbg	 = "dbg";
 
-bool gCancelRender = false;
+static const char* s_stream_fatal	 = "fatal";
+static const char* s_stream_warning = "warning";
+
+static bool gCancelRender = false;
 
 QtVfe::QtVfe(QObject *parent) : QObject(parent)
 {
@@ -56,6 +58,8 @@ void QtVfe::sendMessageToPovray(const QString& message) {
 		commandRender(data);
 	else if (command == "cancel")
 		commandCancel();
+	else if (command == "dbg")
+		commandDebugger(data);
 	else {
 		qCritical() << "QtVfe unknown command:" << command << "from:" << message;
 	}
@@ -148,11 +152,12 @@ void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp)
 //        retval = gCancelRender ? RETURN_USER_ABORT : RETURN_ERROR;
 	session->Shutdown();
 	qtVfe->printStatus(session);
-//    delete sigthread;
-	delete session;
-	sessionp = nullptr;
-	//wsSend(hdl, "done");
 	qtVfe->sendPovrayTextMessage("done");
+//    delete sigthread;
+//	delete session;
+	qtVfe->m_session = nullptr;
+	
+	sessionp = nullptr;
 
 }
 
@@ -228,11 +233,6 @@ void  QtVfe::commandRender(const QString& data)
 	if (m_session->SetOptions(*m_session->m_renderOptions) != vfeNoError) {
 		string s = s_stream_fatal;
 		s += "Problem with option setting";
-//		wsSend(hdl, s);
-//        for(int loony=0;loony<argc_copy;loony++)
-//        {
-//            fprintf(stderr,"%s%c",argv_copy[loony],loony+1<argc_copy?' ':'\n');
-//        }
 		sessionErrorExit();
 		//deleteArgv(argv);
 		return;
@@ -255,6 +255,14 @@ void  QtVfe::commandRender(const QString& data)
 void  QtVfe::commandCancel()
 {
 	gCancelRender = true;
+}
+
+void QtVfe::commandDebugger(const QString &data)
+{
+	if (m_session) {
+		std::string s = data.toStdString();
+		m_session->sendMessageToDebugger(s.c_str());
+	}
 }
 
 void QtVfe::parseCommandLine(const QString& cl, int& argc, char**& argv)
@@ -325,11 +333,11 @@ void QtVfe::printNonStatusMessage(vfeQtSession* session)
 
 void QtVfe::printStatusMessage(vfeQtSession* session)
 {
-	vfeSession::MessageType type;
+	//vfeSession::MessageType type;
 	string str;
 	UCS2String file;
-	int	line;
-	int	col;
+	//int	line;
+	//int	col;
 	vfeSession::StatusMessage msg(*session);
 	while (session->GetNextStatusMessage(msg)) {
 		//stringstream ss;
@@ -356,7 +364,7 @@ void QtVfe::printStatus(vfeQtSession* session)
 {
 	string str;
 	vfeSession::MessageType type;
-	static vfeSession::MessageType lastType = vfeSession::mUnclassified;
+	//static vfeSession::MessageType lastType = vfeSession::mUnclassified;
 
 	while (session->GetNextCombinedMessage (type, str)) {
 		QString qs = QString("%1 %2").arg(type).arg(str.c_str());

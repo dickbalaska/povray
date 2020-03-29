@@ -1,15 +1,15 @@
 /******************************************************************************
  * consoledock.cpp - The dock widget where povray writes his text
  *
- * qtpov - A Qt IDE frontend for POV-Ray
+ * qtpovray - A Qt IDE frontend for POV-Ray
  * Copyright(c) 2017 - Dick Balaska, and BuckoSoft.
  *
- * qtpov is free software: you can redistribute it and/or modify
+ * qtpovray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * qtpov is distributed in the hope that it will be useful,
+ * qtpovray is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
@@ -31,6 +31,8 @@
 #include <QDebug>
 
 #include "workspace.h"
+#include "debugger/debuggerman.h"
+#include "debugger/debuggerconsole.h"
 #include "dropdown.h"
 #include "searchman.h"
 #include "consoledock.h"
@@ -56,12 +58,17 @@ ConsoleDock::ConsoleDock(MainWindow* parent, Qt::WindowFlags flags)
 	m_searchConsole = new SearchConsole(m_consoleTabs, m_consoleBar, m_mainWindow);
 	m_consoleTabs->addTab(m_searchConsole, "Search Results");
 
+	m_debuggerConsole = new DebuggerConsole(m_consoleTabs, m_consoleBar, m_mainWindow);
+	m_mainWindow->getDebuggerMan()->setDebuggerConsole(m_debuggerConsole);
+	m_consoleTabs->addTab(m_debuggerConsole, "Debugger");
+
 	this->setWidget(m_consoleTabs);
 	m_consoleTabs->setCornerWidget(m_consoleBar);
 	m_consoleTabs->setCurrentIndex(0);
 	m_consoleBar->setCurrentIndex(0);
 	//connect(m_consoleTabs, SIGNAL(currentChanged(int)), )
 	connect(m_consoleTabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+	
 }
 
 void ConsoleDock::configure(const PreferenceData* prefs)
@@ -114,7 +121,7 @@ void PovrayConsoleButtonBar::setSelected(int selected)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-SearchConsole::SearchConsole(QTabWidget* parent, QStackedWidget *consoleBar, MainWindow* mainWindow)
+SearchConsole::SearchConsole(QTabWidget* parent, QStackedWidget* consoleBar, MainWindow* mainWindow)
 	: SearchTreeView(parent),
 	  m_mainWindow(mainWindow)
 {
@@ -157,7 +164,7 @@ PovrayConsole::PovrayConsole(QTabWidget* parent, QStackedWidget *consoleBar, Mai
 					 << "orangered" << "firebrick" << "red" << "red";
 	m_mapStreamToConsole << unclassified << debug << info << fatal
 					   << unclassified << statistic << warning << error
-					   << info;
+					   << unclassified << info;
 }
 
 PovrayConsole::~PovrayConsole()

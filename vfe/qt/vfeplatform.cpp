@@ -2,7 +2,7 @@
 ///
 /// @file vfe/qt/vfeplatform.cpp
 ///
-/// This module contains *nix platform-specific support code for the VFE.
+/// This module contains qt platform-specific support code for the VFE.
 ///
 /// Based on @ref vfe/win/vfeplatform.cpp by Christopher J. Cason
 ///
@@ -103,6 +103,8 @@ namespace vfePlatform
 	vfeQtSession::~vfeQtSession()
 	{
 		if (m_renderOptions) delete m_renderOptions;
+//		if (m_qtVfe) delete m_qtVfe;
+//		m_qtVfe = nullptr;
 	}
 
     /////////////////////////////////////////////////////////////////////////
@@ -301,6 +303,12 @@ namespace vfePlatform
 		m_qtVfe->sendPovrayTextMessage(s_stream, qs);
 		//povray::websockets::wsSend(m_hdl, ss.str());
     }
+
+	void vfeQtSession::messageFromDebugger(const string msg)
+	{
+		m_qtVfe->sendPovrayTextMessage(s_dbg, msg.c_str());		
+	}
+
     /////////////////////////////////////////////////////////////////////////
     // The following methods support the I/O permissions feature
     /////////////////////////////////////////////////////////////////////////
