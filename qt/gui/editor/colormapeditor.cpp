@@ -99,8 +99,13 @@ CMWidget::CMWidget(ColormapEditor* parent, PovColormap* colormap)
 	m_font.setFixedPitch(true);
 	m_font.setPointSize(9);
 	QFontMetrics fm(m_font);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+	m_nominalLeftWidth = fm.horizontalAdvance("0000-");
+	m_nominalRightWidth = fm.horizontalAdvance("r=0000 g=0000 b=0000 f=0000 t=0000");
+#else
 	m_nominalLeftWidth = fm.width("0000-");
 	m_nominalRightWidth = fm.width("r=0000 g=0000 b=0000 f=0000 t=0000");
+#endif
 	m_fontHOfs = fm.height()/2;
 	calculateWidths();
 	qDebug() << "size" << this->size() << m_leftWidth << m_centerWidth << m_rightWidth;
@@ -179,7 +184,11 @@ void CMWidget::paintEvent(QPaintEvent*)
 //		if (s.length() == 3)
 //			s.append("0");
 		if (cme == m_selectedCme) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+			int r = fm.horizontalAdvance(s);
+#else
 			int r = fm.width(s);
+#endif
 			p.fillRect(4, tr+2, r+1, -(fm.height()+1), selectedColor);
 		}
 
@@ -189,7 +198,11 @@ void CMWidget::paintEvent(QPaintEvent*)
 		}
 		s = getColormapColor(cme->m_color);
 		if (cme == m_selectedCme) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+			int r = fm.horizontalAdvance(s);
+#else
 			int r = fm.width(s);
+#endif
 			p.fillRect(m_leftWidth+m_centerWidth+4, tr+2, r+1, -(fm.height()+1), selectedColor);
 		}
 		p.drawText(m_leftWidth+m_centerWidth+5,tr, s);
