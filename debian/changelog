@@ -1,3 +1,9 @@
+qtpovray (3.80.14~xenial2) xenial; urgency=low
+
+  * Fix forward reference for QAction
+
+ -- Dick Balaska <dick@buckosoft.com>  Thu, 09 Apr 2020 01:16:52 -0400
+
 qtpovray (3.80.14~xenial1) xenial; urgency=low
 
   * Bug 26 - Add an SDL debugger

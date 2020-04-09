@@ -19,6 +19,7 @@
  *
  *****************************************************************************/
 #include <QVBoxLayout>
+#include <QAction>
 
 #include "debuggerpanel.h"
 #include "debuggerman.h"
