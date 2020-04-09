@@ -40,10 +40,10 @@ DebuggerConsole::DebuggerConsole(QTabWidget* parent, QStackedWidget* consoleBar,
 	m_debuggerPanel = new DebuggerPanel(this, mainWindow);
 	this->addWidget(m_debuggerPanel);
 	m_debuggerTabs = new QTabWidget(this);
-	m_debuggerOptions = new DebuggerOptions(m_debuggerTabs, mainWindow);
-	m_debuggerTabs->addTab(m_debuggerOptions, "Options");
-	m_includeStack = new IncludeStack(m_debuggerTabs, mainWindow);
-	m_debuggerTabs->addTab(m_includeStack, "IncStack");
+//	m_debuggerOptions = new DebuggerOptions(m_debuggerTabs, mainWindow);
+//	m_debuggerTabs->addTab(m_debuggerOptions, "Options");
+//	m_includeStack = new IncludeStack(m_debuggerTabs, mainWindow);
+//	m_debuggerTabs->addTab(m_includeStack, "IncStack");
 	m_breakpointsWidget = new BreakpointsWidget(m_debuggerTabs, mainWindow);
 	m_debuggerTabs->addTab(m_breakpointsWidget, "Breakpoints");
 	m_symbolsWidget = new SymbolsWidget(m_debuggerTabs, mainWindow);
