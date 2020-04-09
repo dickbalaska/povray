@@ -1,3 +1,9 @@
+qtpovray (3.80.14~xenial1) xenial; urgency=low
+
+  * Bug 26 - Add an SDL debugger
+
+ -- Dick Balaska <dick@buckosoft.com>  Thu, 09 Apr 2020 01:06:52 -0400
+
 qtpovray (3.80.13~xenial1) xenial; urgency=low
 
   * Bug 25 - Text cursor (I-beam) is invisible after certain keystrokes
