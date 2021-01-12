@@ -295,8 +295,14 @@ void WsHandler::Render(websocketpp::connection_hdl hdl, const string& data)
 		stringstream ss;
 		ss << "Failed to chdir to '" << argv[0] << "'" << endl;
 		wsSend(hdl, ss.str());
-		return;
-	}
+    	char** pp = oldargv;
+    	while (*pp) {
+    		delete[] *pp;
+    		pp++;
+    	}
+    	delete[] oldargv;
+        return;
+ 	}
     session = new vfeWebsocketSession(hdl);
 	session->renderOptions = new vfeRenderOptions();
     if (session->Initialize(NULL, NULL) != vfeNoError) {
