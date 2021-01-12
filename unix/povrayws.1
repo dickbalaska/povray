@@ -18,7 +18,7 @@ frontend with websockets. This allows the program to report progress
 and status in 'real time' to other calling programs.
 
 It is not intended that povrayws will be used directly, but rather,
-executed and used by other programs.
+executed and used by other programs as a daemon.
 .LP
 \fBPOV\-Ray\fP is a free, full\-featured ray tracer, written and maintained
 by a team of volunteers on the Internet.  
@@ -28,11 +28,14 @@ http://www.buckosoft.com/povrayws
 http://www.povray.org
 
 .SH OPTIONS
-When \fBqtpovray\fP is started, the gui is presented to the user.
 The only option is
 .TP
 \fB\-version\fP
 Print the qtpovray version and exit.
+.TP
+The only argument is an optional listen port
+.TP
+[\fB4402\fP]
 
 .SH SEE ALSO
 qtpovray documentation at:
