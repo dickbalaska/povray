@@ -88,7 +88,9 @@ HEADERS += \
     $$vqDIR/qtoptions.h \
     $$vqDIR/qtgraphics.h \
     $$vqDIR/vfeplatform.h \
-    $$vqDIR/config.h.in
+    $$vqDIR/config.h.in \
+    ../winpovconfig/syspovconfig.h \
+    ../winpovconfig/syspovconfigbase.h
 
 
 #unix {

@@ -53,4 +53,5 @@ SOURCES += \
 
 HEADERS += \
   $$pDIR/png.h \
+	../../../libraries/png/pnglibconf.h
 

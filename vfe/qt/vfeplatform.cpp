@@ -78,7 +78,7 @@ namespace vfePlatform
     POVMS_Sys_Thread_Type GetThreadId ()
     {
         //return (POVMS_Sys_Thread_Type) pthread_self();
-		std::string threadId = boost::lexical_cast<std::string>(boost::this_thread::get_id());
+        std::string threadId = boost::lexical_cast<std::string>(std::this_thread::get_id());
 		unsigned long threadNumber = 0;
 		sscanf(threadId.c_str(), "%lx", &threadNumber);
 		return threadNumber;

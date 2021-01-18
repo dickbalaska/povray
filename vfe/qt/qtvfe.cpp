@@ -9,6 +9,7 @@
 #include "qtgraphics.h"
 #include "vfeplatform.h"
 #include "qtvfe.h"
+#include "base/stringutilities.h"
 #include "base/version_info.h"
 #include "backend/povray.h"
 //#include "config.h"
@@ -249,7 +250,7 @@ void  QtVfe::commandRender(const QString& data)
     //deleteArgv(argv);     // XXX temp!!!
 	if (m_renderMonThread)
 		delete m_renderMonThread;
-	m_renderMonThread = new boost::thread(RenderMonitor, this, m_session);
+    m_renderMonThread = new std::thread(RenderMonitor, this, m_session);
 }
 
 void  QtVfe::commandCancel()

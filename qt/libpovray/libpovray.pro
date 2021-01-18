@@ -395,6 +395,7 @@ HEADERS += \
 	$$sDIR/vm/fnintern.h \
 	$$sDIR/vm/fnpovfpu.h \
 	$$cDIR/syspovconfig.h \
+	../../unix/povconfig/syspovconfigbase.h
 
 #unix {
 #    target.path = /usr/lib

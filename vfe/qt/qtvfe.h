@@ -3,7 +3,8 @@
 
 #include <string>
 #include <QObject>
-#include <boost/thread.hpp>
+//#include <boost/thread.hpp>
+#include <thread>
 
 using std::string;
 
@@ -58,7 +59,7 @@ private:
 	void	cancelRender(vfeQtSession* session);
 
 	vfeQtSession*	m_session;
-	boost::thread*			m_renderMonThread;
+    std::thread*			m_renderMonThread;
 
 	friend void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp);
 };

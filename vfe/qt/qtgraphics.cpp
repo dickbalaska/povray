@@ -5,6 +5,7 @@
  *      Author: dick
  */
 
+#include <iostream>
 #include <QDebug>
 #include "qtgraphics.h"
 #include "qtvfe.h"
