@@ -34,8 +34,10 @@ unix:isEmpty(PREFIX) {
  PREFIX = /usr/local
 }
 
-DESTDIR = ../../usr/bin
-#DESTDIR = $$PREFIX
+unix {
+	DESTDIR = ../../usr/bin
+	#DESTDIR = $$PREFIX
+}
 
 QMAKE_CXXFLAGS -= -Wdate-time -Wsign-conversion
 
@@ -116,7 +118,7 @@ RC_FILE = qtpov.rc
 
 win32 {
     INCLUDEPATH += "../../libraries/boost"
-    #DEFINES += BUILDING_AMD64
+	DEFINES += BUILDING_AMD64
     DEFINES += _WINDOWS
     DEFINES += BOOST_ALL_NO_LIB
 #    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS

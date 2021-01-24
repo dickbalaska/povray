@@ -69,7 +69,7 @@ HEADERS += \
 win32 {
     INCLUDEPATH += ../../libraries/boost
     INCLUDEPATH += $$vDIR
-    #DEFINES += BUILDING_AMD64
+	DEFINES += BUILDING_AMD64
     DEFINES += _WINDOWS
     DEFINES += _CONSOLE
 #    DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
@@ -82,6 +82,9 @@ win32 {
         $$pDIR/avx/avxportablenoise.cpp \
         $$pDIR/avx2fma3/avx2fma3noise.cpp \
         $$pDIR/avxfma4/avxfma4noise.cpp
+
+SOURCES += $$wDIR/syspovfilesystem.cpp
+
 }
 
 unix {

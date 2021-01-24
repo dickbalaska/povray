@@ -51,7 +51,7 @@ win32 {
     INCLUDEPATH += "../../libraries/png"
     INCLUDEPATH += "../../libraries/jpeg"
     INCLUDEPATH += "../../libraries/tiff/libtiff"
-    #DEFINES += BUILDING_AMD64
+	DEFINES += BUILDING_AMD64
     DEFINES += _WINDOWS
     DEFINES += DONT_SHOW_IMAGE_LIB_VERSIONS
     DEFINES += OPENEXR_MISSING
