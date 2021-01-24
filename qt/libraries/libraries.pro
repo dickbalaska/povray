@@ -17,7 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-SUBDIRS = boost_date_time boost_system boost_thread jpeg png zlib boost_chrono
+#SUBDIRS = boost_date_time boost_system boost_thread jpeg png zlib boost_chrono
+SUBDIRS = boost_date_time jpeg png zlib
 
 #CONFIG += ordered
 
