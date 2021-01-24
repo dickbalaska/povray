@@ -3,7 +3,10 @@
 #include <QThread>
 
 #include <iostream>
+
+// Boost header files
 #include <boost/tokenizer.hpp>
+#include <boost/bind.hpp>
 
 #include "qtoptions.h"
 #include "qtgraphics.h"
@@ -250,7 +253,7 @@ void  QtVfe::commandRender(const QString& data)
     //deleteArgv(argv);     // XXX temp!!!
 	if (m_renderMonThread)
 		delete m_renderMonThread;
-    m_renderMonThread = new std::thread(RenderMonitor, this, m_session);
+    m_renderMonThread = new std::thread(boost::bind(RenderMonitor, this, m_session));
 }
 
 void  QtVfe::commandCancel()
@@ -325,7 +328,7 @@ void QtVfe::printNonStatusMessage(vfeQtSession* session)
 //		ss << "stream " << type << " " << str;
 #ifdef _DEBUG
 //		cerr << "PrintNonStatusMessage: " << ss.str()  << " " << UCS2toASCIIString(file) << " : " << line << " : " << col << endl;
-		qDebug() << "PrintNonStatusMessage: " << qs  << " " << UCS2toASCIIString(file).c_str() << " : " << line << " : " << col << endl;
+        qDebug() << "PrintNonStatusMessage: " << qs  << " " << UCS2toSysString(file).c_str() << " : " << line << " : " << col;
 #endif
 		//wsSend(hdl, ss.str());
 		emitPovrayTextMessage(s_stream, qs);
