@@ -251,8 +251,10 @@ void  QtVfe::commandRender(const QString& data)
 		return;
 	}
     //deleteArgv(argv);     // XXX temp!!!
-	if (m_renderMonThread)
+    if (m_renderMonThread) {
+        m_renderMonThread->detach();
 		delete m_renderMonThread;
+    }
     m_renderMonThread = new std::thread(boost::bind(RenderMonitor, this, m_session));
 }
 
