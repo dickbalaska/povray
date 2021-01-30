@@ -884,13 +884,21 @@ QString MainWindow::findPath(const QString& in)
 	qDebug() << "findPath:" << in;
 	QString myDir = QString("qtpovray-%1").arg(ROOT_VERSION);
 	QStringList sl = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+    QString s = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/qtpovray/v" + ROOT_VERSION;
+    sl.push_front(s);
 	foreach (QString s, sl) {
 		qDebug() << "Check: " << s;
 		QDir qdir(s);
+#ifdef _UNIX
 		if (qdir.cdUp() && qdir.cd(myDir) && qdir.cd(in)) {
 			return(qdir.absolutePath());
 		}
-	}
+#endif
+#ifdef _WINDOWS
+        if (qdir.cd(in))
+            return(qdir.absolutePath());
+#endif
+    }
 	return("");
 }
 

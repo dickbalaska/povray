@@ -5,14 +5,15 @@
 /// Processing system for options in povray.conf, command line and environment
 /// variables.
 ///
-/// @author Christoph Hormann <chris_hormann@gmx.de>
+/// @author Dick Balaska <dick@buckosoft.com>
+/// @author Based on unix vfe by Christoph Hormann <chris_hormann@gmx.de>
 /// @author Based on 3.6 elements by Nicolas Calimet
 ///
 /// @copyright
 /// @parblock
 ///
 /// Persistence of Vision Ray Tracer ('POV-Ray') version 3.7.
-/// Copyright 1991-2015 Persistence of Vision Raytracer Pty. Ltd.
+/// Copyright 2018-2021 Persistence of Vision Raytracer Pty. Ltd.
 ///
 /// POV-Ray is free software: you can redistribute it and/or modify
 /// it under the terms of the GNU Affero General Public License as
@@ -96,6 +97,20 @@ namespace vfePlatform
 		m_Session(session),
 		m_qtVfe(qtVfe)
     {
+#ifdef _WINDOWS
+        QString DocumentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+        cerr << "DocumentsPath=" << DocumentsPath.toStdString().c_str() << endl;
+        QString s = DocumentsPath + "\\" + PRODUCT + "\\v" + POV_RAY_HOST_VERSION;
+        m_home = s.toStdString();
+
+        QString t = s + "\\ini\\povray.ini";
+        m_sysini = t.toStdString();
+        // Default values for I/O restrictions: everything is allowed.
+        // Any restrictions must come from system or user configuration.
+        m_file_io  = IO_UNSET;
+        m_shellout = SHL_UNSET;
+
+#else
         char* value;
         value = getenv("HOME");
         m_home = value ? value:"";
@@ -136,7 +151,8 @@ namespace vfePlatform
         else
             m_userini_old = "";
 
-#ifdef UNIX_DEBUG
+#endif
+#if 1
 
         cerr << "PATHS" << endl;
         cerr << "  HOME        = " << m_home << endl;
@@ -178,6 +194,12 @@ namespace vfePlatform
         string path = QueryOptionString("general", "temppath");
         if (path.length() == 0)
         {
+            return(QStandardPaths::writableLocation(QStandardPaths::TempLocation).toStdString());
+        }
+        return(path);
+#if 0
+
+        {
 #ifdef _WINDOWS
 			path = "/temp/";
 			return(path);
@@ -192,6 +214,7 @@ namespace vfePlatform
         if (path[path.length()-1] != '/')
             path = path + "/";
         return path;
+#endif
     }
 
 	void QtOptionsProcessor::PrintOptions(void)
@@ -1227,7 +1250,7 @@ namespace vfePlatform
             }
         }
 #ifdef _WINDOWS
-        QString DocumentsPath = QStandardPaths::displayName(QStandardPaths::DocumentsLocation);
+        QString DocumentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 		// See if Windows knows of one
         if (!DocumentsPath.isEmpty()) {
             cerr << "DocumentsPath=" << DocumentsPath.toStdString().c_str() << endl;

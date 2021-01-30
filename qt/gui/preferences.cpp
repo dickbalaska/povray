@@ -501,7 +501,7 @@ bool Preferences::validateInq(const QString &file) {
 	bool inqStat = false;
 	if (!file.isEmpty()) {
 		QDir dir(file);
-		if (dir.exists("index.html"))
+        if (dir.exists("index.html") && dir.exists("userInsertMenu.html"))
 			inqStat = true;
 	}
 	return(inqStat);

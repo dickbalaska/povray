@@ -139,7 +139,7 @@ void RenderMonitor(QtVfe* qtVfe, vfeQtSession*& sessionp)
 
 	}
 #ifdef _DEBUG
-    std::cerr << "RenderMonitor break" << endl;
+    std::cerr << "RenderMonitor break" << std::endl;
 #endif
 	// pause when done for single or last frame of an animation
 //    if (session->Failed() == false && GetRenderWindow() != NULL && session->GetBoolOption("Pause_When_Done", false))
@@ -170,7 +170,7 @@ static QtVfe*	gQtVfe;
 static vfeDisplay* QtDisplayCreator (unsigned int width, unsigned int height, vfeSession *session, bool visible)
 {
 #ifdef _DEBUG
-    std::cerr << "WsDisplayCreator: w=" << width << " h=" << height << endl;
+    std::cerr << "WsDisplayCreator: w=" << width << " h=" << height << std::endl;
 #endif
 	QtGraphics* qtg = new QtGraphics(width, height, session, visible);
 	qtg->setQtVfe(gQtVfe);
@@ -188,7 +188,7 @@ void  QtVfe::commandRender(const QString& data)
 	parseCommandLine(data, argc, argv);
 	char** oldargv = argv;
 #ifdef _DEBUG
-    std::cerr << "chdir: " << argv[0] << endl;
+    std::cerr << "chdir: " << argv[0] << std::endl;
 #endif
 	int ret = chdir(argv[0]);
 	if (ret) {
@@ -329,7 +329,7 @@ void QtVfe::printNonStatusMessage(vfeQtSession* session)
 //		stringstream ss;
 //		ss << "stream " << type << " " << str;
 #ifdef _DEBUG
-//		cerr << "PrintNonStatusMessage: " << ss.str()  << " " << UCS2toASCIIString(file) << " : " << line << " : " << col << endl;
+//		cerr << "PrintNonStatusMessage: " << ss.str()  << " " << UCS2toASCIIString(file) << " : " << line << " : " << col << std::endl;
         qDebug() << "PrintNonStatusMessage: " << qs  << " " << UCS2toSysString(file).c_str() << " : " << line << " : " << col;
 #endif
 		//wsSend(hdl, ss.str());
