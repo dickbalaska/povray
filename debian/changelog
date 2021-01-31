@@ -1,3 +1,9 @@
+qtpovray (3.80.15~xenial1) xenial; urgency=low
+
+  * Fix forward reference for QAction
+
+ -- Dick Balaska <dick@buckosoft.com>  Sun, 31 Jan 2021 00:56:26 -0500
+
 qtpovray (3.80.14~xenial2) xenial; urgency=low
 
   * Fix forward reference for QAction
