@@ -1,6 +1,7 @@
 qtpovray (3.80.15~xenial1) xenial; urgency=low
 
-  * Fix forward reference for QAction
+  * Bug 27 - Release qtpovray for Windows
+  * Bug 28 - Release qtpovray for Ubuntu 20, focal
 
  -- Dick Balaska <dick@buckosoft.com>  Sun, 31 Jan 2021 00:56:26 -0500
 
