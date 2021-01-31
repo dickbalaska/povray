@@ -36,40 +36,44 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Interface Settings
 
-  !define MUI_ABORTWARNING
+	!define MUI_ABORTWARNING
 
 ;--------------------------------
 ;Pages
 
-  !insertmacro MUI_PAGE_LICENSE "LICENSE"
-  !insertmacro MUI_PAGE_COMPONENTS
-  !insertmacro MUI_PAGE_DIRECTORY
+	!insertmacro MUI_PAGE_LICENSE "LICENSE"
+	!insertmacro MUI_PAGE_COMPONENTS
+	!insertmacro MUI_PAGE_DIRECTORY
   
-  ;Start Menu Folder Page Configuration
-  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\qtpovray" 
-  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+	;Start Menu Folder Page Configuration
+	!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+	!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\qtpovray" 
+	!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
-  !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
+	!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
   
-  !insertmacro MUI_PAGE_INSTFILES
+	!insertmacro MUI_PAGE_INSTFILES
+
+	!define MUI_FINISHPAGE_RUN
+	!define MUI_FINISHPAGE_RUN_FUNCTION LaunchQtpovray
+	!define MUI_FINISHPAGE_RUN_TEXT "Launch qtpovray"
+	!insertmacro MUI_PAGE_FINISH
   
-  !insertmacro MUI_UNPAGE_CONFIRM
-  !insertmacro MUI_UNPAGE_INSTFILES
+	!insertmacro MUI_UNPAGE_CONFIRM
+	!insertmacro MUI_UNPAGE_INSTFILES
+
 
 ;--------------------------------
 ;Languages
  
-  !insertmacro MUI_LANGUAGE "English"
+	!insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
 ;Installer Sections
 
 Section "Program Files"
 
-  SetOutPath "$INSTDIR"
-  
-  ;ADD YOUR OWN FILES HERE...
+	SetOutPath "$INSTDIR"
 	File qtpovray.exe
 	File Qt5Core.dll
 	File Qt5Gui.dll
@@ -80,6 +84,7 @@ Section "Program Files"
 	File libGLESv2.dll
 	File opengl32sw.dll
 	File vcredist_x64.exe
+
 	SetOutPath "$INSTDIR\iconengines"
 	File iconengines\qsvgicon.dll
 
@@ -99,6 +104,11 @@ Section "Program Files"
 	
 	SetOutPath "$INSTDIR\styles"
 	File styles\qwindowsvistastyle.dll
+
+	SetOutPath "$FONTS"
+	File fonts\SourceCodePro\SourceCodePro-Bold.ttf  
+	File fonts\SourceCodePro\SourceCodePro-It.ttf  
+	File fonts\SourceCodePro\SourceCodePro-Regular.ttf 
 	
 	;Store installation folder
 	WriteRegStr HKCU "Software\qtpovray" "" $INSTDIR
@@ -118,17 +128,28 @@ Section "Program Files"
 SectionEnd
 
 Section "POV-Ray includes"
-
 	StrCpy $DataDir $DOCUMENTS\qtpovray\v${POVVERSION}
 	SetOutPath "$DataDir\include"
 	!include "finclude.nsh"
 SectionEnd
 
 Section "Insert Menu items"
-
 	StrCpy $DataDir $DOCUMENTS\qtpovray\v${POVVERSION}
 	!include "finsert.nsh"
 SectionEnd
+
+Section "qtpovray Help"
+	StrCpy $DataDir $DOCUMENTS\qtpovray\v${POVVERSION}
+	SetOutPath "$DataDir\qtpovrayHelp"
+	!include "fqthelp.nsh"
+SectionEnd
+
+Section "Sample scenes"
+	StrCpy $DataDir $DOCUMENTS\qtpovray\v${POVVERSION}
+	SetOutPath "$DataDir\scenes"
+	!include "fscenes.nsh"
+SectionEnd
+
 
 ;--------------------------------
 ;Uninstaller Section
@@ -174,8 +195,14 @@ Section "Uninstall"
 	RMDir "$DataDir\include"
 
 	!include "finsertUn.nsh"
+	RMDir "$DataDir\Insert Menu"
+	!include "fqthelpUn.nsh"
+	RMDir "$DataDir\qtpovrayHelp"
+	!include "fscenesUn.nsh"
+	RMDir "$DataDir\scenes"
 
 	RMDir "$DataDir"
+	RMDir "$DOCUMENTS\qtpovray"
 
 	Delete "$INSTDIR\Uninstall.exe"
 
@@ -191,3 +218,9 @@ Section "Uninstall"
 	DeleteRegKey /ifempty HKCU "Software\qtpovray"
 
 SectionEnd
+
+Function LaunchQtpovray
+	SetOutPath $INSTDIR
+	#ShellExecAsUser::ShellExecAsUser "" "$INSTDIR/qtpovray.exe"
+	Exec '"$WINDIR\explorer.exe" "$INSTDIR\qtpovray.exe"'
+FunctionEnd
