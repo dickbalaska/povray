@@ -3,7 +3,7 @@
 # A Cygwin script to setup the staged directory for Windows nsis installer
 
 STAGEDIR=/c/Users/dick/staged/qtpovray
-#EXEDIR=
+QTBUILDDIR="build-qtpovray-Desktop_Qt_5_15_2_MSVC2015_64bit-Release"
 
 
 FILEINC=$STAGEDIR/finclude.nsh
@@ -17,23 +17,45 @@ FILESCNUN=$STAGEDIR/fscenesUn.nsh
 
 DEBUG=0
 
+VIRGIN="N"
+
 if [ ! -f stageqtpovray.sh ]; then
 	echo "Run this script from its directory"
 	exit 1
 fi
 if [ ! -d $STAGEDIR ]; then
-	echo "$STAGEDIR does not exist"
-	exit 2
+	echo -n "$STAGEDIR does not exist. Create? [Y/N] "
+	read YN
+	if [ "$YN" != "Y" -a "$YN" != "y" ]; then
+		exit 2
+	fi
+	mkdir -p $STAGEDIR
+	if [ ! -d "$STAGEDIR" ]; then
+		echo "Failed to create $STAGEDIR"
+		exit 3
+	fi
+	VIRGIN="Y"
+
 fi
 SCRIPTDIR=`pwd`
 cd ../..
 MASTERDIR=`pwd`
 echo  "MASTERDIR=$MASTERDIR"
+
+cp ../$QTBUILDDIR/qt/gui/release/qtpovray.exe $STAGEDIR
+
+if [ $VIRGIN = Y ]; then
+	cd $STAGEDIR
+	cp $MASTERDIR/qt/install/doWinDeployQt.bat .
+	cmd /c doWinDeployQt.bat
+fi
 cp $MASTERDIR/qt/install/qtpovray.nsi $STAGEDIR
+cp $MASTERDIR/LICENSE $STAGEDIR
 rm -rf $STAGEDIR/include
 rm -rf "$STAGEDIR/fonts"
 rm -rf "$STAGEDIR/Insert Menu"
 rm -rf "$STAGEDIR/qtpovrayHelp"
+cd $MASTERDIR
 cp -rp distribution/include $STAGEDIR
 cp -rp distribution/qt/qtpovrayHelp $STAGEDIR
 cp -rp qt/install/fonts $STAGEDIR
@@ -149,4 +171,7 @@ for f in * ; do
 		processInsertFile "" "$f"
 	fi
 done
+
+cd $STAGEDIR
+/c/Program\ Files\ \(x86\)/NSIS/Bin/makensis.exe qtpovray.nsi
 

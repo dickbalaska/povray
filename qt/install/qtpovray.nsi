@@ -9,6 +9,14 @@
 !define VERSION 3.80.15
 !define	POVVERSION	3.8
 
+!define PRODUCT "qtpovray"
+!define COMPANY	"BuckoSoft"
+!define COPYRIGHT	"Copyright(c) 2021 Dick Balaska and BuckoSoft"
+!define MYURL	"https://www.buckosoft.com/qtpovray"
+!define VERSIONSTR	"v${VERSION}"
+!define SUBVER	"0.0"
+!define REGKEY "SOFTWARE\${COMPANY}\${PRODUCT}"
+!define UNINSTALL_REG_SUFFIX "${VERSIONSTR}"
 ;--------------------------------
 ;General
 
@@ -113,15 +121,27 @@ Section "Program Files"
 	;Store installation folder
 	WriteRegStr HKCU "Software\qtpovray" "" $INSTDIR
   
+
+    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}" DisplayName "$(^Name) ${VERSIONSTR}"
+    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}" DisplayVersion "${VERSION}"
+    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}" Publisher "${COMPANY}"
+    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}" URLInfoAbout "${MYURL}"
+    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}" DisplayIcon "$INSTDIR\${PRODUCT}.exe"
+    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}" UninstallString "$INSTDIR\${PRODUCT}-uninstall.exe"
+    WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}" NoModify 1
+    WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}" NoRepair 1
+	;
 	;Create uninstaller
-	WriteUninstaller "$INSTDIR\Uninstall.exe"
+	WriteUninstaller "$INSTDIR\${PRODUCT}-uninstall.exe"
   
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
 	;Create shortcuts
+	;SetShellVarContext all
+	CreateShortcut "$DESKTOP\qtpovray.lnk" "$INSTDIR\qtpovray.exe"
 	CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 	CreateShortcut "$SMPROGRAMS\$StartMenuFolder\qtpovray.lnk" "$INSTDIR\qtpovray.exe"
-	CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+	CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Uninstall qtpovray.lnk" "$INSTDIR\${PRODUCT}-uninstall.exe"
   
 	!insertmacro MUI_STARTMENU_WRITE_END
 
@@ -204,10 +224,15 @@ Section "Uninstall"
 	RMDir "$DataDir"
 	RMDir "$DOCUMENTS\qtpovray"
 
+	Delete "$DESKTOP\qtpovray.lnk"
+
 	Delete "$INSTDIR\Uninstall.exe"
 
 	RMDir "$INSTDIR"
   
+
+    DeleteRegKey HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name) ${UNINSTALL_REG_SUFFIX}"
+    DeleteRegKey HKCU "${REGKEY}"
 
 	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
     
